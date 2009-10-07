@@ -1,0 +1,52 @@
+Cmp-Mod V01 Created by Cvpcb (2007-01-15) date = 24/5/2007-11:43:25
+
+BeginCmp
+TimeStamp = 46557889;
+Reference = D1;
+ValeurCmp = Green_LED;
+IdModule  = LEDV;
+EndCmp
+
+BeginCmp
+TimeStamp = 4655789B;
+Reference = D2;
+ValeurCmp = Green_LED;
+IdModule  = LEDV;
+EndCmp
+
+BeginCmp
+TimeStamp = 46557877;
+Reference = D3;
+ValeurCmp = Red_LED;
+IdModule  = LEDV;
+EndCmp
+
+BeginCmp
+TimeStamp = 46557896;
+Reference = D4;
+ValeurCmp = Red_LED;
+IdModule  = LEDV;
+EndCmp
+
+BeginCmp
+TimeStamp = 46557814;
+Reference = P1;
+ValeurCmp = CONN_4;
+IdModule  = SIL-4;
+EndCmp
+
+BeginCmp
+TimeStamp = 4655783E;
+Reference = R1;
+ValeurCmp = 560_R;
+IdModule  = R3;
+EndCmp
+
+BeginCmp
+TimeStamp = 46557848;
+Reference = R2;
+ValeurCmp = 560_R;
+IdModule  = R3;
+EndCmp
+
+EndListe

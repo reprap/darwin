@@ -1,0 +1,113 @@
+EESchema (2006-08-28)  >> Creation date: 7/1/2007-15:09:06
+
+#Cmp ( order = Reference )
+| C1         1000uF 25v  
+| C2         100uF 12v   
+| C3         1uF         
+| C4         0.1uF       
+| D1         1N4005      
+| D10        LED         
+| D2         1N4005      
+| D3         1N4005      
+| D4         1N4005      
+| D5         1N4005      
+| D6         1N4005      
+| D7         1N4005      
+| D8         1N4005      
+| D9         LED         
+| J1         SIL10       
+| J2         SIL10       
+| J3         SIL10       
+| J4         SIL10       
+| J5         SIL10       
+| J6         SIL10       
+| J7         SIL10       
+| J8         SIL10       
+| K1         CONN_3      
+| K2         CONN_3      
+| P1         CONN_2      
+| P10        CONN_5      
+| P2         CONN_2      
+| P3         CONN_2      
+| P4         CONN_2      
+| P5         CONN_2      
+| P6         CONN_2      
+| P7         CONN_2      
+| P8         CONN_2      
+| P9         CONN_4      
+| Q1         TIP110      
+| Q2         TIP110      
+| Q3         TIP110      
+| R1         10K         
+| R10        4K7         
+| R11        4K7         
+| R12        560R        
+| R2         10K         
+| R3         180R        
+| R4         220R        
+| R5         220R        
+| R6         220R        
+| R7         220R        
+| R8         220R        
+| R9         220R        
+| U1         78L05       
+| U2         L298N       
+| U3         PIC16F628   
+#End Cmp
+
+#Cmp ( order = Value )
+| 0.1uF        C4        
+| 1000uF 25v   C1        
+| 100uF 12v    C2        
+| 10K          R1        
+| 10K          R2        
+| 180R         R3        
+| 1N4005       D1        
+| 1N4005       D2        
+| 1N4005       D3        
+| 1N4005       D4        
+| 1N4005       D5        
+| 1N4005       D6        
+| 1N4005       D7        
+| 1N4005       D8        
+| 1uF          C3        
+| 220R         R4        
+| 220R         R5        
+| 220R         R6        
+| 220R         R7        
+| 220R         R8        
+| 220R         R9        
+| 4K7          R10       
+| 4K7          R11       
+| 560R         R12       
+| 78L05        U1        
+| CONN_2       P1        
+| CONN_2       P2        
+| CONN_2       P3        
+| CONN_2       P4        
+| CONN_2       P5        
+| CONN_2       P6        
+| CONN_2       P7        
+| CONN_2       P8        
+| CONN_3       K1        
+| CONN_3       K2        
+| CONN_4       P9        
+| CONN_5       P10       
+| L298N        U2        
+| LED          D10       
+| LED          D9        
+| PIC16F628    U3        
+| SIL10        J1        
+| SIL10        J2        
+| SIL10        J3        
+| SIL10        J4        
+| SIL10        J5        
+| SIL10        J6        
+| SIL10        J7        
+| SIL10        J8        
+| TIP110       Q1        
+| TIP110       Q2        
+| TIP110       Q3        
+#End Cmp
+
+#End List

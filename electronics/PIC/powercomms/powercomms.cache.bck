@@ -1,0 +1,37 @@
+EESchema-DOCLIB  Version 2.0  30/8/2007-01:40:19
+#
+$CMP 7805
+D Linear Regulator +5V
+K POWER REGUL
+F regulator/lm78*.*
+$ENDCMP
+#
+$CMP C
+D Condensateur non polarise
+$ENDCMP
+#
+$CMP CONN_2
+D Symbole general de connecteur
+K CONN
+$ENDCMP
+#
+$CMP CP
+D Condensateur polarise
+$ENDCMP
+#
+$CMP DB9
+K CONN
+$ENDCMP
+#
+$CMP MAX232
+D Driver de Ligne RS232
+K RS232
+F maxim/MAX220-MAX249.pdf
+$ENDCMP
+#
+$CMP R
+D Resistance
+K R DEV
+$ENDCMP
+#
+#End Doc Library

@@ -1,0 +1,91 @@
+#!/usr/bin/perl
+# 
+# A perl script for automatic generation of asynchronous stimuli
+# for USART input in GPSIM
+# Written by Wojciech M. Zabolotny (wzab@ise.pw.edu.pl) 3 Aug 2001
+# This code is so simple that I release it to public domain
+# 
+# Calling syntax:
+# usartst [-f 1] -r divisor -o output_file -n stimuli_name times_and_strings_list
+#
+# Modified to accept hex pairs instead of text
+use strict;
+use Getopt::Std;
+use vars qw/$i $sim_time $bit_time $opt_f $opt_r $opt_o $opt_n *OUTFILE/;
+# The global variables
+$sim_time=0;
+$bit_time=10;
+#The procedure below sends the string of characters
+sub emit_string
+  {
+    my $i;
+    for ( $i=0 ; $i<length($_[0]) ; $i+=2)
+      {
+        my $hex = substr($_[0], $i, 2);
+	emit_char(hex($hex));
+      }
+  }
+
+#The procedure below sends the single character
+sub emit_char
+  {
+    my $code=$_[0];
+    my $i=1;
+    emit_bit(0); #The start bit
+    while ( $i<256 )
+      {
+	emit_bit ( $code & $i ? 1 : 0);
+	$i *= 2;
+      }
+    emit_bit(1); #The stop bit
+  }
+
+#The procedure below sends the single bit
+sub emit_bit
+  {
+    print OUTFILE $sim_time .  " " . $_[0] . "\n";
+    $sim_time += $bit_time;
+  }
+
+getopt("fron");
+# First get options (f=fast, r=baud rate divisor)
+# Let's calculate the time of single bit
+$bit_time = ( $opt_f ? 16 : 64 ) * ($opt_r +1);
+# Open the output file
+open OUTFILE,">".$opt_o or die "I can't open the output file:" . $opt_o;
+#Let's print the stimulus header
+print OUTFILE "stimulus asynchronous_stimulus\n";
+print OUTFILE "initial_state 1\n";
+print OUTFILE"start_cycle 0\n";
+# Now the @ARGV should hold the pairs: time to emit the string, and string
+for ($i=0;$i<=$#ARGV;$i+=2)
+  {
+    #The time must be monotonic
+    my $new_time = $ARGV[$i];
+    my $new_string = $ARGV[$i+1];
+    if ( substr($new_time,0,1) eq "+" )
+      {
+	$sim_time=$sim_time + $new_time;
+      }
+    else 
+      {
+	if ( $new_time < $sim_time )
+	  {
+	    die "Time must be monotonic!!!"
+	  }
+	else
+	  {
+	    $sim_time=$new_time;
+	  }
+	}
+    #Now we know the string emission time and the string, so let's start
+    #sending
+    emit_string($new_string);
+  }
+#Let's print the stimuli footer
+print OUTFILE "name ". $opt_n ."\n";
+print OUTFILE "end\n";
+close OUTFILE;
+
+
+

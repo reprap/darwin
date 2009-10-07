@@ -1,0 +1,8 @@
+rm AnalogEncoder/*.o
+rm CartesianBot/*.o
+rm CartesianBot_SNAP_v1/*.o
+rm LinearAxis/*.o
+rm RepStepper/*.o
+rm SNAP/*.o
+rm ThermoplastExtruder/*.o
+rm ThermoplastExtruder_SNAP_v1/*.o

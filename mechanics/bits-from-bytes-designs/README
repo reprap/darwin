@@ -1,0 +1,41 @@
+Lasercut RepRap from Bits from Bytes
+====================================
+
+http://www.bitsfrombytes.com/
+http://reprap.org
+
+This directory contains the designs done by Bits from Bytes for their lasercut 
+RepRap, which Bits from Bytes sell as a kit.
+
+All the lasercutter files are in the directory DXFs-for-laser-cutter.
+
+The parts are tight-packed, with common edges and no gaps.  This means that if
+you cut them as they are the laser-cutter will waste a little time cutting some 
+lines twice.  Most laser-cutter driver software has an option to edit such lines
+so that they are only cut once.
+
+A few parts need to be engraved to get partial-thiknesses.  You will almost certainly
+have to experiment with your particular cutter to get those right.
+
+Almost all the parts can be cut in 3mm, 5mm and 8mm acrylic; the file names give
+the thickness and material you need.  Two parts are better made in acetal because
+they need to be slightly flexible.
+
+Because the shapes are laminar (a few have steps) they can, of course, all also be
+made on a RepRap machine.  The STL files for this will be in the directory 
+STLs-for-reprapping, though only the extruder is there at the moment; we are
+in the preocess of translating the rest.
+
+Some STL files are two or more combined separate laser-cut shapes, as the RepRap
+machine can make these in one go, unlike a laser cutter.  Those file names are
+combinations of the parts with the word AND in.  Thus:
+
+  bearing-floating-plate-AND-bearing-lower-clamp-plate.stl
+
+is
+
+  bearing-floating-plate.stl   together with   bearing-lower-clamp-plate.stl
+
+
+Ian Adkins & Adrian Bowyer
+22 July 2008

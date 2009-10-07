@@ -1,0 +1,2035 @@
+gpasm-0.13.4 beta               extruder1-extruder2.asm6-13-2008  14:34:04          PAGE  1
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+               00001 ;--------------------------------------------------------
+               00002 ; File Created by SDCC : free open source ANSI-C Compiler
+               00003 ; Version 2.7.4 #4943 (Oct 27 2007) (UNIX)
+               00004 ; This file was generated Fri Jun 13 14:34:04 2008
+               00005 ;--------------------------------------------------------
+               00006 ; PIC port for the 14-bit core
+               00007 ;--------------------------------------------------------
+               00008 ;       .module extruder2
+               00009         list    p=16f648a
+               00010         radix dec
+               00011         include "p16f648a.inc"
+               00001         LIST
+               00002 ; P16F648A.INC  Standard Header File, Version 1.00    Microchip Technology, Inc.
+               00264         LIST
+               00012 ;--------------------------------------------------------
+               00013 ; external declarations
+               00014 ;--------------------------------------------------------
+               00015         extern  _flashLED
+               00016         extern  _LEDon
+               00017         extern  _setFlash
+               00018         extern  _uartTransmit
+               00019         extern  _sendReply
+               00020         extern  _sendMessage
+               00021         extern  _sendDataByte
+               00022         extern  _endMessage
+               00023         extern  _sendMessageISR
+               00024         extern  _sendDataByteISR
+               00025         extern  _endMessageISR
+               00026         extern  _releaseLock
+               00027         extern  _serialInterruptHandler
+               00028         extern  _packetReady
+               00029         extern  _uartNotifyReceive
+               00030         extern  _serial_init
+               00031         extern  _delay_10us
+               00032         extern  _clearwdt
+               00033         extern  _CCP1CON_bits
+               00034         extern  _CMCON_bits
+               00035         extern  _EECON1_bits
+               00036         extern  _INTCON_bits
+               00037         extern  _OPTION_REG_bits
+               00038         extern  _PCON_bits
+               00039         extern  _PIE1_bits
+               00040         extern  _PIR1_bits
+               00041         extern  _PORTA_bits
+               00042         extern  _PORTB_bits
+               00043         extern  _RCSTA_bits
+               00044         extern  _STATUS_bits
+               00045         extern  _T1CON_bits
+               00046         extern  _T2CON_bits
+               00047         extern  _TRISA_bits
+               00048         extern  _TRISB_bits
+               00049         extern  _TXSTA_bits
+               00050         extern  _VRCON_bits
+               00051         extern  _buffer
+gpasm-0.13.4 beta               extruder1-extruder2.asm6-13-2008  14:34:04          PAGE  2
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+               00052         extern  _serialStatus
+               00053         extern  _INDF
+               00054         extern  _TMR0
+               00055         extern  _PCL
+               00056         extern  _STATUS
+               00057         extern  _FSR
+               00058         extern  _PORTA
+               00059         extern  _PORTB
+               00060         extern  _PCLATH
+               00061         extern  _INTCON
+               00062         extern  _PIR1
+               00063         extern  _TMR1L
+               00064         extern  _TMR1H
+               00065         extern  _T1CON
+               00066         extern  _TMR2
+               00067         extern  _T2CON
+               00068         extern  _CCPR1L
+               00069         extern  _CCPR1H
+               00070         extern  _CCP1CON
+               00071         extern  _RCSTA
+               00072         extern  _TXREG
+               00073         extern  _RCREG
+               00074         extern  _CMCON
+               00075         extern  _OPTION_REG
+               00076         extern  _TRISA
+               00077         extern  _TRISB
+               00078         extern  _PIE1
+               00079         extern  _PCON
+               00080         extern  _PR2
+               00081         extern  _TXSTA
+               00082         extern  _SPBRG
+               00083         extern  _EEDATA
+               00084         extern  _EEADR
+               00085         extern  _EECON1
+               00086         extern  _EECON2
+               00087         extern  _VRCON
+               00088 
+               00089         extern PSAVE
+               00090         extern SSAVE
+               00091         extern WSAVE
+               00092         extern STK12
+               00093         extern STK11
+               00094         extern STK10
+               00095         extern STK09
+               00096         extern STK08
+               00097         extern STK07
+               00098         extern STK06
+               00099         extern STK05
+               00100         extern STK04
+               00101         extern STK03
+               00102         extern STK02
+               00103         extern STK01
+               00104         extern STK00
+               00105 ;--------------------------------------------------------
+gpasm-0.13.4 beta               extruder1-extruder2.asm6-13-2008  14:34:04          PAGE  3
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+               00106 ; global declarations
+               00107 ;--------------------------------------------------------
+               00108         global  _processCommand
+               00109         global  _checkTemperature
+               00110         global  _motorTick
+               00111         global  _timerTick
+               00112         global  _init2
+               00113         global  _extruder_stop
+               00114         global  _extruder_forward
+               00115         global  _extruder_reverse
+               00116         global  _heater_off
+               00117         global  _heater_on
+               00118         global  _change_log
+               00119         global  _set_cooler
+               00120         global  _pwmSet
+               00121         global  _solenoid_delay
+               00122         global  _solenoid
+               00123         global  _dummy
+               00124         global  _PWMPeriod
+               00125 
+               00126 ;--------------------------------------------------------
+               00127 ; global definitions
+               00128 ;--------------------------------------------------------
+               00129 ;--------------------------------------------------------
+               00130 ; absolute symbol definitions
+               00131 ;--------------------------------------------------------
+               00132 ;--------------------------------------------------------
+               00133 ; compiler-defined variables
+               00134 ;--------------------------------------------------------
+               00135 UDL_extruder2_0 udata
+               00136 r0x101F res     1
+               00137 r0x1020 res     1
+               00138 r0x1021 res     1
+               00139 r0x101A res     1
+               00140 r0x101B res     1
+               00141 r0x101C res     1
+               00142 r0x101D res     1
+               00143 r0x101E res     1
+               00144 r0x1018 res     1
+               00145 r0x1019 res     1
+               00146 _currentPosition        res     2
+               00147 _seekPosition   res     2
+               00148 ;--------------------------------------------------------
+               00149 ; initialized data
+               00150 ;--------------------------------------------------------
+               00151 
+               00152 ID_extruder2_0  idata
+0000           00153 _PWMPeriod
+               00154         db      0xff
+               00155 
+               00156 
+               00157 ID_extruder2_1  idata
+0000           00158 _currentDirection
+               00159         db      0x00
+gpasm-0.13.4 beta               extruder1-extruder2.asm6-13-2008  14:34:04          PAGE  4
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+               00160 
+               00161 
+               00162 ID_extruder2_2  idata
+0000           00163 _seekSpeed
+               00164         db      0x00
+               00165 
+               00166 
+               00167 ID_extruder2_3  idata
+0000           00168 _seekNotify
+               00169         db      0xff
+               00170 
+               00171 
+               00172 ID_extruder2_4  idata
+0000           00173 _lastPortB
+               00174         db      0x00
+               00175 
+               00176 
+               00177 ID_extruder2_5  idata
+0000           00178 _lastPortA
+               00179         db      0x00
+               00180 
+               00181 
+               00182 ID_extruder2_6  idata
+0000           00183 _extrude_click
+               00184         db      0x00
+               00185 
+               00186 
+               00187 ID_extruder2_7  idata
+0000           00188 _material_click
+               00189         db      0x00
+               00190 
+               00191 
+               00192 ID_extruder2_8  idata
+0000           00193 _requestedHeat0
+               00194         db      0x00
+               00195 
+               00196 
+               00197 ID_extruder2_9  idata
+0000           00198 _requestedHeat1
+               00199         db      0x00
+               00200 
+               00201 
+               00202 ID_extruder2_10 idata
+0000           00203 _heatCounter
+               00204         db      0x00
+               00205 
+               00206 
+               00207 ID_extruder2_11 idata
+0000           00208 _pulseCounter1
+               00209         db      0x64
+               00210 
+               00211 
+               00212 ID_extruder2_12 idata
+0000           00213 _pulseCounter2
+gpasm-0.13.4 beta               extruder1-extruder2.asm6-13-2008  14:34:04          PAGE  5
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+               00214         db      0x14
+               00215 
+               00216 
+               00217 ID_extruder2_13 idata
+0000           00218 _solenoid_on
+               00219         db      0x00
+               00220 
+               00221 
+               00222 ID_extruder2_14 idata
+0000           00223 _temperatureLimit0
+               00224         db      0x00
+               00225 
+               00226 
+               00227 ID_extruder2_15 idata
+0000           00228 _temperatureLimit1
+               00229         db      0x00
+               00230 
+               00231 
+               00232 ID_extruder2_16 idata
+0000           00233 _lastTemperature
+               00234         db      0x00
+               00235 
+               00236 
+               00237 ID_extruder2_17 idata
+0000           00238 _lastTemperatureRef
+               00239         db      0x00
+               00240 
+               00241 
+               00242 ID_extruder2_18 idata
+0000           00243 _temperatureVRef
+               00244         db      0x03
+               00245 
+               00246 
+               00247 ID_extruder2_19 idata
+0000           00248 _portaval
+               00249         db      0x00
+               00250 
+               00251 ;--------------------------------------------------------
+               00252 ; overlayable items in internal ram 
+               00253 ;--------------------------------------------------------
+               00254 ;       udata_ovr
+               00255 ;--------------------------------------------------------
+               00256 ; code
+               00257 ;--------------------------------------------------------
+               00258 code_extruder2  code
+               00259 ;***
+               00260 ;  pBlock Stats: dbName = C
+               00261 ;***
+               00262 ;entry:  _dummy ;Function start
+               00263 ; 2 exit points
+               00264 ;has an exit
+               00265 ;; Starting pCode block
+0000           00266 _dummy  ;Function start
+               00267 ; 2 exit points
+gpasm-0.13.4 beta               extruder1-extruder2.asm6-13-2008  14:34:04          PAGE  6
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+               00268 ;       .line   695; "extruder2.c"      INTCON = 0;
+0000 0000 0000 00269         BANKSEL _INTCON
+0002 0180      00270         CLRF    _INTCON
+0003 0008      00271         RETURN  
+               00272 ; exit point of _dummy
+               00273 
+               00274 ;***
+               00275 ;  pBlock Stats: dbName = C
+               00276 ;***
+               00277 ;entry:  _processCommand        ;Function start
+               00278 ; 2 exit points
+               00279 ;has an exit
+               00280 ;functions called:
+               00281 ;   _sendReply
+               00282 ;   _sendDataByte
+               00283 ;   _sendDataByte
+               00284 ;   _sendDataByte
+               00285 ;   _endMessage
+               00286 ;   _sendReply
+               00287 ;   _sendDataByte
+               00288 ;   _sendDataByte
+               00289 ;   _sendDataByte
+               00290 ;   _sendDataByte
+               00291 ;   _sendDataByte
+               00292 ;   _sendDataByte
+               00293 ;   _sendDataByte
+               00294 ;   _endMessage
+               00295 ;   _sendReply
+               00296 ;   _sendDataByte
+               00297 ;   _sendDataByte
+               00298 ;   _endMessage
+               00299 ;   _solenoid
+               00300 ;   _solenoid
+               00301 ;   _sendReply
+               00302 ;   _sendDataByte
+               00303 ;   _sendDataByte
+               00304 ;   _sendDataByte
+               00305 ;   _endMessage
+               00306 ;   _solenoid
+               00307 ;   _sendReply
+               00308 ;   _sendDataByte
+               00309 ;   _sendDataByte
+               00310 ;   _endMessage
+               00311 ;   _sendReply
+               00312 ;   _sendDataByte
+               00313 ;   _sendDataByte
+               00314 ;   _sendDataByte
+               00315 ;   _endMessage
+               00316 ;   _set_cooler
+               00317 ;   _pwmSet
+               00318 ;   _sendReply
+               00319 ;   _sendDataByte
+               00320 ;   _sendDataByte
+               00321 ;   _sendDataByte
+gpasm-0.13.4 beta               extruder1-extruder2.asm6-13-2008  14:34:04          PAGE  7
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+               00322 ;   _endMessage
+               00323 ;   _sendReply
+               00324 ;   _sendDataByte
+               00325 ;   _sendDataByte
+               00326 ;   _sendDataByte
+               00327 ;   _sendDataByte
+               00328 ;   _sendDataByte
+               00329 ;   _sendDataByte
+               00330 ;   _sendDataByte
+               00331 ;   _endMessage
+               00332 ;   _sendReply
+               00333 ;   _sendDataByte
+               00334 ;   _sendDataByte
+               00335 ;   _endMessage
+               00336 ;   _solenoid
+               00337 ;   _solenoid
+               00338 ;   _sendReply
+               00339 ;   _sendDataByte
+               00340 ;   _sendDataByte
+               00341 ;   _sendDataByte
+               00342 ;   _endMessage
+               00343 ;   _solenoid
+               00344 ;   _sendReply
+               00345 ;   _sendDataByte
+               00346 ;   _sendDataByte
+               00347 ;   _endMessage
+               00348 ;   _sendReply
+               00349 ;   _sendDataByte
+               00350 ;   _sendDataByte
+               00351 ;   _sendDataByte
+               00352 ;   _endMessage
+               00353 ;   _set_cooler
+               00354 ;   _pwmSet
+               00355 ;2 compiler assigned registers:
+               00356 ;   r0x1018
+               00357 ;   r0x1019
+               00358 ;; Starting pCode block
+0004           00359 _processCommand ;Function start
+               00360 ; 2 exit points
+               00361 ;       .line   542; "extruder2.c"      switch(buffer[0]) {
+0004 0000 0000 00362         BANKSEL _buffer
+0006 0800      00363         MOVF    (_buffer + 0),W
+0007 0000 0000 00364         BANKSEL r0x1018
+0009 0080      00365         MOVWF   r0x1018
+000A 1903      00366         BTFSC   STATUS,2
+000B 2800      00367         GOTO    _00204_DS_
+000C 0800      00368         MOVF    r0x1018,W
+000D 3A01      00369         XORLW   0x01
+000E 1903      00370         BTFSC   STATUS,2
+000F 2800      00371         GOTO    _00216_DS_
+0010 0800      00372         MOVF    r0x1018,W
+0011 3A02      00373         XORLW   0x02
+0012 1903      00374         BTFSC   STATUS,2
+0013 2800      00375         GOTO    _00217_DS_
+gpasm-0.13.4 beta               extruder1-extruder2.asm6-13-2008  14:34:04          PAGE  8
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+0014 0800      00376         MOVF    r0x1018,W
+0015 3A03      00377         XORLW   0x03
+0016 1903      00378         BTFSC   STATUS,2
+0017 2800      00379         GOTO    _00218_DS_
+0018 0800      00380         MOVF    r0x1018,W
+0019 3A04      00381         XORLW   0x04
+001A 1903      00382         BTFSC   STATUS,2
+001B 2800      00383         GOTO    _00219_DS_
+001C 0800      00384         MOVF    r0x1018,W
+001D 3A05      00385         XORLW   0x05
+001E 1903      00386         BTFSC   STATUS,2
+001F 2800      00387         GOTO    _00220_DS_
+0020 0800      00388         MOVF    r0x1018,W
+0021 3A06      00389         XORLW   0x06
+0022 1903      00390         BTFSC   STATUS,2
+0023 2800      00391         GOTO    _00221_DS_
+0024 0800      00392         MOVF    r0x1018,W
+0025 3A07      00393         XORLW   0x07
+0026 1903      00394         BTFSC   STATUS,2
+0027 2800      00395         GOTO    _00222_DS_
+0028 0800      00396         MOVF    r0x1018,W
+0029 3A08      00397         XORLW   0x08
+002A 1903      00398         BTFSC   STATUS,2
+002B 2800      00399         GOTO    _00223_DS_
+002C 0800      00400         MOVF    r0x1018,W
+002D 3A09      00401         XORLW   0x09
+002E 1903      00402         BTFSC   STATUS,2
+002F 2800      00403         GOTO    _00224_DS_
+0030 0800      00404         MOVF    r0x1018,W
+0031 3A0A      00405         XORLW   0x0a
+0032 1903      00406         BTFSC   STATUS,2
+0033 2800      00407         GOTO    _00225_DS_
+0034 0800      00408         MOVF    r0x1018,W
+0035 3A0B      00409         XORLW   0x0b
+0036 1903      00410         BTFSC   STATUS,2
+0037 2800      00411         GOTO    _00226_DS_
+0038 0800      00412         MOVF    r0x1018,W
+0039 3A32      00413         XORLW   0x32
+003A 1903      00414         BTFSC   STATUS,2
+003B 2800      00415         GOTO    _00230_DS_
+003C 0800      00416         MOVF    r0x1018,W
+003D 3A33      00417         XORLW   0x33
+003E 1903      00418         BTFSC   STATUS,2
+003F 2800      00419         GOTO    _00231_DS_
+0040 0800      00420         MOVF    r0x1018,W
+0041 3A34      00421         XORLW   0x34
+0042 1903      00422         BTFSC   STATUS,2
+0043 2800      00423         GOTO    _00232_DS_
+0044 0800      00424         MOVF    r0x1018,W
+0045 3A35      00425         XORLW   0x35
+0046 1903      00426         BTFSC   STATUS,2
+0047 2800      00427         GOTO    _00233_DS_
+0048 0800      00428         MOVF    r0x1018,W
+0049 3AFE      00429         XORLW   0xfe
+gpasm-0.13.4 beta               extruder1-extruder2.asm6-13-2008  14:34:04          PAGE  9
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+004A 1903      00430         BTFSC   STATUS,2
+004B 2800      00431         GOTO    _00205_DS_
+004C 0800      00432         MOVF    r0x1018,W
+004D 3AFF      00433         XORLW   0xff
+004E 1903      00434         BTFSC   STATUS,2
+004F 2800      00435         GOTO    _00215_DS_
+0050 2800      00436         GOTO    _00235_DS_
+0051           00437 _00204_DS_
+               00438 ;       .line   544; "extruder2.c"      sendReply();
+0051 0000      00439         PAGESEL _sendReply
+0052 2000      00440         CALL    _sendReply
+0053 0000      00441         PAGESEL $
+               00442 ;       .line   545; "extruder2.c"      sendDataByte(CMD_VERSION);  // Response type 0
+0054 3000      00443         MOVLW   0x00
+0055 0000      00444         PAGESEL _sendDataByte
+0056 2000      00445         CALL    _sendDataByte
+0057 0000      00446         PAGESEL $
+               00447 ;       .line   546; "extruder2.c"      sendDataByte(MAJOR_VERSION_NUMBER);
+0058 3001      00448         MOVLW   0x01
+0059 0000      00449         PAGESEL _sendDataByte
+005A 2000      00450         CALL    _sendDataByte
+005B 0000      00451         PAGESEL $
+               00452 ;       .line   547; "extruder2.c"      sendDataByte(MINOR_VERSION_NUMBER);
+005C 3000      00453         MOVLW   0x00
+005D 0000      00454         PAGESEL _sendDataByte
+005E 2000      00455         CALL    _sendDataByte
+005F 0000      00456         PAGESEL $
+               00457 ;       .line   548; "extruder2.c"      endMessage();
+0060 0000      00458         PAGESEL _endMessage
+0061 2000      00459         CALL    _endMessage
+0062 0000      00460         PAGESEL $
+               00461 ;       .line   549; "extruder2.c"      break;
+0063 2800      00462         GOTO    _00235_DS_
+0064           00463 _00205_DS_
+               00464 ;       .line   552; "extruder2.c"      sendReply();
+0064 0000      00465         PAGESEL _sendReply
+0065 2000      00466         CALL    _sendReply
+0066 0000      00467         PAGESEL $
+               00468 ;       .line   553; "extruder2.c"      sendDataByte(CMD_CHECKHOSTVERSION);    
+0067 30FE      00469         MOVLW   0xfe
+0068 0000      00470         PAGESEL _sendDataByte
+0069 2000      00471         CALL    _sendDataByte
+006A 0000      00472         PAGESEL $
+               00473 ;       .line   554; "extruder2.c"      if(buffer[1] > OLDHOST_MAJOR_VERSION_NUMBER)
+006B 0000 0000 00474         BANKSEL _buffer
+006D 0800      00475         MOVF    (_buffer + 1),W
+006E 0000 0000 00476         BANKSEL r0x1018
+0070 0080      00477         MOVWF   r0x1018
+0071 1903      00478         BTFSC   STATUS,2
+0072 2800      00479         GOTO    _00213_DS_
+               00480 ;       .line   555; "extruder2.c"      sendDataByte(0xff);    
+0073 30FF      00481         MOVLW   0xff
+0074 0000      00482         PAGESEL _sendDataByte
+0075 2000      00483         CALL    _sendDataByte
+gpasm-0.13.4 beta               extruder1-extruder2.asm6-13-2008  14:34:04          PAGE 10
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+0076 0000      00484         PAGESEL $
+0077 2800      00485         GOTO    _00214_DS_
+0078           00486 _00213_DS_
+               00487 ;       .line   556; "extruder2.c"      else if (buffer[1] == OLDHOST_MAJOR_VERSION_NUMBER)
+0078 0000 0000 00488         BANKSEL _buffer
+007A 0800      00489         MOVF    (_buffer + 1),W
+007B 0000 0000 00490         BANKSEL r0x1018
+007D 0080      00491         MOVWF   r0x1018
+007E 0800      00492         MOVF    r0x1018,W
+007F 1D03      00493         BTFSS   STATUS,2
+0080 2800      00494         GOTO    _00210_DS_
+               00495 ;       .line   558; "extruder2.c"      if (buffer[2] >= OLDHOST_MINOR_VERSION_NUMBER)
+0081 0000 0000 00496         BANKSEL _buffer
+0083 0800      00497         MOVF    (_buffer + 2),W
+0084 0000 0000 00498         BANKSEL r0x1018
+0086 0080      00499         MOVWF   r0x1018
+               00500 ;unsigned compare: left < lit(0x8=8), size=1
+0087 3008      00501         MOVLW   0x08
+0088 0200      00502         SUBWF   r0x1018,W
+0089 1C03      00503         BTFSS   STATUS,0
+008A 2800      00504         GOTO    _00207_DS_
+               00505 ;genSkipc:3694: created from rifx:0xbf9ff510
+               00506 ;       .line   559; "extruder2.c"      sendDataByte(0xff);
+008B 30FF      00507         MOVLW   0xff
+008C 0000      00508         PAGESEL _sendDataByte
+008D 2000      00509         CALL    _sendDataByte
+008E 0000      00510         PAGESEL $
+008F 2800      00511         GOTO    _00214_DS_
+0090           00512 _00207_DS_
+               00513 ;       .line   561; "extruder2.c"      sendDataByte(0);    
+0090 3000      00514         MOVLW   0x00
+0091 0000      00515         PAGESEL _sendDataByte
+0092 2000      00516         CALL    _sendDataByte
+0093 0000      00517         PAGESEL $
+0094 2800      00518         GOTO    _00214_DS_
+0095           00519 _00210_DS_
+               00520 ;       .line   563; "extruder2.c"      sendDataByte(0);
+0095 3000      00521         MOVLW   0x00
+0096 0000      00522         PAGESEL _sendDataByte
+0097 2000      00523         CALL    _sendDataByte
+0098 0000      00524         PAGESEL $
+0099           00525 _00214_DS_
+               00526 ;       .line   564; "extruder2.c"      sendDataByte(OLDHOST_MAJOR_VERSION_NUMBER);
+0099 3000      00527         MOVLW   0x00
+009A 0000      00528         PAGESEL _sendDataByte
+009B 2000      00529         CALL    _sendDataByte
+009C 0000      00530         PAGESEL $
+               00531 ;       .line   565; "extruder2.c"      sendDataByte(OLDHOST_MINOR_VERSION_NUMBER);
+009D 3008      00532         MOVLW   0x08
+009E 0000      00533         PAGESEL _sendDataByte
+009F 2000      00534         CALL    _sendDataByte
+00A0 0000      00535         PAGESEL $
+               00536 ;       .line   566; "extruder2.c"      endMessage();
+00A1 0000      00537         PAGESEL _endMessage
+gpasm-0.13.4 beta               extruder1-extruder2.asm6-13-2008  14:34:04          PAGE 11
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+00A2 2000      00538         CALL    _endMessage
+00A3 0000      00539         PAGESEL $
+               00540 ;       .line   567; "extruder2.c"      break;    
+00A4 2800      00541         GOTO    _00235_DS_
+00A5           00542 _00215_DS_
+               00543 ;       .line   570; "extruder2.c"      sendReply();
+00A5 0000      00544         PAGESEL _sendReply
+00A6 2000      00545         CALL    _sendReply
+00A7 0000      00546         PAGESEL $
+               00547 ;       .line   571; "extruder2.c"      sendDataByte(CMD_GETMODULETYPE);
+00A8 30FF      00548         MOVLW   0xff
+00A9 0000      00549         PAGESEL _sendDataByte
+00AA 2000      00550         CALL    _sendDataByte
+00AB 0000      00551         PAGESEL $
+               00552 ;       .line   572; "extruder2.c"      sendDataByte(SUPPORT_EXTRUDER_TYPE);
+00AC 3002      00553         MOVLW   0x02
+00AD 0000      00554         PAGESEL _sendDataByte
+00AE 2000      00555         CALL    _sendDataByte
+00AF 0000      00556         PAGESEL $
+               00557 ;       .line   573; "extruder2.c"      endMessage();
+00B0 0000      00558         PAGESEL _endMessage
+00B1 2000      00559         CALL    _endMessage
+00B2 0000      00560         PAGESEL $
+               00561 ;       .line   574; "extruder2.c"      break;
+00B3 2800      00562         GOTO    _00235_DS_
+00B4           00563 _00216_DS_
+               00564 ;       .line   578; "extruder2.c"      solenoid(buffer[1]);
+00B4 0000 0000 00565         BANKSEL _buffer
+00B6 0800      00566         MOVF    (_buffer + 1),W
+00B7 0000 0000 00567         BANKSEL r0x1018
+00B9 0080      00568         MOVWF   r0x1018
+00BA 2000      00569         CALL    _solenoid
+               00570 ;       .line   581; "extruder2.c"      break;
+00BB 2800      00571         GOTO    _00235_DS_
+00BC           00572 _00217_DS_
+               00573 ;       .line   586; "extruder2.c"      solenoid(0);
+00BC 3000      00574         MOVLW   0x00
+00BD 2000      00575         CALL    _solenoid
+               00576 ;       .line   587; "extruder2.c"      break;
+00BE 2800      00577         GOTO    _00235_DS_
+00BF           00578 _00218_DS_
+               00579 ;       .line   591; "extruder2.c"      currentPosition.bytes[0] = buffer[1];
+00BF 0000 0000 00580         BANKSEL _buffer
+00C1 0800      00581         MOVF    (_buffer + 1),W
+00C2 0000 0000 00582         BANKSEL r0x1018
+00C4 0080      00583         MOVWF   r0x1018
+00C5 0000 0000 00584         BANKSEL _currentPosition
+00C7 0080      00585         MOVWF   (_currentPosition + 0)
+               00586 ;       .line   592; "extruder2.c"      currentPosition.bytes[1] = buffer[2];
+00C8 0000 0000 00587         BANKSEL _buffer
+00CA 0800      00588         MOVF    (_buffer + 2),W
+00CB 0000 0000 00589         BANKSEL r0x1018
+00CD 0080      00590         MOVWF   r0x1018
+00CE 0000 0000 00591         BANKSEL _currentPosition
+gpasm-0.13.4 beta               extruder1-extruder2.asm6-13-2008  14:34:04          PAGE 12
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+00D0 0080      00592         MOVWF   (_currentPosition + 1)
+               00593 ;       .line   593; "extruder2.c"      break;
+00D1 2800      00594         GOTO    _00235_DS_
+00D2           00595 _00219_DS_
+               00596 ;       .line   597; "extruder2.c"      sendReply();
+00D2 0000      00597         PAGESEL _sendReply
+00D3 2000      00598         CALL    _sendReply
+00D4 0000      00599         PAGESEL $
+               00600 ;       .line   598; "extruder2.c"      sendDataByte(CMD_GETPOS);
+00D5 3004      00601         MOVLW   0x04
+00D6 0000      00602         PAGESEL _sendDataByte
+00D7 2000      00603         CALL    _sendDataByte
+00D8 0000      00604         PAGESEL $
+               00605 ;       .line   599; "extruder2.c"      sendDataByte(currentPosition.bytes[0]);
+00D9 0000 0000 00606         BANKSEL _currentPosition
+00DB 0800      00607         MOVF    (_currentPosition + 0),W
+00DC 0000 0000 00608         BANKSEL r0x1018
+00DE 0080      00609         MOVWF   r0x1018
+00DF 0000      00610         PAGESEL _sendDataByte
+00E0 2000      00611         CALL    _sendDataByte
+00E1 0000      00612         PAGESEL $
+               00613 ;       .line   600; "extruder2.c"      sendDataByte(currentPosition.bytes[1]);
+00E2 0000 0000 00614         BANKSEL _currentPosition
+00E4 0800      00615         MOVF    (_currentPosition + 1),W
+00E5 0000 0000 00616         BANKSEL r0x1018
+00E7 0080      00617         MOVWF   r0x1018
+00E8 0000      00618         PAGESEL _sendDataByte
+00E9 2000      00619         CALL    _sendDataByte
+00EA 0000      00620         PAGESEL $
+               00621 ;       .line   601; "extruder2.c"      endMessage();
+00EB 0000      00622         PAGESEL _endMessage
+00EC 2000      00623         CALL    _endMessage
+00ED 0000      00624         PAGESEL $
+               00625 ;       .line   602; "extruder2.c"      break;
+00EE 2800      00626         GOTO    _00235_DS_
+00EF           00627 _00220_DS_
+               00628 ;       .line   606; "extruder2.c"      seekPosition.bytes[0] = buffer[2];
+00EF 0000 0000 00629         BANKSEL _buffer
+00F1 0800      00630         MOVF    (_buffer + 2),W
+00F2 0000 0000 00631         BANKSEL r0x1018
+00F4 0080      00632         MOVWF   r0x1018
+00F5 0000 0000 00633         BANKSEL _seekPosition
+00F7 0080      00634         MOVWF   (_seekPosition + 0)
+               00635 ;       .line   607; "extruder2.c"      seekPosition.bytes[1] = buffer[3];
+00F8 0000 0000 00636         BANKSEL _buffer
+00FA 0800      00637         MOVF    (_buffer + 3),W
+00FB 0000 0000 00638         BANKSEL r0x1018
+00FD 0080      00639         MOVWF   r0x1018
+00FE 0000 0000 00640         BANKSEL _seekPosition
+0100 0080      00641         MOVWF   (_seekPosition + 1)
+               00642 ;       .line   617; "extruder2.c"      break;
+0101 2800      00643         GOTO    _00235_DS_
+0102           00644 _00221_DS_
+               00645 ;       .line   623; "extruder2.c"      solenoid(0);
+gpasm-0.13.4 beta               extruder1-extruder2.asm6-13-2008  14:34:04          PAGE 13
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+0102 3000      00646         MOVLW   0x00
+0103 2000      00647         CALL    _solenoid
+               00648 ;       .line   624; "extruder2.c"      break;
+0104 2800      00649         GOTO    _00235_DS_
+0105           00650 _00222_DS_
+               00651 ;       .line   628; "extruder2.c"      seekNotify = buffer[1];
+0105 0000 0000 00652         BANKSEL _buffer
+0107 0800      00653         MOVF    (_buffer + 1),W
+0108 0000 0000 00654         BANKSEL _seekNotify
+010A 0080      00655         MOVWF   _seekNotify
+               00656 ;       .line   629; "extruder2.c"      break;
+010B 2800      00657         GOTO    _00235_DS_
+010C           00658 _00223_DS_
+               00659 ;       .line   632; "extruder2.c"      sendReply();
+010C 0000      00660         PAGESEL _sendReply
+010D 2000      00661         CALL    _sendReply
+010E 0000      00662         PAGESEL $
+               00663 ;       .line   633; "extruder2.c"      sendDataByte(CMD_ISEMPTY);
+010F 3008      00664         MOVLW   0x08
+0110 0000      00665         PAGESEL _sendDataByte
+0111 2000      00666         CALL    _sendDataByte
+0112 0000      00667         PAGESEL $
+               00668 ;       .line   635; "extruder2.c"      sendDataByte(!RA5);   
+0113 0000 0000 00669         BANKSEL r0x1018
+0115 0180      00670         CLRF    r0x1018
+0116 0000 0000 00671         BANKSEL _PORTA_bits
+0118 1E80      00672         BTFSS   _PORTA_bits,5
+0119 2800      00673         GOTO    _00001_DS_
+011A 0000 0000 00674         BANKSEL r0x1018
+011C 0A80      00675         INCF    r0x1018,F
+011D           00676 _00001_DS_
+011D 0000 0000 00677         BANKSEL r0x1018
+011F 0800      00678         MOVF    r0x1018,W
+0120 3000      00679         MOVLW   0x00
+0121 1903      00680         BTFSC   STATUS,2
+0122 3001      00681         MOVLW   0x01
+0123 0080      00682         MOVWF   r0x1019
+0124 0000      00683         PAGESEL _sendDataByte
+0125 2000      00684         CALL    _sendDataByte
+0126 0000      00685         PAGESEL $
+               00686 ;       .line   639; "extruder2.c"      endMessage();
+0127 0000      00687         PAGESEL _endMessage
+0128 2000      00688         CALL    _endMessage
+0129 0000      00689         PAGESEL $
+               00690 ;       .line   640; "extruder2.c"      break;
+012A 2800      00691         GOTO    _00235_DS_
+012B           00692 _00224_DS_
+               00693 ;       .line   643; "extruder2.c"      requestedHeat0 = buffer[1];
+012B 0000 0000 00694         BANKSEL _buffer
+012D 0800      00695         MOVF    (_buffer + 1),W
+012E 0000 0000 00696         BANKSEL _requestedHeat0
+0130 0080      00697         MOVWF   _requestedHeat0
+               00698 ;       .line   644; "extruder2.c"      requestedHeat1 = buffer[2];
+0131 0000 0000 00699         BANKSEL _buffer
+gpasm-0.13.4 beta               extruder1-extruder2.asm6-13-2008  14:34:04          PAGE 14
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+0133 0800      00700         MOVF    (_buffer + 2),W
+0134 0000 0000 00701         BANKSEL _requestedHeat1
+0136 0080      00702         MOVWF   _requestedHeat1
+               00703 ;       .line   645; "extruder2.c"      temperatureLimit0 = buffer[3];
+0137 0000 0000 00704         BANKSEL _buffer
+0139 0800      00705         MOVF    (_buffer + 3),W
+013A 0000 0000 00706         BANKSEL _temperatureLimit0
+013C 0080      00707         MOVWF   _temperatureLimit0
+               00708 ;       .line   646; "extruder2.c"      temperatureLimit1 = buffer[4];
+013D 0000 0000 00709         BANKSEL _buffer
+013F 0800      00710         MOVF    (_buffer + 4),W
+0140 0000 0000 00711         BANKSEL _temperatureLimit1
+0142 0080      00712         MOVWF   _temperatureLimit1
+               00713 ;       .line   647; "extruder2.c"      break;
+0143 2800      00714         GOTO    _00235_DS_
+0144           00715 _00225_DS_
+               00716 ;       .line   650; "extruder2.c"      sendReply();
+0144 0000      00717         PAGESEL _sendReply
+0145 2000      00718         CALL    _sendReply
+0146 0000      00719         PAGESEL $
+               00720 ;       .line   651; "extruder2.c"      sendDataByte(CMD_GETTEMP);
+0147 300A      00721         MOVLW   0x0a
+0148 0000      00722         PAGESEL _sendDataByte
+0149 2000      00723         CALL    _sendDataByte
+014A 0000      00724         PAGESEL $
+               00725 ;       .line   652; "extruder2.c"      sendDataByte(lastTemperature);
+014B 0000 0000 00726         BANKSEL _lastTemperature
+014D 0800      00727         MOVF    _lastTemperature,W
+014E 0000      00728         PAGESEL _sendDataByte
+014F 2000      00729         CALL    _sendDataByte
+0150 0000      00730         PAGESEL $
+               00731 ;       .line   653; "extruder2.c"      sendDataByte(lastTemperatureRef);
+0151 0000 0000 00732         BANKSEL _lastTemperatureRef
+0153 0800      00733         MOVF    _lastTemperatureRef,W
+0154 0000      00734         PAGESEL _sendDataByte
+0155 2000      00735         CALL    _sendDataByte
+0156 0000      00736         PAGESEL $
+               00737 ;       .line   654; "extruder2.c"      endMessage();
+0157 0000      00738         PAGESEL _endMessage
+0158 2000      00739         CALL    _endMessage
+0159 0000      00740         PAGESEL $
+               00741 ;       .line   655; "extruder2.c"      break;
+015A 2800      00742         GOTO    _00235_DS_
+015B           00743 _00226_DS_
+               00744 ;       .line   658; "extruder2.c"      set_cooler(buffer[1]);
+015B 0000 0000 00745         BANKSEL _buffer
+015D 0800      00746         MOVF    (_buffer + 1),W
+015E 0000 0000 00747         BANKSEL r0x1018
+0160 0080      00748         MOVWF   r0x1018
+0161 2000      00749         CALL    _set_cooler
+               00750 ;       .line   660; "extruder2.c"      if(buffer[1] && !seekSpeed)
+0162 0000 0000 00751         BANKSEL _buffer
+0164 0800      00752         MOVF    (_buffer + 1),W
+0165 0000 0000 00753         BANKSEL r0x1018
+gpasm-0.13.4 beta               extruder1-extruder2.asm6-13-2008  14:34:04          PAGE 15
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+0167 0080      00754         MOVWF   r0x1018
+0168 1903      00755         BTFSC   STATUS,2
+0169 2800      00756         GOTO    _00235_DS_
+016A 0000 0000 00757         BANKSEL _seekSpeed
+016C 0800      00758         MOVF    _seekSpeed,W
+016D 1D03      00759         BTFSS   STATUS,2
+016E 2800      00760         GOTO    _00235_DS_
+               00761 ;       .line   662; "extruder2.c"      seekSpeed = buffer[1];
+016F 0000 0000 00762         BANKSEL _buffer
+0171 0800      00763         MOVF    (_buffer + 1),W
+0172 0000 0000 00764         BANKSEL _seekSpeed
+0174 0080      00765         MOVWF   _seekSpeed
+               00766 ;       .line   663; "extruder2.c"      pwmSet();
+0175 2000      00767         CALL    _pwmSet
+               00768 ;       .line   666; "extruder2.c"      break;
+0176 2800      00769         GOTO    _00235_DS_
+0177           00770 _00230_DS_
+               00771 ;       .line   671; "extruder2.c"      PWMPeriod = buffer[1];
+0177 0000 0000 00772         BANKSEL _buffer
+0179 0800      00773         MOVF    (_buffer + 1),W
+017A 0000 0000 00774         BANKSEL _PWMPeriod
+017C 0080      00775         MOVWF   _PWMPeriod
+               00776 ;       .line   672; "extruder2.c"      PR2 = PWMPeriod;
+017D 0800      00777         MOVF    _PWMPeriod,W
+017E 0000 0000 00778         BANKSEL _PR2
+0180 0080      00779         MOVWF   _PR2
+               00780 ;       .line   673; "extruder2.c"      break;
+0181 2800      00781         GOTO    _00235_DS_
+0182           00782 _00231_DS_
+               00783 ;       .line   677; "extruder2.c"      T2CON = BIN(00000100) | (buffer[1] & 3);
+0182 0000 0000 00784         BANKSEL _buffer
+0184 0800      00785         MOVF    (_buffer + 1),W
+0185 0000 0000 00786         BANKSEL r0x1018
+0187 0080      00787         MOVWF   r0x1018
+0188 3003      00788         MOVLW   0x03
+0189 0580      00789         ANDWF   r0x1018,F
+018A 3004      00790         MOVLW   0x04
+018B 0400      00791         IORWF   r0x1018,W
+018C 0000 0000 00792         BANKSEL _T2CON
+018E 0080      00793         MOVWF   _T2CON
+               00794 ;       .line   678; "extruder2.c"      break;
+018F 2800      00795         GOTO    _00235_DS_
+0190           00796 _00232_DS_
+               00797 ;       .line   681; "extruder2.c"      temperatureVRef = buffer[1];
+0190 0000 0000 00798         BANKSEL _buffer
+0192 0800      00799         MOVF    (_buffer + 1),W
+0193 0000 0000 00800         BANKSEL _temperatureVRef
+0195 0080      00801         MOVWF   _temperatureVRef
+               00802 ;       .line   682; "extruder2.c"      break;
+0196 2800      00803         GOTO    _00235_DS_
+0197           00804 _00233_DS_
+               00805 ;       .line   685; "extruder2.c"      OPTION_REG = (OPTION_REG & BIN(11111000)) | (buffer[1] & BIN(111));
+0197 30F8      00806         MOVLW   0xf8
+0198 0000 0000 00807         BANKSEL _OPTION_REG
+gpasm-0.13.4 beta               extruder1-extruder2.asm6-13-2008  14:34:04          PAGE 16
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+019A 0500      00808         ANDWF   _OPTION_REG,W
+019B 0000 0000 00809         BANKSEL r0x1018
+019D 0080      00810         MOVWF   r0x1018
+019E 0000 0000 00811         BANKSEL _buffer
+01A0 0800      00812         MOVF    (_buffer + 1),W
+01A1 0000 0000 00813         BANKSEL r0x1019
+01A3 0080      00814         MOVWF   r0x1019
+01A4 3007      00815         MOVLW   0x07
+01A5 0580      00816         ANDWF   r0x1019,F
+01A6 0800      00817         MOVF    r0x1019,W
+01A7 0400      00818         IORWF   r0x1018,W
+01A8 0000 0000 00819         BANKSEL _OPTION_REG
+01AA 0080      00820         MOVWF   _OPTION_REG
+01AB           00821 _00235_DS_
+               00822 ;       .line   688; "extruder2.c"      }
+01AB 0008      00823         RETURN  
+               00824 ; exit point of _processCommand
+               00825 
+               00826 ;***
+               00827 ;  pBlock Stats: dbName = C
+               00828 ;***
+               00829 ;entry:  _checkTemperature      ;Function start
+               00830 ; 2 exit points
+               00831 ;has an exit
+               00832 ;; Starting pCode block
+01AC           00833 _checkTemperature       ;Function start
+               00834 ; 2 exit points
+01AC 0000 0000 00835         BANKSEL _currentPosition
+01AE 0008      00836         RETURN  
+               00837 ; exit point of _checkTemperature
+               00838 
+               00839 ;***
+               00840 ;  pBlock Stats: dbName = C
+               00841 ;***
+               00842 ;entry:  _motorTick     ;Function start
+               00843 ; 2 exit points
+               00844 ;has an exit
+               00845 ;functions called:
+               00846 ;   _change_log
+               00847 ;   _extruder_stop
+               00848 ;   _sendMessageISR
+               00849 ;   _sendDataByteISR
+               00850 ;   _sendDataByteISR
+               00851 ;   _endMessageISR
+               00852 ;   _change_log
+               00853 ;   _extruder_stop
+               00854 ;   _sendMessageISR
+               00855 ;   _sendDataByteISR
+               00856 ;   _sendDataByteISR
+               00857 ;   _endMessageISR
+               00858 ;4 compiler assigned registers:
+               00859 ;   r0x101B
+               00860 ;   r0x101C
+               00861 ;   r0x101D
+gpasm-0.13.4 beta               extruder1-extruder2.asm6-13-2008  14:34:04          PAGE 17
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+               00862 ;   r0x101E
+               00863 ;; Starting pCode block
+01AF           00864 _motorTick      ;Function start
+               00865 ; 2 exit points
+               00866 ;       .line   402; "extruder2.c"      RBIF = 0;
+01AF 0000 0000 00867         BANKSEL _INTCON_bits
+01B1 1000      00868         BCF     _INTCON_bits,0
+               00869 ;       .line   404; "extruder2.c"      change_log();
+01B2 2000      00870         CALL    _change_log
+               00871 ;       .line   406; "extruder2.c"      if (extrude_click) {
+01B3 0000 0000 00872         BANKSEL _extrude_click
+01B5 0800      00873         MOVF    _extrude_click,W
+01B6 1903      00874         BTFSC   STATUS,2
+01B7 2800      00875         GOTO    _00191_DS_
+               00876 ;       .line   409; "extruder2.c"      if (currentDirection)
+01B8 0000 0000 00877         BANKSEL _currentDirection
+01BA 0800      00878         MOVF    _currentDirection,W
+01BB 1903      00879         BTFSC   STATUS,2
+01BC 2800      00880         GOTO    _00185_DS_
+               00881 ;       .line   410; "extruder2.c"      currentPosition.ival--;
+01BD 0000 0000 00882         BANKSEL _currentPosition
+01BF 0800      00883         MOVF    (_currentPosition + 0),W
+01C0 0000 0000 00884         BANKSEL r0x101B
+01C2 0080      00885         MOVWF   r0x101B
+01C3 0000 0000 00886         BANKSEL _currentPosition
+01C5 0800      00887         MOVF    (_currentPosition + 1),W
+01C6 0000 0000 00888         BANKSEL r0x101C
+01C8 0080      00889         MOVWF   r0x101C
+01C9 30FF      00890         MOVLW   0xff
+01CA 0780      00891         ADDWF   r0x101B,F
+01CB 1C03      00892         BTFSS   STATUS,0
+01CC 0380      00893         DECF    r0x101C,F
+               00894 ;gen.c:9306: size=1/2, offset=0, AOP_TYPE(res)=13
+01CD 0800      00895         MOVF    r0x101B,W
+01CE 0000 0000 00896         BANKSEL _currentPosition
+01D0 0080      00897         MOVWF   (_currentPosition + 0)
+               00898 ;gen.c:9306: size=0/2, offset=1, AOP_TYPE(res)=13
+01D1 0000 0000 00899         BANKSEL r0x101C
+01D3 0800      00900         MOVF    r0x101C,W
+01D4 0000 0000 00901         BANKSEL _currentPosition
+01D6 0080      00902         MOVWF   (_currentPosition + 1)
+01D7 2800      00903         GOTO    _00186_DS_
+01D8           00904 _00185_DS_
+               00905 ;       .line   412; "extruder2.c"      currentPosition.ival++;
+01D8 0000 0000 00906         BANKSEL _currentPosition
+01DA 0800      00907         MOVF    (_currentPosition + 0),W
+01DB 0000 0000 00908         BANKSEL r0x101B
+01DD 0080      00909         MOVWF   r0x101B
+01DE 0000 0000 00910         BANKSEL _currentPosition
+01E0 0800      00911         MOVF    (_currentPosition + 1),W
+01E1 0000 0000 00912         BANKSEL r0x101C
+01E3 0080      00913         MOVWF   r0x101C
+01E4 0A80      00914         INCF    r0x101B,F
+01E5 1903      00915         BTFSC   STATUS,2
+gpasm-0.13.4 beta               extruder1-extruder2.asm6-13-2008  14:34:04          PAGE 18
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+01E6 0A80      00916         INCF    r0x101C,F
+               00917 ;gen.c:9306: size=1/2, offset=0, AOP_TYPE(res)=13
+01E7 0800      00918         MOVF    r0x101B,W
+01E8 0000 0000 00919         BANKSEL _currentPosition
+01EA 0080      00920         MOVWF   (_currentPosition + 0)
+               00921 ;gen.c:9306: size=0/2, offset=1, AOP_TYPE(res)=13
+01EB 0000 0000 00922         BANKSEL r0x101C
+01ED 0800      00923         MOVF    r0x101C,W
+01EE 0000 0000 00924         BANKSEL _currentPosition
+01F0 0080      00925         MOVWF   (_currentPosition + 1)
+01F1           00926 _00186_DS_
+               00927 ;       .line   414; "extruder2.c"      if (seekSpeed != 0 && currentPosition.ival == seekPosition.ival) {
+01F1 3000      00928         MOVLW   0x00
+01F2 0000 0000 00929         BANKSEL _seekSpeed
+01F4 0400      00930         IORWF   _seekSpeed,W
+01F5 1903      00931         BTFSC   STATUS,2
+01F6 2800      00932         GOTO    _00191_DS_
+01F7 0000 0000 00933         BANKSEL _currentPosition
+01F9 0800      00934         MOVF    (_currentPosition + 0),W
+01FA 0000 0000 00935         BANKSEL r0x101B
+01FC 0080      00936         MOVWF   r0x101B
+01FD 0000 0000 00937         BANKSEL _currentPosition
+01FF 0800      00938         MOVF    (_currentPosition + 1),W
+0200 0000 0000 00939         BANKSEL r0x101C
+0202 0080      00940         MOVWF   r0x101C
+0203 0000 0000 00941         BANKSEL _seekPosition
+0205 0800      00942         MOVF    (_seekPosition + 0),W
+0206 0000 0000 00943         BANKSEL r0x101D
+0208 0080      00944         MOVWF   r0x101D
+0209 0000 0000 00945         BANKSEL _seekPosition
+020B 0800      00946         MOVF    (_seekPosition + 1),W
+020C 0000 0000 00947         BANKSEL r0x101E
+020E 0080      00948         MOVWF   r0x101E
+020F 0800      00949         MOVF    r0x101D,W
+0210 0600      00950         XORWF   r0x101B,W
+0211 1D03      00951         BTFSS   STATUS,2
+0212 2800      00952         GOTO    _00191_DS_
+0213 0800      00953         MOVF    r0x101E,W
+               00954 ;       .line   416; "extruder2.c"      extruder_stop();
+0214 0600      00955         XORWF   r0x101C,W
+               00956 ;       .line   419; "extruder2.c"      if (material_click) {
+0215 1903      00957         BTFSC   STATUS,2
+0216 2000      00958         CALL    _extruder_stop
+0217           00959 _00191_DS_
+0217 3000      00960         MOVLW   0x00
+0218 0000 0000 00961         BANKSEL _material_click
+021A 0400      00962         IORWF   _material_click,W
+021B 1903      00963         BTFSC   STATUS,2
+021C 2800      00964         GOTO    _00195_DS_
+               00965 ;       .line   420; "extruder2.c"      if (sendMessageISR(seekNotify)) { //TODO: if sending is not possible, what todo?
+021D 0000 0000 00966         BANKSEL _seekNotify
+021F 0800      00967         MOVF    _seekNotify,W
+0220 0000      00968         PAGESEL _sendMessageISR
+0221 2000      00969         CALL    _sendMessageISR
+gpasm-0.13.4 beta               extruder1-extruder2.asm6-13-2008  14:34:04          PAGE 19
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+0222 0000      00970         PAGESEL $
+0223 0000 0000 00971         BANKSEL r0x101B
+0225 0080      00972         MOVWF   r0x101B
+0226 0800      00973         MOVF    r0x101B,W
+0227 1903      00974         BTFSC   STATUS,2
+0228 2800      00975         GOTO    _00195_DS_
+               00976 ;       .line   421; "extruder2.c"      sendDataByteISR(CMD_ISEMPTY);
+0229 3008      00977         MOVLW   0x08
+022A 0000      00978         PAGESEL _sendDataByteISR
+022B 2000      00979         CALL    _sendDataByteISR
+022C 0000      00980         PAGESEL $
+               00981 ;       .line   422; "extruder2.c"      sendDataByteISR(1);
+022D 3001      00982         MOVLW   0x01
+022E 0000      00983         PAGESEL _sendDataByteISR
+022F 2000      00984         CALL    _sendDataByteISR
+0230 0000      00985         PAGESEL $
+               00986 ;       .line   423; "extruder2.c"      endMessageISR();
+0231 0000      00987         PAGESEL _endMessageISR
+0232 2000      00988         CALL    _endMessageISR
+0233 0000      00989         PAGESEL $
+0234           00990 _00195_DS_
+0234 0000 0000 00991         BANKSEL _currentPosition
+               00992         
+0236 0008      00993         RETURN  
+               00994 ; exit point of _motorTick
+               00995 
+               00996 ;***
+               00997 ;  pBlock Stats: dbName = C
+               00998 ;***
+               00999 ;entry:  _timerTick     ;Function start
+               01000 ; 2 exit points
+               01001 ;has an exit
+               01002 ;functions called:
+               01003 ;   _extruder_stop
+               01004 ;   _extruder_stop
+               01005 ;; Starting pCode block
+0237           01006 _timerTick      ;Function start
+               01007 ; 2 exit points
+               01008 ;       .line   369; "extruder2.c"      if(solenoid_on)
+0237 0000 0000 01009         BANKSEL _solenoid_on
+0239 0800      01010         MOVF    _solenoid_on,W
+023A 1903      01011         BTFSC   STATUS,2
+023B 2800      01012         GOTO    _00179_DS_
+               01013 ;       .line   371; "extruder2.c"      if(pulseCounter2 == 0)
+023C 0000 0000 01014         BANKSEL _pulseCounter2
+023E 0800      01015         MOVF    _pulseCounter2,W
+023F 1D03      01016         BTFSS   STATUS,2
+0240 2800      01017         GOTO    _00176_DS_
+               01018 ;       .line   373; "extruder2.c"      if(pulseCounter1 == 0)
+0241 0000 0000 01019         BANKSEL _pulseCounter1
+0243 0800      01020         MOVF    _pulseCounter1,W
+0244 1D03      01021         BTFSS   STATUS,2
+0245 2800      01022         GOTO    _00173_DS_
+               01023 ;       .line   375; "extruder2.c"      extruder_stop();
+gpasm-0.13.4 beta               extruder1-extruder2.asm6-13-2008  14:34:04          PAGE 20
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+0246 2000      01024         CALL    _extruder_stop
+               01025 ;       .line   376; "extruder2.c"      solenoid_on = 0;
+0247 0000 0000 01026         BANKSEL _solenoid_on
+0249 0180      01027         CLRF    _solenoid_on
+024A 2800      01028         GOTO    _00179_DS_
+024B           01029 _00173_DS_
+               01030 ;       .line   379; "extruder2.c"      pulseCounter1--;
+024B 0000 0000 01031         BANKSEL _pulseCounter1
+024D 0380      01032         DECF    _pulseCounter1,F
+               01033 ;       .line   380; "extruder2.c"      pulseCounter2 = PC2;
+024E 3014      01034         MOVLW   0x14
+024F 0000 0000 01035         BANKSEL _pulseCounter2
+0251 0080      01036         MOVWF   _pulseCounter2
+0252 2800      01037         GOTO    _00179_DS_
+0253           01038 _00176_DS_
+               01039 ;       .line   383; "extruder2.c"      pulseCounter2--;
+0253 0000 0000 01040         BANKSEL _pulseCounter2
+0255 0380      01041         DECF    _pulseCounter2,F
+0256           01042 _00179_DS_
+               01043 ;       .line   386; "extruder2.c"      heatCounter++;
+0256 0000 0000 01044         BANKSEL _heatCounter
+0258 0A80      01045         INCF    _heatCounter,F
+               01046 ;       .line   387; "extruder2.c"      TMR1H = HEATER_PWM_PERIOD;
+0259 30FF      01047         MOVLW   0xff
+025A 0000 0000 01048         BANKSEL _TMR1H
+025C 0080      01049         MOVWF   _TMR1H
+               01050 ;       .line   388; "extruder2.c"      TMR1L = 0;
+025D 0180      01051         CLRF    _TMR1L
+025E 0000 0000 01052         BANKSEL _currentPosition
+0260 0008      01053         RETURN  
+               01054 ; exit point of _timerTick
+               01055 
+               01056 ;***
+               01057 ;  pBlock Stats: dbName = C
+               01058 ;***
+               01059 ;entry:  _solenoid      ;Function start
+               01060 ; 2 exit points
+               01061 ;has an exit
+               01062 ;functions called:
+               01063 ;   _extruder_forward
+               01064 ;   _extruder_reverse
+               01065 ;   _solenoid_delay
+               01066 ;   _extruder_forward
+               01067 ;   _extruder_reverse
+               01068 ;   _solenoid_delay
+               01069 ;1 compiler assigned register :
+               01070 ;   r0x101A
+               01071 ;; Starting pCode block
+0261           01072 _solenoid       ;Function start
+               01073 ; 2 exit points
+               01074 ;       .line   308; "extruder2.c"      void solenoid(byte on)
+0261 0000 0000 01075         BANKSEL r0x101A
+0263 0080      01076         MOVWF   r0x101A
+               01077 ;       .line   310; "extruder2.c"      if(on)
+gpasm-0.13.4 beta               extruder1-extruder2.asm6-13-2008  14:34:04          PAGE 21
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+0264 0800      01078         MOVF    r0x101A,W
+0265 1903      01079         BTFSC   STATUS,2
+0266 2800      01080         GOTO    _00166_DS_
+               01081 ;       .line   311; "extruder2.c"      extruder_forward();
+0267 2000      01082         CALL    _extruder_forward
+0268 2800      01083         GOTO    _00167_DS_
+0269           01084 _00166_DS_
+               01085 ;       .line   313; "extruder2.c"      extruder_reverse();
+0269 2000      01086         CALL    _extruder_reverse
+026A           01087 _00167_DS_
+               01088 ;       .line   314; "extruder2.c"      solenoid_delay();
+026A 2000      01089         CALL    _solenoid_delay
+026B 0008      01090         RETURN  
+               01091 ; exit point of _solenoid
+               01092 
+               01093 ;***
+               01094 ;  pBlock Stats: dbName = C
+               01095 ;***
+               01096 ;entry:  _solenoid_delay        ;Function start
+               01097 ; 2 exit points
+               01098 ;has an exit
+               01099 ;functions called:
+               01100 ;   _pwmSet
+               01101 ;   _pwmSet
+               01102 ;; Starting pCode block
+026C           01103 _solenoid_delay ;Function start
+               01104 ; 2 exit points
+               01105 ;       .line   297; "extruder2.c"      pwmSet();
+026C 2000      01106         CALL    _pwmSet
+               01107 ;       .line   298; "extruder2.c"      pulseCounter1 = PC1;
+026D 3064      01108         MOVLW   0x64
+026E 0000 0000 01109         BANKSEL _pulseCounter1
+0270 0080      01110         MOVWF   _pulseCounter1
+               01111 ;       .line   299; "extruder2.c"      pulseCounter2 = PC2; 
+0271 3014      01112         MOVLW   0x14
+0272 0000 0000 01113         BANKSEL _pulseCounter2
+0274 0080      01114         MOVWF   _pulseCounter2
+               01115 ;       .line   300; "extruder2.c"      solenoid_on = 1;
+0275 3001      01116         MOVLW   0x01
+0276 0000 0000 01117         BANKSEL _solenoid_on
+0278 0080      01118         MOVWF   _solenoid_on
+0279 0008      01119         RETURN  
+               01120 ; exit point of _solenoid_delay
+               01121 
+               01122 ;***
+               01123 ;  pBlock Stats: dbName = C
+               01124 ;***
+               01125 ;entry:  _pwmSet        ;Function start
+               01126 ; 2 exit points
+               01127 ;has an exit
+               01128 ;; Starting pCode block
+027A           01129 _pwmSet ;Function start
+               01130 ; 2 exit points
+               01131 ;       .line   271; "extruder2.c"      CCP1CON = BIN(00111100);
+gpasm-0.13.4 beta               extruder1-extruder2.asm6-13-2008  14:34:04          PAGE 22
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+027A 303C      01132         MOVLW   0x3c
+027B 0000 0000 01133         BANKSEL _CCP1CON
+027D 0080      01134         MOVWF   _CCP1CON
+               01135 ;       .line   273; "extruder2.c"      CCPR1L = 255;
+027E 30FF      01136         MOVLW   0xff
+027F 0080      01137         MOVWF   _CCPR1L
+               01138 ;       .line   275; "extruder2.c"      PR2 = 0;
+0280 0000 0000 01139         BANKSEL _PR2
+0282 0180      01140         CLRF    _PR2
+0283 0008      01141         RETURN  
+               01142 ; exit point of _pwmSet
+               01143 
+               01144 ;***
+               01145 ;  pBlock Stats: dbName = C
+               01146 ;***
+               01147 ;entry:  _init2 ;Function start
+               01148 ; 2 exit points
+               01149 ;has an exit
+               01150 ;; Starting pCode block
+0284           01151 _init2  ;Function start
+               01152 ; 2 exit points
+               01153 ;       .line   244; "extruder2.c"      PWMPeriod = 255;
+0284 30FF      01154         MOVLW   0xff
+0285 0000 0000 01155         BANKSEL _PWMPeriod
+0287 0080      01156         MOVWF   _PWMPeriod
+               01157 ;       .line   245; "extruder2.c"      currentDirection = 0;
+0288 0000 0000 01158         BANKSEL _currentDirection
+028A 0180      01159         CLRF    _currentDirection
+               01160 ;       .line   246; "extruder2.c"      seekSpeed = 0;
+028B 0000 0000 01161         BANKSEL _seekSpeed
+028D 0180      01162         CLRF    _seekSpeed
+               01163 ;       .line   247; "extruder2.c"      seekNotify = 255;
+028E 30FF      01164         MOVLW   0xff
+028F 0000 0000 01165         BANKSEL _seekNotify
+0291 0080      01166         MOVWF   _seekNotify
+               01167 ;       .line   248; "extruder2.c"      lastPortB = 0;
+0292 0000 0000 01168         BANKSEL _lastPortB
+0294 0180      01169         CLRF    _lastPortB
+               01170 ;       .line   249; "extruder2.c"      lastPortA = 0;
+0295 0000 0000 01171         BANKSEL _lastPortA
+0297 0180      01172         CLRF    _lastPortA
+               01173 ;gen.c:9306: size=0/1, offset=0, AOP_TYPE(res)=13
+               01174 ;       .line   250; "extruder2.c"      currentPosition.bytes[0] = 0;
+0298 0000 0000 01175         BANKSEL _currentPosition
+029A 0180      01176         CLRF    (_currentPosition + 0)
+               01177 ;gen.c:9306: size=0/1, offset=0, AOP_TYPE(res)=13
+               01178 ;       .line   251; "extruder2.c"      currentPosition.bytes[1] = 0;
+029B 0180      01179         CLRF    (_currentPosition + 1)
+               01180 ;gen.c:9306: size=0/1, offset=0, AOP_TYPE(res)=13
+               01181 ;       .line   252; "extruder2.c"      seekPosition.bytes[0] = 0;
+029C 0000 0000 01182         BANKSEL _seekPosition
+029E 0180      01183         CLRF    (_seekPosition + 0)
+               01184 ;gen.c:9306: size=0/1, offset=0, AOP_TYPE(res)=13
+               01185 ;       .line   253; "extruder2.c"      seekPosition.bytes[1] = 0;
+gpasm-0.13.4 beta               extruder1-extruder2.asm6-13-2008  14:34:04          PAGE 23
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+029F 0180      01186         CLRF    (_seekPosition + 1)
+               01187 ;       .line   254; "extruder2.c"      requestedHeat0 = 0;
+02A0 0000 0000 01188         BANKSEL _requestedHeat0
+02A2 0180      01189         CLRF    _requestedHeat0
+               01190 ;       .line   255; "extruder2.c"      requestedHeat1 = 0;
+02A3 0000 0000 01191         BANKSEL _requestedHeat1
+02A5 0180      01192         CLRF    _requestedHeat1
+               01193 ;       .line   256; "extruder2.c"      heatCounter = 0;
+02A6 0000 0000 01194         BANKSEL _heatCounter
+02A8 0180      01195         CLRF    _heatCounter
+               01196 ;       .line   257; "extruder2.c"      lastTemperature = 0;
+02A9 0000 0000 01197         BANKSEL _lastTemperature
+02AB 0180      01198         CLRF    _lastTemperature
+               01199 ;       .line   258; "extruder2.c"      lastTemperatureRef = 0;
+02AC 0000 0000 01200         BANKSEL _lastTemperatureRef
+02AE 0180      01201         CLRF    _lastTemperatureRef
+               01202 ;       .line   259; "extruder2.c"      temperatureVRef = 3;
+02AF 3003      01203         MOVLW   0x03
+02B0 0000 0000 01204         BANKSEL _temperatureVRef
+02B2 0080      01205         MOVWF   _temperatureVRef
+               01206 ;       .line   260; "extruder2.c"      portaval = 0;
+02B3 0000 0000 01207         BANKSEL _portaval
+02B5 0180      01208         CLRF    _portaval
+               01209 ;       .line   261; "extruder2.c"      solenoid_on = 0;
+02B6 0000 0000 01210         BANKSEL _solenoid_on
+02B8 0180      01211         CLRF    _solenoid_on
+               01212 ;       .line   262; "extruder2.c"      PORTA = portaval;
+02B9 0000 0000 01213         BANKSEL _PORTA
+02BB 0180      01214         CLRF    _PORTA
+               01215 ;       .line   263; "extruder2.c"      TMR1H = HEATER_PWM_PERIOD;
+02BC 30FF      01216         MOVLW   0xff
+02BD 0080      01217         MOVWF   _TMR1H
+               01218 ;       .line   264; "extruder2.c"      TMR1L = 0;
+02BE 0180      01219         CLRF    _TMR1L
+02BF 0008      01220         RETURN  
+               01221 ; exit point of _init2
+               01222 
+               01223 ;***
+               01224 ;  pBlock Stats: dbName = C
+               01225 ;***
+               01226 ;entry:  _set_cooler    ;Function start
+               01227 ; 2 exit points
+               01228 ;has an exit
+               01229 ;1 compiler assigned register :
+               01230 ;   r0x101A
+               01231 ;; Starting pCode block
+02C0           01232 _set_cooler     ;Function start
+               01233 ; 2 exit points
+               01234 ;       .line   166; "extruder2.c"      void set_cooler(byte b)
+02C0 0000 0000 01235         BANKSEL r0x101A
+02C2 0080      01236         MOVWF   r0x101A
+               01237 ;       .line   168; "extruder2.c"      if (b)
+02C3 0800      01238         MOVF    r0x101A,W
+02C4 1903      01239         BTFSC   STATUS,2
+gpasm-0.13.4 beta               extruder1-extruder2.asm6-13-2008  14:34:04          PAGE 24
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+02C5 2800      01240         GOTO    _00147_DS_
+               01241 ;       .line   169; "extruder2.c"      portaval |= BIN(00000001);
+02C6 0000 0000 01242         BANKSEL _portaval
+02C8 1400      01243         BSF     _portaval,0
+02C9 2800      01244         GOTO    _00148_DS_
+02CA           01245 _00147_DS_
+               01246 ;       .line   171; "extruder2.c"      portaval &= BIN(11111110);
+02CA 0000 0000 01247         BANKSEL _portaval
+02CC 1000      01248         BCF     _portaval,0
+02CD           01249 _00148_DS_
+               01250 ;       .line   172; "extruder2.c"      PORTA = portaval;
+02CD 0000 0000 01251         BANKSEL _portaval
+02CF 0800      01252         MOVF    _portaval,W
+02D0 0000 0000 01253         BANKSEL _PORTA
+02D2 0080      01254         MOVWF   _PORTA
+02D3 0008      01255         RETURN  
+               01256 ; exit point of _set_cooler
+               01257 
+               01258 ;***
+               01259 ;  pBlock Stats: dbName = C
+               01260 ;***
+               01261 ;entry:  _change_log    ;Function start
+               01262 ; 2 exit points
+               01263 ;has an exit
+               01264 ;3 compiler assigned registers:
+               01265 ;   r0x101F
+               01266 ;   r0x1020
+               01267 ;   r0x1021
+               01268 ;; Starting pCode block
+02D4           01269 _change_log     ;Function start
+               01270 ; 2 exit points
+               01271 ;       .line   141; "extruder2.c"      extrude_click = 0;
+02D4 0000 0000 01272         BANKSEL _extrude_click
+02D6 0180      01273         CLRF    _extrude_click
+               01274 ;       .line   142; "extruder2.c"      material_click = 0;
+02D7 0000 0000 01275         BANKSEL _material_click
+02D9 0180      01276         CLRF    _material_click
+               01277 ;       .line   143; "extruder2.c"      current = RB1;  // Store so it doesn't change half way through processing
+02DA 0000 0000 01278         BANKSEL r0x101F
+02DC 0180      01279         CLRF    r0x101F
+02DD 0000 0000 01280         BANKSEL _PORTB_bits
+02DF 1C80      01281         BTFSS   _PORTB_bits,1
+02E0 2800      01282         GOTO    _00002_DS_
+02E1 0000 0000 01283         BANKSEL r0x101F
+02E3 0A80      01284         INCF    r0x101F,F
+02E4           01285 _00002_DS_
+               01286 ;       .line   144; "extruder2.c"      changes = lastPortB ^ current;
+02E4 0000 0000 01287         BANKSEL _lastPortB
+02E6 0800      01288         MOVF    _lastPortB,W
+02E7 0000 0000 01289         BANKSEL r0x1020
+02E9 0080      01290         MOVWF   r0x1020
+02EA 0800      01291         MOVF    r0x101F,W
+02EB 0680      01292         XORWF   r0x1020,F
+               01293 ;       .line   146; "extruder2.c"      if (changes) {
+gpasm-0.13.4 beta               extruder1-extruder2.asm6-13-2008  14:34:04          PAGE 25
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+02EC 0800      01294         MOVF    r0x1020,W
+02ED 1903      01295         BTFSC   STATUS,2
+02EE 2800      01296         GOTO    _00128_DS_
+               01297 ;       .line   148; "extruder2.c"      if (current) {
+02EF 0800      01298         MOVF    r0x101F,W
+02F0 1903      01299         BTFSC   STATUS,2
+02F1 2800      01300         GOTO    _00128_DS_
+               01301 ;       .line   149; "extruder2.c"      extrude_click = 1;
+02F2 3001      01302         MOVLW   0x01
+02F3 0000 0000 01303         BANKSEL _extrude_click
+02F5 0080      01304         MOVWF   _extrude_click
+02F6           01305 _00128_DS_
+               01306 ;       .line   152; "extruder2.c"      lastPortB = current;
+02F6 0000 0000 01307         BANKSEL r0x101F
+02F8 0800      01308         MOVF    r0x101F,W
+02F9 0000 0000 01309         BANKSEL _lastPortB
+02FB 0080      01310         MOVWF   _lastPortB
+               01311 ;       .line   154; "extruder2.c"      current = RA5;  // Store so it doesn't change half way through processing
+02FC 0000 0000 01312         BANKSEL r0x1021
+02FE 0180      01313         CLRF    r0x1021
+02FF 0000 0000 01314         BANKSEL _PORTA_bits
+0301 1E80      01315         BTFSS   _PORTA_bits,5
+0302 2800      01316         GOTO    _00003_DS_
+0303 0000 0000 01317         BANKSEL r0x1021
+0305 0A80      01318         INCF    r0x1021,F
+0306           01319 _00003_DS_
+0306 0000 0000 01320         BANKSEL r0x1021
+0308 0800      01321         MOVF    r0x1021,W
+0309 0080      01322         MOVWF   r0x101F
+               01323 ;       .line   155; "extruder2.c"      changes = lastPortA ^ current;  
+030A 0000 0000 01324         BANKSEL _lastPortA
+030C 0800      01325         MOVF    _lastPortA,W
+030D 0000 0000 01326         BANKSEL r0x1021
+030F 0080      01327         MOVWF   r0x1021
+0310 0600      01328         XORWF   r0x101F,W
+0311 0080      01329         MOVWF   r0x1020
+               01330 ;       .line   156; "extruder2.c"      if (changes) {
+0312 0800      01331         MOVF    r0x1020,W
+0313 1903      01332         BTFSC   STATUS,2
+0314 2800      01333         GOTO    _00133_DS_
+               01334 ;       .line   158; "extruder2.c"      if (!current && seekNotify != 255) {
+0315 0800      01335         MOVF    r0x101F,W
+0316 1D03      01336         BTFSS   STATUS,2
+0317 2800      01337         GOTO    _00133_DS_
+0318 0000 0000 01338         BANKSEL _seekNotify
+031A 0800      01339         MOVF    _seekNotify,W
+               01340 ;       .line   159; "extruder2.c"      material_click = 1;
+031B 3AFF      01341         XORLW   0xff
+031C 1903      01342         BTFSC   STATUS,2
+031D 2800      01343         GOTO    _00133_DS_
+031E 3001      01344         MOVLW   0x01
+031F 0000 0000 01345         BANKSEL _material_click
+0321 0080      01346         MOVWF   _material_click
+0322           01347 _00133_DS_
+gpasm-0.13.4 beta               extruder1-extruder2.asm6-13-2008  14:34:04          PAGE 26
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+               01348 ;       .line   162; "extruder2.c"      lastPortA = current;
+0322 0000 0000 01349         BANKSEL r0x101F
+0324 0800      01350         MOVF    r0x101F,W
+0325 0000 0000 01351         BANKSEL _lastPortA
+0327 0080      01352         MOVWF   _lastPortA
+0328 0008      01353         RETURN  
+               01354 ; exit point of _change_log
+               01355 
+               01356 ;***
+               01357 ;  pBlock Stats: dbName = C
+               01358 ;***
+               01359 ;entry:  _heater_on     ;Function start
+               01360 ; 2 exit points
+               01361 ;has an exit
+               01362 ;; Starting pCode block
+0329           01363 _heater_on      ;Function start
+               01364 ; 2 exit points
+               01365 ;       .line   132; "extruder2.c"      portaval |= BIN(00001000);
+0329 0000 0000 01366         BANKSEL _portaval
+032B 1580      01367         BSF     _portaval,3
+               01368 ;       .line   133; "extruder2.c"      PORTA = portaval;
+032C 0800      01369         MOVF    _portaval,W
+032D 0000 0000 01370         BANKSEL _PORTA
+032F 0080      01371         MOVWF   _PORTA
+0330 0008      01372         RETURN  
+               01373 ; exit point of _heater_on
+               01374 
+               01375 ;***
+               01376 ;  pBlock Stats: dbName = C
+               01377 ;***
+               01378 ;entry:  _heater_off    ;Function start
+               01379 ; 2 exit points
+               01380 ;has an exit
+               01381 ;; Starting pCode block
+0331           01382 _heater_off     ;Function start
+               01383 ; 2 exit points
+               01384 ;       .line   127; "extruder2.c"      portaval &= BIN(11110111);
+0331 0000 0000 01385         BANKSEL _portaval
+0333 1180      01386         BCF     _portaval,3
+               01387 ;       .line   128; "extruder2.c"      PORTA = portaval;
+0334 0800      01388         MOVF    _portaval,W
+0335 0000 0000 01389         BANKSEL _PORTA
+0337 0080      01390         MOVWF   _PORTA
+0338 0008      01391         RETURN  
+               01392 ; exit point of _heater_off
+               01393 
+               01394 ;***
+               01395 ;  pBlock Stats: dbName = C
+               01396 ;***
+               01397 ;entry:  _extruder_reverse      ;Function start
+               01398 ; 2 exit points
+               01399 ;has an exit
+               01400 ;; Starting pCode block
+0339           01401 _extruder_reverse       ;Function start
+gpasm-0.13.4 beta               extruder1-extruder2.asm6-13-2008  14:34:04          PAGE 27
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+               01402 ; 2 exit points
+               01403 ;       .line   122; "extruder2.c"      RB4 = 0;
+0339 0000 0000 01404         BANKSEL _PORTB_bits
+033B 1200      01405         BCF     _PORTB_bits,4
+               01406 ;       .line   123; "extruder2.c"      RB5 = 1;
+033C 1680      01407         BSF     _PORTB_bits,5
+033D 0008      01408         RETURN  
+               01409 ; exit point of _extruder_reverse
+               01410 
+               01411 ;***
+               01412 ;  pBlock Stats: dbName = C
+               01413 ;***
+               01414 ;entry:  _extruder_forward      ;Function start
+               01415 ; 2 exit points
+               01416 ;has an exit
+               01417 ;; Starting pCode block
+033E           01418 _extruder_forward       ;Function start
+               01419 ; 2 exit points
+               01420 ;       .line   117; "extruder2.c"      RB5 = 0;
+033E 0000 0000 01421         BANKSEL _PORTB_bits
+0340 1280      01422         BCF     _PORTB_bits,5
+               01423 ;       .line   118; "extruder2.c"      RB4 = 1;
+0341 1600      01424         BSF     _PORTB_bits,4
+0342 0008      01425         RETURN  
+               01426 ; exit point of _extruder_forward
+               01427 
+               01428 ;***
+               01429 ;  pBlock Stats: dbName = C
+               01430 ;***
+               01431 ;entry:  _extruder_stop ;Function start
+               01432 ; 2 exit points
+               01433 ;has an exit
+               01434 ;; Starting pCode block
+0343           01435 _extruder_stop  ;Function start
+               01436 ; 2 exit points
+               01437 ;       .line   112; "extruder2.c"      RB4 = 0;
+0343 0000 0000 01438         BANKSEL _PORTB_bits
+0345 1200      01439         BCF     _PORTB_bits,4
+               01440 ;       .line   113; "extruder2.c"      RB5 = 0;
+0346 1280      01441         BCF     _PORTB_bits,5
+0347 0008      01442         RETURN  
+               01443 ; exit point of _extruder_stop
+               01444 
+               01445 
+               01446 ;       code size estimation:
+               01447 ;         450+  228 =   678 instructions ( 1812 byte)
+               01448 
+gpasm-0.13.4 beta               extruder1-extruder2.asm6-13-2008  14:34:04          PAGE 28
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+ADEN                              00000003
+BRGH                              00000002
+C                                 00000000
+C1INV                             00000004
+C1OUT                             00000006
+C2INV                             00000005
+C2OUT                             00000007
+CCP1CON                           00000017
+CCP1IE                            00000002
+CCP1IF                            00000002
+CCP1M0                            00000000
+CCP1M1                            00000001
+CCP1M2                            00000002
+CCP1M3                            00000003
+CCP1X                             00000005
+CCP1Y                             00000004
+CCPR1H                            00000016
+CCPR1L                            00000015
+CIS                               00000003
+CM0                               00000000
+CM1                               00000001
+CM2                               00000002
+CMCON                             0000001F
+CMIE                              00000006
+CMIF                              00000006
+CREN                              00000004
+CSRC                              00000007
+DC                                00000001
+EEADR                             0000009B
+EECON1                            0000009C
+EECON2                            0000009D
+EEDATA                            0000009A
+EEIE                              00000007
+EEIF                              00000007
+F                                 00000001
+FERR                              00000002
+FSR                               00000004
+GIE                               00000007
+INDF                              00000000
+INTCON                            0000000B
+INTE                              00000004
+INTEDG                            00000006
+INTF                              00000001
+IRP                               00000007
+NOT_BO                            00000000
+NOT_BOD                           00000000
+NOT_BOR                           00000000
+NOT_PD                            00000003
+NOT_POR                           00000001
+NOT_RBPU                          00000007
+NOT_T1SYNC                        00000002
+NOT_TO                            00000004
+OERR                              00000001
+gpasm-0.13.4 beta               extruder1-extruder2.asm6-13-2008  14:34:04          PAGE 29
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+OPTION_REG                        00000081
+OSCF                              00000003
+PCL                               00000002
+PCLATH                            0000000A
+PCON                              0000008E
+PEIE                              00000006
+PIE1                              0000008C
+PIR1                              0000000C
+PORTA                             00000005
+PORTB                             00000006
+PR2                               00000092
+PS0                               00000000
+PS1                               00000001
+PS2                               00000002
+PSA                               00000003
+PSAVE                             00000000
+RBIE                              00000003
+RBIF                              00000000
+RCIE                              00000005
+RCIF                              00000005
+RCREG                             0000001A
+RCSTA                             00000018
+RD                                00000000
+RP0                               00000005
+RP1                               00000006
+RX9                               00000006
+RX9D                              00000000
+SPBRG                             00000099
+SPEN                              00000007
+SREN                              00000005
+SSAVE                             00000000
+STATUS                            00000003
+STK00                             00000000
+STK01                             00000000
+STK02                             00000000
+STK03                             00000000
+STK04                             00000000
+STK05                             00000000
+STK06                             00000000
+STK07                             00000000
+STK08                             00000000
+STK09                             00000000
+STK10                             00000000
+STK11                             00000000
+STK12                             00000000
+SYNC                              00000004
+T0CS                              00000005
+T0IE                              00000005
+T0IF                              00000002
+T0SE                              00000004
+T1CKPS0                           00000004
+T1CKPS1                           00000005
+T1CON                             00000010
+T1OSCEN                           00000003
+gpasm-0.13.4 beta               extruder1-extruder2.asm6-13-2008  14:34:04          PAGE 30
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+T2CKPS0                           00000000
+T2CKPS1                           00000001
+T2CON                             00000012
+TMR0                              00000001
+TMR1CS                            00000001
+TMR1H                             0000000F
+TMR1IE                            00000000
+TMR1IF                            00000000
+TMR1L                             0000000E
+TMR1ON                            00000000
+TMR2                              00000011
+TMR2IE                            00000001
+TMR2IF                            00000001
+TMR2ON                            00000002
+TOUTPS0                           00000003
+TOUTPS1                           00000004
+TOUTPS2                           00000005
+TOUTPS3                           00000006
+TRISA                             00000085
+TRISB                             00000086
+TRMT                              00000001
+TX9                               00000006
+TX9D                              00000000
+TXEN                              00000005
+TXIE                              00000004
+TXIF                              00000004
+TXREG                             00000019
+TXSTA                             00000098
+VR0                               00000000
+VR1                               00000001
+VR2                               00000002
+VR3                               00000003
+VRCON                             0000009F
+VREN                              00000007
+VROE                              00000006
+VRR                               00000005
+W                                 00000000
+WR                                00000001
+WREN                              00000002
+WRERR                             00000003
+WSAVE                             00000000
+Z                                 00000002
+_00001_DS_                        0000011D
+_00002_DS_                        000002E4
+_00003_DS_                        00000306
+_00128_DS_                        000002F6
+_00133_DS_                        00000322
+_00147_DS_                        000002CA
+_00148_DS_                        000002CD
+_00166_DS_                        00000269
+_00167_DS_                        0000026A
+_00173_DS_                        0000024B
+_00176_DS_                        00000253
+_00179_DS_                        00000256
+gpasm-0.13.4 beta               extruder1-extruder2.asm6-13-2008  14:34:04          PAGE 31
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+_00185_DS_                        000001D8
+_00186_DS_                        000001F1
+_00191_DS_                        00000217
+_00195_DS_                        00000234
+_00204_DS_                        00000051
+_00205_DS_                        00000064
+_00207_DS_                        00000090
+_00210_DS_                        00000095
+_00213_DS_                        00000078
+_00214_DS_                        00000099
+_00215_DS_                        000000A5
+_00216_DS_                        000000B4
+_00217_DS_                        000000BC
+_00218_DS_                        000000BF
+_00219_DS_                        000000D2
+_00220_DS_                        000000EF
+_00221_DS_                        00000102
+_00222_DS_                        00000105
+_00223_DS_                        0000010C
+_00224_DS_                        0000012B
+_00225_DS_                        00000144
+_00226_DS_                        0000015B
+_00230_DS_                        00000177
+_00231_DS_                        00000182
+_00232_DS_                        00000190
+_00233_DS_                        00000197
+_00235_DS_                        000001AB
+_BODEN_OFF                        00003FBF
+_BODEN_ON                         00003FFF
+_BOREN_OFF                        00003FBF
+_BOREN_ON                         00003FFF
+_CCP1CON                          00000000
+_CCP1CON_bits                     00000000
+_CCPR1H                           00000000
+_CCPR1L                           00000000
+_CMCON                            00000000
+_CMCON_bits                       00000000
+_CP_OFF                           00003FFF
+_CP_ON                            00001FFF
+_DATA_CP_OFF                      00003FFF
+_DATA_CP_ON                       00003EFF
+_EEADR                            00000000
+_EECON1                           00000000
+_EECON1_bits                      00000000
+_EECON2                           00000000
+_EEDATA                           00000000
+_ER_OSC_CLKOUT                    00003FFF
+_ER_OSC_NOCLKOUT                  00003FFE
+_EXTCLK_OSC                       00003FEF
+_FSR                              00000000
+_HS_OSC                           00003FEE
+_INDF                             00000000
+_INTCON                           00000000
+_INTCON_bits                      00000000
+gpasm-0.13.4 beta               extruder1-extruder2.asm6-13-2008  14:34:04          PAGE 32
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+_INTOSC_OSC_CLKOUT                00003FFD
+_INTOSC_OSC_NOCLKOUT              00003FFC
+_INTRC_OSC_CLKOUT                 00003FFD
+_INTRC_OSC_NOCLKOUT               00003FFC
+_LEDon                            00000000
+_LP_OSC                           00003FEC
+_LVP_OFF                          00003F7F
+_LVP_ON                           00003FFF
+_MCLRE_OFF                        00003FDF
+_MCLRE_ON                         00003FFF
+_OPTION_REG                       00000000
+_OPTION_REG_bits                  00000000
+_PCL                              00000000
+_PCLATH                           00000000
+_PCON                             00000000
+_PCON_bits                        00000000
+_PIE1                             00000000
+_PIE1_bits                        00000000
+_PIR1                             00000000
+_PIR1_bits                        00000000
+_PORTA                            00000000
+_PORTA_bits                       00000000
+_PORTB                            00000000
+_PORTB_bits                       00000000
+_PR2                              00000000
+_PWMPeriod                        00000000
+_PWRTE_OFF                        00003FFF
+_PWRTE_ON                         00003FF7
+_RCREG                            00000000
+_RCSTA                            00000000
+_RCSTA_bits                       00000000
+_RC_OSC_CLKOUT                    00003FFF
+_RC_OSC_NOCLKOUT                  00003FFE
+_SPBRG                            00000000
+_STATUS                           00000000
+_STATUS_bits                      00000000
+_T1CON                            00000000
+_T1CON_bits                       00000000
+_T2CON                            00000000
+_T2CON_bits                       00000000
+_TMR0                             00000000
+_TMR1H                            00000000
+_TMR1L                            00000000
+_TMR2                             00000000
+_TRISA                            00000000
+_TRISA_bits                       00000000
+_TRISB                            00000000
+_TRISB_bits                       00000000
+_TXREG                            00000000
+_TXSTA                            00000000
+_TXSTA_bits                       00000000
+_VRCON                            00000000
+_VRCON_bits                       00000000
+_WDT_OFF                          00003FFB
+gpasm-0.13.4 beta               extruder1-extruder2.asm6-13-2008  14:34:04          PAGE 33
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+_WDT_ON                           00003FFF
+_XT_OSC                           00003FED
+__16F648A                         00000001
+_buffer                           00000000
+_change_log                       000002D4
+_checkTemperature                 000001AC
+_clearwdt                         00000000
+_code_extruder2_000053            00000053
+_code_extruder2_000057            00000057
+_code_extruder2_00005b            0000005B
+_code_extruder2_00005f            0000005F
+_code_extruder2_000062            00000062
+_code_extruder2_000066            00000066
+_code_extruder2_00006a            0000006A
+_code_extruder2_000076            00000076
+_code_extruder2_00008e            0000008E
+_code_extruder2_000093            00000093
+_code_extruder2_000098            00000098
+_code_extruder2_00009c            0000009C
+_code_extruder2_0000a0            000000A0
+_code_extruder2_0000a3            000000A3
+_code_extruder2_0000a7            000000A7
+_code_extruder2_0000ab            000000AB
+_code_extruder2_0000af            000000AF
+_code_extruder2_0000b2            000000B2
+_code_extruder2_0000d4            000000D4
+_code_extruder2_0000d8            000000D8
+_code_extruder2_0000e1            000000E1
+_code_extruder2_0000ea            000000EA
+_code_extruder2_0000ed            000000ED
+_code_extruder2_00010e            0000010E
+_code_extruder2_000112            00000112
+_code_extruder2_000126            00000126
+_code_extruder2_000129            00000129
+_code_extruder2_000146            00000146
+_code_extruder2_00014a            0000014A
+_code_extruder2_000150            00000150
+_code_extruder2_000156            00000156
+_code_extruder2_000159            00000159
+_code_extruder2_000222            00000222
+_code_extruder2_00022c            0000022C
+_code_extruder2_000230            00000230
+_code_extruder2_000233            00000233
+_currentDirection                 00000000
+_currentPosition                  0000000A
+_delay_10us                       00000000
+_dummy                            00000000
+_endMessage                       00000000
+_endMessageISR                    00000000
+_extrude_click                    00000000
+_extruder_forward                 0000033E
+_extruder_reverse                 00000339
+_extruder_stop                    00000343
+_flashLED                         00000000
+gpasm-0.13.4 beta               extruder1-extruder2.asm6-13-2008  14:34:04          PAGE 34
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+_heatCounter                      00000000
+_heater_off                       00000331
+_heater_on                        00000329
+_init2                            00000284
+_lastPortA                        00000000
+_lastPortB                        00000000
+_lastTemperature                  00000000
+_lastTemperatureRef               00000000
+_material_click                   00000000
+_motorTick                        000001AF
+_packetReady                      00000000
+_portaval                         00000000
+_processCommand                   00000004
+_pulseCounter1                    00000000
+_pulseCounter2                    00000000
+_pwmSet                           0000027A
+_releaseLock                      00000000
+_requestedHeat0                   00000000
+_requestedHeat1                   00000000
+_seekNotify                       00000000
+_seekPosition                     0000000C
+_seekSpeed                        00000000
+_sendDataByte                     00000000
+_sendDataByteISR                  00000000
+_sendMessage                      00000000
+_sendMessageISR                   00000000
+_sendReply                        00000000
+_serialInterruptHandler           00000000
+_serialStatus                     00000000
+_serial_init                      00000000
+_setFlash                         00000000
+_set_cooler                       000002C0
+_solenoid                         00000261
+_solenoid_delay                   0000026C
+_solenoid_on                      00000000
+_temperatureLimit0                00000000
+_temperatureLimit1                00000000
+_temperatureVRef                  00000000
+_timerTick                        00000237
+_uartNotifyReceive                00000000
+_uartTransmit                     00000000
+r0x1018                           00000008
+r0x1019                           00000009
+r0x101A                           00000003
+r0x101B                           00000004
+r0x101C                           00000005
+r0x101D                           00000006
+r0x101E                           00000007
+r0x101F                           00000000
+r0x1020                           00000001
+r0x1021                           00000002
+
+
+Errors   :       0
+Warnings :       0 reported,       0 suppressed
+Messages :       0 reported,       0 suppressed
+

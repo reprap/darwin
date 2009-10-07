@@ -1,0 +1,496 @@
+gpasm-0.13.4 beta               serial2.asm 6-13-2008  14:34:00          PAGE  1
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+               00001 ;--------------------------------------------------------
+               00002 ; File Created by SDCC : free open source ANSI-C Compiler
+               00003 ; Version 2.7.4 #4943 (Oct 27 2007) (UNIX)
+               00004 ; This file was generated Fri Jun 13 14:34:00 2008
+               00005 ;--------------------------------------------------------
+               00006 ; PIC port for the 14-bit core
+               00007 ;--------------------------------------------------------
+               00008 ;       .module serial2
+               00009         list    p=16f648a
+               00010         radix dec
+               00011         include "p16f648a.inc"
+               00001         LIST
+               00002 ; P16F648A.INC  Standard Header File, Version 1.00    Microchip Technology, Inc.
+               00264         LIST
+               00012 ;--------------------------------------------------------
+               00013 ; external declarations
+               00014 ;--------------------------------------------------------
+               00015         extern  _flashLED
+               00016         extern  _LEDon
+               00017         extern  _setFlash
+               00018         extern  _uartTransmit
+               00019         extern  _sendReply
+               00020         extern  _sendMessage
+               00021         extern  _sendDataByte
+               00022         extern  _endMessage
+               00023         extern  _sendMessageISR
+               00024         extern  _sendDataByteISR
+               00025         extern  _endMessageISR
+               00026         extern  _releaseLock
+               00027         extern  _serialInterruptHandler
+               00028         extern  _packetReady
+               00029         extern  _uartNotifyReceive
+               00030         extern  _serial_init
+               00031         extern  _CCP1CON_bits
+               00032         extern  _CMCON_bits
+               00033         extern  _EECON1_bits
+               00034         extern  _INTCON_bits
+               00035         extern  _OPTION_REG_bits
+               00036         extern  _PCON_bits
+               00037         extern  _PIE1_bits
+               00038         extern  _PIR1_bits
+               00039         extern  _PORTA_bits
+               00040         extern  _PORTB_bits
+               00041         extern  _RCSTA_bits
+               00042         extern  _STATUS_bits
+               00043         extern  _T1CON_bits
+               00044         extern  _T2CON_bits
+               00045         extern  _TRISA_bits
+               00046         extern  _TRISB_bits
+               00047         extern  _TXSTA_bits
+               00048         extern  _VRCON_bits
+               00049         extern  _serialStatus
+               00050         extern  _INDF
+               00051         extern  _TMR0
+gpasm-0.13.4 beta               serial2.asm 6-13-2008  14:34:00          PAGE  2
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+               00052         extern  _PCL
+               00053         extern  _STATUS
+               00054         extern  _FSR
+               00055         extern  _PORTA
+               00056         extern  _PORTB
+               00057         extern  _PCLATH
+               00058         extern  _INTCON
+               00059         extern  _PIR1
+               00060         extern  _TMR1L
+               00061         extern  _TMR1H
+               00062         extern  _T1CON
+               00063         extern  _TMR2
+               00064         extern  _T2CON
+               00065         extern  _CCPR1L
+               00066         extern  _CCPR1H
+               00067         extern  _CCP1CON
+               00068         extern  _RCSTA
+               00069         extern  _TXREG
+               00070         extern  _RCREG
+               00071         extern  _CMCON
+               00072         extern  _OPTION_REG
+               00073         extern  _TRISA
+               00074         extern  _TRISB
+               00075         extern  _PIE1
+               00076         extern  _PCON
+               00077         extern  _PR2
+               00078         extern  _TXSTA
+               00079         extern  _SPBRG
+               00080         extern  _EEDATA
+               00081         extern  _EEADR
+               00082         extern  _EECON1
+               00083         extern  _EECON2
+               00084         extern  _VRCON
+               00085 
+               00086         extern PSAVE
+               00087         extern SSAVE
+               00088         extern WSAVE
+               00089         extern STK12
+               00090         extern STK11
+               00091         extern STK10
+               00092         extern STK09
+               00093         extern STK08
+               00094         extern STK07
+               00095         extern STK06
+               00096         extern STK05
+               00097         extern STK04
+               00098         extern STK03
+               00099         extern STK02
+               00100         extern STK01
+               00101         extern STK00
+               00102 ;--------------------------------------------------------
+               00103 ; global declarations
+               00104 ;--------------------------------------------------------
+               00105         global  _clearwdt
+gpasm-0.13.4 beta               serial2.asm 6-13-2008  14:34:00          PAGE  3
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+               00106         global  _delay_10us
+               00107         global  _buffer
+               00108         global  _transmitBuffer
+               00109         global  _sendPacket
+               00110 
+               00111 ;--------------------------------------------------------
+               00112 ; global definitions
+               00113 ;--------------------------------------------------------
+               00114 UD_serial2_0    udata
+               00115 _buffer res     16
+               00116 
+               00117 UD_serial2_1    udata
+               00118 _transmitBuffer res     16
+               00119 
+               00120 UD_serial2_2    udata
+               00121 _sendPacket     res     16
+               00122 
+               00123 ;--------------------------------------------------------
+               00124 ; absolute symbol definitions
+               00125 ;--------------------------------------------------------
+               00126 ;--------------------------------------------------------
+               00127 ; compiler-defined variables
+               00128 ;--------------------------------------------------------
+               00129 ;--------------------------------------------------------
+               00130 ; initialized data
+               00131 ;--------------------------------------------------------
+               00132 ;--------------------------------------------------------
+               00133 ; overlayable items in internal ram 
+               00134 ;--------------------------------------------------------
+               00135 ;       udata_ovr
+               00136 ;--------------------------------------------------------
+               00137 ; code
+               00138 ;--------------------------------------------------------
+               00139 code_serial2    code
+               00140 ;***
+               00141 ;  pBlock Stats: dbName = C
+               00142 ;***
+               00143 ;entry:  _clearwdt      ;Function start
+               00144 ; 2 exit points
+               00145 ;has an exit
+               00146 ;; Starting pCode block
+0000           00147 _clearwdt       ;Function start
+               00148 ; 2 exit points
+0000 0064      00149         CLRWDT
+               00150         
+0001 0008      00151         RETURN  
+               00152 ; exit point of _clearwdt
+               00153 
+               00154 ;***
+               00155 ;  pBlock Stats: dbName = C
+               00156 ;***
+               00157 ;entry:  _delay_10us    ;Function start
+               00158 ; 2 exit points
+               00159 ;has an exit
+gpasm-0.13.4 beta               serial2.asm 6-13-2008  14:34:00          PAGE  4
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+               00160 ;; Starting pCode block
+0002           00161 _delay_10us     ;Function start
+               00162 ; 2 exit points
+0002 0000      00163         NOP
+0003 0000      00164         NOP
+0004 0000      00165         NOP
+0005 0000      00166         NOP
+0006 0000      00167         NOP
+0007 0000      00168         NOP
+0008 0000      00169         NOP
+0009 0000      00170         NOP
+000A 0000      00171         NOP
+000B 0000      00172         NOP
+               00173         
+000C 0008      00174         RETURN  
+               00175 ; exit point of _delay_10us
+               00176 
+               00177 
+               00178 ;       code size estimation:
+               00179 ;           2+    0 =     2 instructions (    4 byte)
+               00180 
+gpasm-0.13.4 beta               serial2.asm 6-13-2008  14:34:00          PAGE  5
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+ADEN                              00000003
+BRGH                              00000002
+C                                 00000000
+C1INV                             00000004
+C1OUT                             00000006
+C2INV                             00000005
+C2OUT                             00000007
+CCP1CON                           00000017
+CCP1IE                            00000002
+CCP1IF                            00000002
+CCP1M0                            00000000
+CCP1M1                            00000001
+CCP1M2                            00000002
+CCP1M3                            00000003
+CCP1X                             00000005
+CCP1Y                             00000004
+CCPR1H                            00000016
+CCPR1L                            00000015
+CIS                               00000003
+CM0                               00000000
+CM1                               00000001
+CM2                               00000002
+CMCON                             0000001F
+CMIE                              00000006
+CMIF                              00000006
+CREN                              00000004
+CSRC                              00000007
+DC                                00000001
+EEADR                             0000009B
+EECON1                            0000009C
+EECON2                            0000009D
+EEDATA                            0000009A
+EEIE                              00000007
+EEIF                              00000007
+F                                 00000001
+FERR                              00000002
+FSR                               00000004
+GIE                               00000007
+INDF                              00000000
+INTCON                            0000000B
+INTE                              00000004
+INTEDG                            00000006
+INTF                              00000001
+IRP                               00000007
+NOT_BO                            00000000
+NOT_BOD                           00000000
+NOT_BOR                           00000000
+NOT_PD                            00000003
+NOT_POR                           00000001
+NOT_RBPU                          00000007
+NOT_T1SYNC                        00000002
+NOT_TO                            00000004
+OERR                              00000001
+gpasm-0.13.4 beta               serial2.asm 6-13-2008  14:34:00          PAGE  6
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+OPTION_REG                        00000081
+OSCF                              00000003
+PCL                               00000002
+PCLATH                            0000000A
+PCON                              0000008E
+PEIE                              00000006
+PIE1                              0000008C
+PIR1                              0000000C
+PORTA                             00000005
+PORTB                             00000006
+PR2                               00000092
+PS0                               00000000
+PS1                               00000001
+PS2                               00000002
+PSA                               00000003
+PSAVE                             00000000
+RBIE                              00000003
+RBIF                              00000000
+RCIE                              00000005
+RCIF                              00000005
+RCREG                             0000001A
+RCSTA                             00000018
+RD                                00000000
+RP0                               00000005
+RP1                               00000006
+RX9                               00000006
+RX9D                              00000000
+SPBRG                             00000099
+SPEN                              00000007
+SREN                              00000005
+SSAVE                             00000000
+STATUS                            00000003
+STK00                             00000000
+STK01                             00000000
+STK02                             00000000
+STK03                             00000000
+STK04                             00000000
+STK05                             00000000
+STK06                             00000000
+STK07                             00000000
+STK08                             00000000
+STK09                             00000000
+STK10                             00000000
+STK11                             00000000
+STK12                             00000000
+SYNC                              00000004
+T0CS                              00000005
+T0IE                              00000005
+T0IF                              00000002
+T0SE                              00000004
+T1CKPS0                           00000004
+T1CKPS1                           00000005
+T1CON                             00000010
+T1OSCEN                           00000003
+gpasm-0.13.4 beta               serial2.asm 6-13-2008  14:34:00          PAGE  7
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+T2CKPS0                           00000000
+T2CKPS1                           00000001
+T2CON                             00000012
+TMR0                              00000001
+TMR1CS                            00000001
+TMR1H                             0000000F
+TMR1IE                            00000000
+TMR1IF                            00000000
+TMR1L                             0000000E
+TMR1ON                            00000000
+TMR2                              00000011
+TMR2IE                            00000001
+TMR2IF                            00000001
+TMR2ON                            00000002
+TOUTPS0                           00000003
+TOUTPS1                           00000004
+TOUTPS2                           00000005
+TOUTPS3                           00000006
+TRISA                             00000085
+TRISB                             00000086
+TRMT                              00000001
+TX9                               00000006
+TX9D                              00000000
+TXEN                              00000005
+TXIE                              00000004
+TXIF                              00000004
+TXREG                             00000019
+TXSTA                             00000098
+VR0                               00000000
+VR1                               00000001
+VR2                               00000002
+VR3                               00000003
+VRCON                             0000009F
+VREN                              00000007
+VROE                              00000006
+VRR                               00000005
+W                                 00000000
+WR                                00000001
+WREN                              00000002
+WRERR                             00000003
+WSAVE                             00000000
+Z                                 00000002
+_BODEN_OFF                        00003FBF
+_BODEN_ON                         00003FFF
+_BOREN_OFF                        00003FBF
+_BOREN_ON                         00003FFF
+_CCP1CON                          00000000
+_CCP1CON_bits                     00000000
+_CCPR1H                           00000000
+_CCPR1L                           00000000
+_CMCON                            00000000
+_CMCON_bits                       00000000
+_CP_OFF                           00003FFF
+_CP_ON                            00001FFF
+gpasm-0.13.4 beta               serial2.asm 6-13-2008  14:34:00          PAGE  8
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+_DATA_CP_OFF                      00003FFF
+_DATA_CP_ON                       00003EFF
+_EEADR                            00000000
+_EECON1                           00000000
+_EECON1_bits                      00000000
+_EECON2                           00000000
+_EEDATA                           00000000
+_ER_OSC_CLKOUT                    00003FFF
+_ER_OSC_NOCLKOUT                  00003FFE
+_EXTCLK_OSC                       00003FEF
+_FSR                              00000000
+_HS_OSC                           00003FEE
+_INDF                             00000000
+_INTCON                           00000000
+_INTCON_bits                      00000000
+_INTOSC_OSC_CLKOUT                00003FFD
+_INTOSC_OSC_NOCLKOUT              00003FFC
+_INTRC_OSC_CLKOUT                 00003FFD
+_INTRC_OSC_NOCLKOUT               00003FFC
+_LEDon                            00000000
+_LP_OSC                           00003FEC
+_LVP_OFF                          00003F7F
+_LVP_ON                           00003FFF
+_MCLRE_OFF                        00003FDF
+_MCLRE_ON                         00003FFF
+_OPTION_REG                       00000000
+_OPTION_REG_bits                  00000000
+_PCL                              00000000
+_PCLATH                           00000000
+_PCON                             00000000
+_PCON_bits                        00000000
+_PIE1                             00000000
+_PIE1_bits                        00000000
+_PIR1                             00000000
+_PIR1_bits                        00000000
+_PORTA                            00000000
+_PORTA_bits                       00000000
+_PORTB                            00000000
+_PORTB_bits                       00000000
+_PR2                              00000000
+_PWRTE_OFF                        00003FFF
+_PWRTE_ON                         00003FF7
+_RCREG                            00000000
+_RCSTA                            00000000
+_RCSTA_bits                       00000000
+_RC_OSC_CLKOUT                    00003FFF
+_RC_OSC_NOCLKOUT                  00003FFE
+_SPBRG                            00000000
+_STATUS                           00000000
+_STATUS_bits                      00000000
+_T1CON                            00000000
+_T1CON_bits                       00000000
+_T2CON                            00000000
+_T2CON_bits                       00000000
+gpasm-0.13.4 beta               serial2.asm 6-13-2008  14:34:00          PAGE  9
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+_TMR0                             00000000
+_TMR1H                            00000000
+_TMR1L                            00000000
+_TMR2                             00000000
+_TRISA                            00000000
+_TRISA_bits                       00000000
+_TRISB                            00000000
+_TRISB_bits                       00000000
+_TXREG                            00000000
+_TXSTA                            00000000
+_TXSTA_bits                       00000000
+_VRCON                            00000000
+_VRCON_bits                       00000000
+_WDT_OFF                          00003FFB
+_WDT_ON                           00003FFF
+_XT_OSC                           00003FED
+__16F648A                         00000001
+_buffer                           00000000
+_clearwdt                         00000000
+_delay_10us                       00000002
+_endMessage                       00000000
+_endMessageISR                    00000000
+_flashLED                         00000000
+_packetReady                      00000000
+_releaseLock                      00000000
+_sendDataByte                     00000000
+_sendDataByteISR                  00000000
+_sendMessage                      00000000
+_sendMessageISR                   00000000
+_sendPacket                       00000000
+_sendReply                        00000000
+_serialInterruptHandler           00000000
+_serialStatus                     00000000
+_serial_init                      00000000
+_setFlash                         00000000
+_transmitBuffer                   00000000
+_uartNotifyReceive                00000000
+_uartTransmit                     00000000
+
+
+Errors   :       0
+Warnings :       0 reported,       0 suppressed
+Messages :       0 reported,       0 suppressed
+

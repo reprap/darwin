@@ -1,0 +1,2738 @@
+gplink-0.13.4 alpha
+Copyright (c) 1998-2005 gputils project
+Listing File Generated: 6-13-2008  14:34:03
+ 
+ 
+Address  Value    Disassembly              Source
+-------  -----    -----------              ------
+                                           ;--------------------------------------------------------
+                                           ; File Created by SDCC : free open source ANSI-C Compiler
+                                           ; Version 2.7.4 #4943 (Oct 27 2007) (UNIX)
+                                           ; This file was generated Fri Jun 13 14:34:03 2008
+                                           ;--------------------------------------------------------
+                                           ; PIC port for the 14-bit core
+                                           ;--------------------------------------------------------
+                                           ;	.module extruder1
+                                           	list	p=16f648a
+                                           	radix dec
+                                           	include "p16f648a.inc"
+                                                   LIST
+                                           ; P16F648A.INC  Standard Header File, Version 1.00    Microchip Technology, Inc.
+                                                   NOLIST
+                                           ;--------------------------------------------------------
+                                           ; config word 
+                                           ;--------------------------------------------------------
+                                           	__config 0x3f10
+                                           ;--------------------------------------------------------
+                                           ; external declarations
+                                           ;--------------------------------------------------------
+                                           	extern	_init2
+                                           	extern	_processCommand
+                                           	extern	_motorTick
+                                           	extern	_timerTick
+                                           	extern	_checkTemperature
+                                           	extern	_flashLED
+                                           	extern	_LEDon
+                                           	extern	_setFlash
+                                           	extern	_uartTransmit
+                                           	extern	_sendReply
+                                           	extern	_sendMessage
+                                           	extern	_sendDataByte
+                                           	extern	_endMessage
+                                           	extern	_sendMessageISR
+                                           	extern	_sendDataByteISR
+                                           	extern	_endMessageISR
+                                           	extern	_releaseLock
+                                           	extern	_serialInterruptHandler
+                                           	extern	_packetReady
+                                           	extern	_uartNotifyReceive
+                                           	extern	_serial_init
+                                           	extern	_delay_10us
+                                           	extern	_clearwdt
+                                           	extern	_CCP1CON_bits
+                                           	extern	_CMCON_bits
+                                           	extern	_EECON1_bits
+                                           	extern	_INTCON_bits
+                                           	extern	_OPTION_REG_bits
+                                           	extern	_PCON_bits
+                                           	extern	_PIE1_bits
+                                           	extern	_PIR1_bits
+                                           	extern	_PORTA_bits
+                                           	extern	_PORTB_bits
+                                           	extern	_RCSTA_bits
+                                           	extern	_STATUS_bits
+                                           	extern	_T1CON_bits
+                                           	extern	_T2CON_bits
+                                           	extern	_TRISA_bits
+                                           	extern	_TRISB_bits
+                                           	extern	_TXSTA_bits
+                                           	extern	_VRCON_bits
+                                           	extern	_PWMPeriod
+                                           	extern	_buffer
+                                           	extern	_serialStatus
+                                           	extern	_INDF
+                                           	extern	_TMR0
+                                           	extern	_PCL
+                                           	extern	_STATUS
+                                           	extern	_FSR
+                                           	extern	_PORTA
+                                           	extern	_PORTB
+                                           	extern	_PCLATH
+                                           	extern	_INTCON
+                                           	extern	_PIR1
+                                           	extern	_TMR1L
+                                           	extern	_TMR1H
+                                           	extern	_T1CON
+                                           	extern	_TMR2
+                                           	extern	_T2CON
+                                           	extern	_CCPR1L
+                                           	extern	_CCPR1H
+                                           	extern	_CCP1CON
+                                           	extern	_RCSTA
+                                           	extern	_TXREG
+                                           	extern	_RCREG
+                                           	extern	_CMCON
+                                           	extern	_OPTION_REG
+                                           	extern	_TRISA
+                                           	extern	_TRISB
+                                           	extern	_PIE1
+                                           	extern	_PCON
+                                           	extern	_PR2
+                                           	extern	_TXSTA
+                                           	extern	_SPBRG
+                                           	extern	_EEDATA
+                                           	extern	_EEADR
+                                           	extern	_EECON1
+                                           	extern	_EECON2
+                                           	extern	_VRCON
+                                           	extern	___sdcc_saved_fsr
+                                           	extern	__sdcc_gsinit_startup
+                                           ;--------------------------------------------------------
+                                           ; global declarations
+                                           ;--------------------------------------------------------
+                                           	global	_init1
+                                           	global	_main
+                                           	global	_deviceAddress
+                                           	global	_interruptTemp
+                                           
+                                           	global PSAVE
+                                           	global SSAVE
+                                           	global WSAVE
+                                           	global STK12
+                                           	global STK11
+                                           	global STK10
+                                           	global STK09
+                                           	global STK08
+                                           	global STK07
+                                           	global STK06
+                                           	global STK05
+                                           	global STK04
+                                           	global STK03
+                                           	global STK02
+                                           	global STK01
+                                           	global STK00
+                                           
+                                           sharebank udata_ovr 0x0070
+                                           PSAVE	res 1
+                                           SSAVE	res 1
+                                           WSAVE	res 1
+                                           STK12	res 1
+                                           STK11	res 1
+                                           STK10	res 1
+                                           STK09	res 1
+                                           STK08	res 1
+                                           STK07	res 1
+                                           STK06	res 1
+                                           STK05	res 1
+                                           STK04	res 1
+                                           STK03	res 1
+                                           STK02	res 1
+                                           STK01	res 1
+                                           STK00	res 1
+                                           
+                                           ;--------------------------------------------------------
+                                           ; global definitions
+                                           ;--------------------------------------------------------
+                                           UD_extruder1_0	udata
+                                           _interruptTemp	res	1
+                                           
+                                           ;--------------------------------------------------------
+                                           ; absolute symbol definitions
+                                           ;--------------------------------------------------------
+                                           ;--------------------------------------------------------
+                                           ; compiler-defined variables
+                                           ;--------------------------------------------------------
+                                           UDL_extruder1_0	udata
+                                           r0x1003	res	1
+                                           ;--------------------------------------------------------
+                                           ; initialized data
+                                           ;--------------------------------------------------------
+                                           
+                                           ID_extruder1_0	idata
+                                           _deviceAddress
+                                           	db	0x08
+                                           
+                                           ;--------------------------------------------------------
+                                           ; overlayable items in internal ram 
+                                           ;--------------------------------------------------------
+                                           ;	udata_ovr
+                                           ;--------------------------------------------------------
+                                           ; reset vector 
+                                           ;--------------------------------------------------------
+                                           STARTUP	code
+000000   0000     nop                      	nop
+000001   118a     bcf	0xa, 0x3             	pagesel __sdcc_gsinit_startup
+000002   2d5a     goto	0x55a               	goto	__sdcc_gsinit_startup
+                                           ;--------------------------------------------------------
+                                           ; interrupt and initialization code
+                                           ;--------------------------------------------------------
+                                           c_interrupt	code	0x4
+                                           __sdcc_interrupt
+                                           ;***
+                                           ;  pBlock Stats: dbName = I
+                                           ;***
+                                           ;entry:  _isr	;Function start
+                                           ; 0 exit points
+                                           ;functions called:
+                                           ;   _serialInterruptHandler
+                                           ;   _motorTick
+                                           ;   _timerTick
+                                           ;   _serialInterruptHandler
+                                           ;   _motorTick
+                                           ;   _timerTick
+                                           ;; Starting pCode block
+                                           _isr	;Function start
+                                           ; 0 exit points
+                                           ;	.line	50; "extruder1.c"	static void isr() interrupt 0 {
+000004   00f2     movwf	0x72               	MOVWF	WSAVE
+000005   0e03     swapf	0x3, w             	SWAPF	STATUS,W
+000006   0183     clrf	0x3                 	CLRF	STATUS
+000007   00f1     movwf	0x71               	MOVWF	SSAVE
+000008   080a     movf	0xa, w              	MOVF	PCLATH,W
+000009   018a     clrf	0xa                 	CLRF	PCLATH
+00000a   00f0     movwf	0x70               	MOVWF	PSAVE
+00000b   0804     movf	0x4, w              	MOVF	FSR,W
+00000c   1683     bsf	0x3, 0x5             	BANKSEL	___sdcc_saved_fsr
+00000d   1303     bcf	0x3, 0x6             
+00000e   00dd     movwf	0x5d               	MOVWF	___sdcc_saved_fsr
+                                           ;	.line	51; "extruder1.c"	interruptTemp = 1; //set flag, to check if the measurement is finishing during our isr
+00000f   3001     movlw	0x1                	MOVLW	0x01
+000010   1283     bcf	0x3, 0x5             	BANKSEL	_interruptTemp
+000011   1303     bcf	0x3, 0x6             
+000012   00e7     movwf	0x67               	MOVWF	_interruptTemp
+                                           ;	.line	53; "extruder1.c"	serialInterruptHandler();
+000013   158a     bsf	0xa, 0x3             	PAGESEL	_serialInterruptHandler
+000014   2000     call	0                   	CALL	_serialInterruptHandler
+000015   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	55; "extruder1.c"	if (RBIF) 
+000016   1283     bcf	0x3, 0x5             	BANKSEL	_INTCON_bits
+000017   1303     bcf	0x3, 0x6             
+000018   1c0b     btfss	0xb, 0             	BTFSS	_INTCON_bits,0
+000019   281d     goto	0x1d                	GOTO	_00106_DS_
+                                           ;	.line	56; "extruder1.c"	motorTick();  //should not occur in UNIVERSAL_PCB
+00001a   118a     bcf	0xa, 0x3             	PAGESEL	_motorTick
+00001b   2347     call	0x347               	CALL	_motorTick
+00001c   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           _00106_DS_
+                                           ;	.line	58; "extruder1.c"	if (TMR1IF) {
+00001d   1283     bcf	0x3, 0x5             	BANKSEL	_PIR1_bits
+00001e   1303     bcf	0x3, 0x6             
+00001f   1c0c     btfss	0xc, 0             	BTFSS	_PIR1_bits,0
+000020   2827     goto	0x27                	GOTO	_00108_DS_
+                                           ;	.line	59; "extruder1.c"	timerTick();
+000021   118a     bcf	0xa, 0x3             	PAGESEL	_timerTick
+000022   23cf     call	0x3cf               	CALL	_timerTick
+000023   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	60; "extruder1.c"	TMR1IF = 0;
+000024   1283     bcf	0x3, 0x5             	BANKSEL	_PIR1_bits
+000025   1303     bcf	0x3, 0x6             
+000026   100c     bcf	0xc, 0               	BCF	_PIR1_bits,0
+                                           _00108_DS_
+                                           ;	.line	62; "extruder1.c"	if (C2OUT) {
+000027   1283     bcf	0x3, 0x5             	BANKSEL	_CMCON_bits
+000028   1303     bcf	0x3, 0x6             
+000029   1f9f     btfss	0x1f, 0x7          	BTFSS	_CMCON_bits,7
+00002a   282e     goto	0x2e                	GOTO	_00111_DS_
+                                           ;	.line	63; "extruder1.c"	interruptTemp = 0; //measurement is not finished
+00002b   1283     bcf	0x3, 0x5             	BANKSEL	_interruptTemp
+00002c   1303     bcf	0x3, 0x6             
+00002d   01e7     clrf	0x67                	CLRF	_interruptTemp
+                                           _00111_DS_
+00002e   1683     bsf	0x3, 0x5             	BANKSEL	___sdcc_saved_fsr
+00002f   1303     bcf	0x3, 0x6             
+000030   085d     movf	0x5d, w             	MOVF	___sdcc_saved_fsr,W
+000031   0084     movwf	0x4                	MOVWF	FSR
+000032   0870     movf	0x70, w             	MOVF	PSAVE,W
+000033   008a     movwf	0xa                	MOVWF	PCLATH
+000034   0183     clrf	0x3                 	CLRF	STATUS
+000035   0e71     swapf	0x71, w            	SWAPF	SSAVE,W
+000036   0083     movwf	0x3                	MOVWF	STATUS
+000037   0ef2     swapf	0x72, f            	SWAPF	WSAVE,F
+000038   0e72     swapf	0x72, w            	SWAPF	WSAVE,W
+                                           END_OF_INTERRUPT
+000039   0009     retfie                   	RETFIE	
+                                           
+                                           ;--------------------------------------------------------
+                                           ; code
+                                           ;--------------------------------------------------------
+                                           code_extruder1	code
+                                           ;***
+                                           ;  pBlock Stats: dbName = M
+                                           ;***
+                                           ;entry:  _main	;Function start
+                                           ; 2 exit points
+                                           ;has an exit
+                                           ;functions called:
+                                           ;   _init2
+                                           ;   _init1
+                                           ;   _serial_init
+                                           ;   _uartTransmit
+                                           ;   _uartTransmit
+                                           ;   _packetReady
+                                           ;   _processCommand
+                                           ;   _releaseLock
+                                           ;   _checkTemperature
+                                           ;   _delay_10us
+                                           ;   _init2
+                                           ;   _init1
+                                           ;   _serial_init
+                                           ;   _uartTransmit
+                                           ;   _uartTransmit
+                                           ;   _packetReady
+                                           ;   _processCommand
+                                           ;   _releaseLock
+                                           ;   _checkTemperature
+                                           ;   _delay_10us
+                                           ;1 compiler assigned register :
+                                           ;   r0x1003
+                                           ;; Starting pCode block
+                                           _main	;Function start
+                                           ; 2 exit points
+                                           ;	.line	140; "extruder1.c"	init2();  // Order is important here, otherwise interrupts will occur
+0005ee   118a     bcf	0xa, 0x3             	PAGESEL	_init2
+0005ef   248c     call	0x48c               	CALL	_init2
+0005f0   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	143; "extruder1.c"	init1();
+0005f1   261a     call	0x61a               	CALL	_init1
+                                           ;	.line	144; "extruder1.c"	serial_init();
+0005f2   158a     bsf	0xa, 0x3             	PAGESEL	_serial_init
+0005f3   23e6     call	0x3e6               	CALL	_serial_init
+0005f4   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	147; "extruder1.c"	GIE=0;
+0005f5   1283     bcf	0x3, 0x5             	BANKSEL	_INTCON_bits
+0005f6   1303     bcf	0x3, 0x6             
+0005f7   138b     bcf	0xb, 0x7             	BCF	_INTCON_bits,7
+                                           ;	.line	148; "extruder1.c"	uartTransmit(0);
+0005f8   3000     movlw	0                  	MOVLW	0x00
+0005f9   158a     bsf	0xa, 0x3             	PAGESEL	_uartTransmit
+0005fa   2164     call	0x164               	CALL	_uartTransmit
+0005fb   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	149; "extruder1.c"	uartTransmit(0);
+0005fc   3000     movlw	0                  	MOVLW	0x00
+0005fd   158a     bsf	0xa, 0x3             	PAGESEL	_uartTransmit
+0005fe   2164     call	0x164               	CALL	_uartTransmit
+0005ff   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	150; "extruder1.c"	GIE=1;
+000600   1283     bcf	0x3, 0x5             	BANKSEL	_INTCON_bits
+000601   1303     bcf	0x3, 0x6             
+000602   178b     bsf	0xb, 0x7             	BSF	_INTCON_bits,7
+                                           _00123_DS_
+                                           ;	.line	153; "extruder1.c"	if (packetReady()) {
+000603   158a     bsf	0xa, 0x3             	PAGESEL	_packetReady
+000604   20b1     call	0xb1                	CALL	_packetReady
+000605   118a     bcf	0xa, 0x3             	PAGESEL	$
+000606   1283     bcf	0x3, 0x5             	BANKSEL	r0x1003
+000607   1303     bcf	0x3, 0x6             
+000608   00e8     movwf	0x68               	MOVWF	r0x1003
+000609   0868     movf	0x68, w             	MOVF	r0x1003,W
+00060a   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+00060b   2e12     goto	0x612               	GOTO	_00121_DS_
+                                           ;	.line	154; "extruder1.c"	processCommand();
+00060c   118a     bcf	0xa, 0x3             	PAGESEL	_processCommand
+00060d   203e     call	0x3e                	CALL	_processCommand
+00060e   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	155; "extruder1.c"	releaseLock();
+00060f   158a     bsf	0xa, 0x3             	PAGESEL	_releaseLock
+000610   2123     call	0x123               	CALL	_releaseLock
+000611   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           _00121_DS_
+                                           ;	.line	158; "extruder1.c"	checkTemperature();
+000612   118a     bcf	0xa, 0x3             	PAGESEL	_checkTemperature
+000613   22a3     call	0x2a3               	CALL	_checkTemperature
+000614   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	160; "extruder1.c"	delay_10us();
+000615   118a     bcf	0xa, 0x3             	PAGESEL	_delay_10us
+000616   26b8     call	0x6b8               	CALL	_delay_10us
+000617   118a     bcf	0xa, 0x3             	PAGESEL	$
+000618   2e03     goto	0x603               	GOTO	_00123_DS_
+000619   0008     return                   	RETURN	
+                                           ; exit point of _main
+                                           
+                                           ;***
+                                           ;  pBlock Stats: dbName = C
+                                           ;***
+                                           ;entry:  _init1	;Function start
+                                           ; 2 exit points
+                                           ;has an exit
+                                           ;; Starting pCode block
+                                           _init1	;Function start
+                                           ; 2 exit points
+                                           ;	.line	69; "extruder1.c"	INTCON = BIN(00000000);     // Interrupts disabled
+00061a   1283     bcf	0x3, 0x5             	BANKSEL	_INTCON
+00061b   1303     bcf	0x3, 0x6             
+00061c   018b     clrf	0xb                 	CLRF	_INTCON
+                                           ;	.line	70; "extruder1.c"	PIR1 = 0;                   // Clear peripheral interrupt flags
+00061d   018c     clrf	0xc                 	CLRF	_PIR1
+                                           ;	.line	71; "extruder1.c"	PIE1 = BIN(00000000);       // All peripheral interrupts initially disabled
+00061e   1683     bsf	0x3, 0x5             	BANKSEL	_PIE1
+00061f   1303     bcf	0x3, 0x6             
+000620   018c     clrf	0xc                 	CLRF	_PIE1
+                                           ;	.line	73; "extruder1.c"	OPTION_REG = BIN(01010111); // Disable TMR0 on RA4, 1:256 Prescaler for TMR0, pullups on
+000621   3057     movlw	0x57               	MOVLW	0x57
+000622   0081     movwf	0x1                	MOVWF	_OPTION_REG
+                                           ;	.line	76; "extruder1.c"	SPBRG = 12;                 // 12 = ~19200 baud @ 4MHz
+000623   300c     movlw	0xc                	MOVLW	0x0c
+000624   0099     movwf	0x19               	MOVWF	_SPBRG
+                                           ;	.line	78; "extruder1.c"	TXSTA = BIN(00000100);      // 8 bit high speed 
+000625   3004     movlw	0x4                	MOVLW	0x04
+000626   0098     movwf	0x18               	MOVWF	_TXSTA
+                                           ;	.line	79; "extruder1.c"	RCSTA = BIN(10000000);      // Enable port for 8 bit receive
+000627   3080     movlw	0x80               	MOVLW	0x80
+000628   1283     bcf	0x3, 0x5             	BANKSEL	_RCSTA
+000629   1303     bcf	0x3, 0x6             
+00062a   0098     movwf	0x18               	MOVWF	_RCSTA
+                                           ;	.line	80; "extruder1.c"	CREN = 1;  // Start reception
+00062b   1618     bsf	0x18, 0x4            	BSF	_RCSTA_bits,4
+                                           ;	.line	81; "extruder1.c"	TXEN = 1;  // Enable transmit
+00062c   1683     bsf	0x3, 0x5             	BANKSEL	_TXSTA_bits
+00062d   1303     bcf	0x3, 0x6             
+00062e   1698     bsf	0x18, 0x5            	BSF	_TXSTA_bits,5
+                                           ;	.line	82; "extruder1.c"	RCIE = 1;  // Enable receive interrupts
+00062f   168c     bsf	0xc, 0x5             	BSF	_PIE1_bits,5
+                                           ;	.line	92; "extruder1.c"	RBIE = 1;  // Enable RB port change interrupt 
+000630   1283     bcf	0x3, 0x5             	BANKSEL	_INTCON_bits
+000631   1303     bcf	0x3, 0x6             
+000632   158b     bsf	0xb, 0x3             	BSF	_INTCON_bits,3
+                                           ;	.line	94; "extruder1.c"	PEIE = 1;  // Peripheral interrupts on
+000633   170b     bsf	0xb, 0x6             	BSF	_INTCON_bits,6
+                                           ;	.line	96; "extruder1.c"	TRISA = BIN(11000010) | PORTATRIS;  // Turn off A/D lines,
+000634   30e2     movlw	0xe2               	MOVLW	0xe2
+000635   1683     bsf	0x3, 0x5             	BANKSEL	_TRISA
+000636   1303     bcf	0x3, 0x6             
+000637   0085     movwf	0x5                	MOVWF	_TRISA
+                                           ;	.line	99; "extruder1.c"	TRISB = BIN(10000111);
+000638   3087     movlw	0x87               	MOVLW	0x87
+000639   0086     movwf	0x6                	MOVWF	_TRISB
+                                           ;	.line	100; "extruder1.c"	PORTA = 0;
+00063a   1283     bcf	0x3, 0x5             	BANKSEL	_PORTA
+00063b   1303     bcf	0x3, 0x6             
+00063c   0185     clrf	0x5                 	CLRF	_PORTA
+                                           ;	.line	101; "extruder1.c"	PORTB = BIN(10000001);   // Fan off; pullup on RB7
+00063d   3081     movlw	0x81               	MOVLW	0x81
+00063e   0086     movwf	0x6                	MOVWF	_PORTB
+                                           ;	.line	113; "extruder1.c"	CMCON = BIN(00000010);   // Comparator: compare RA0 to int. ref.
+00063f   3002     movlw	0x2                	MOVLW	0x02
+000640   009f     movwf	0x1f               	MOVWF	_CMCON
+                                           ;	.line	115; "extruder1.c"	TMR1IE = 0;
+000641   1683     bsf	0x3, 0x5             	BANKSEL	_PIE1_bits
+000642   1303     bcf	0x3, 0x6             
+000643   100c     bcf	0xc, 0               	BCF	_PIE1_bits,0
+                                           ;	.line	116; "extruder1.c"	T1CON = BIN(00000000);   // Timer 1 in clock mode with 1:1 scale
+000644   1283     bcf	0x3, 0x5             	BANKSEL	_T1CON
+000645   1303     bcf	0x3, 0x6             
+000646   0190     clrf	0x10                	CLRF	_T1CON
+                                           ;	.line	117; "extruder1.c"	TMR1IE = 1;              // Enable timer interrupt
+000647   1683     bsf	0x3, 0x5             	BANKSEL	_PIE1_bits
+000648   1303     bcf	0x3, 0x6             
+000649   140c     bsf	0xc, 0               	BSF	_PIE1_bits,0
+                                           ;	.line	118; "extruder1.c"	TMR1ON = 1;
+00064a   1283     bcf	0x3, 0x5             	BANKSEL	_T1CON_bits
+00064b   1303     bcf	0x3, 0x6             
+00064c   1410     bsf	0x10, 0              	BSF	_T1CON_bits,0
+                                           ;	.line	120; "extruder1.c"	PR2 = PWMPeriod;          // Initial PWM period
+00064d   1283     bcf	0x3, 0x5             	BANKSEL	_PWMPeriod
+00064e   1303     bcf	0x3, 0x6             
+00064f   086a     movf	0x6a, w             	MOVF	_PWMPeriod,W
+000650   1683     bsf	0x3, 0x5             	BANKSEL	_PR2
+000651   1303     bcf	0x3, 0x6             
+000652   0092     movwf	0x12               	MOVWF	_PR2
+                                           ;	.line	121; "extruder1.c"	CCP1CON = BIN(00001100);  // Enable PWM mode
+000653   300c     movlw	0xc                	MOVLW	0x0c
+000654   1283     bcf	0x3, 0x5             	BANKSEL	_CCP1CON
+000655   1303     bcf	0x3, 0x6             
+000656   0097     movwf	0x17               	MOVWF	_CCP1CON
+                                           ;	.line	122; "extruder1.c"	CCPR1L = 0;               // Start turned off
+000657   0195     clrf	0x15                	CLRF	_CCPR1L
+                                           ;	.line	124; "extruder1.c"	T2CON = BIN(00000100);    // Enable timer 2 and set prescale to 1
+000658   3004     movlw	0x4                	MOVLW	0x04
+000659   0092     movwf	0x12               	MOVWF	_T2CON
+                                           ;	.line	125; "extruder1.c"	GIE = 1;   // Now turn on interrupts
+00065a   178b     bsf	0xb, 0x7             	BSF	_INTCON_bits,7
+00065b   0008     return                   	RETURN	
+                                           ; exit point of _init1
+                                           
+                                           
+                                           ;	code size estimation:
+                                           ;	   90+   49 =   139 instructions (  376 byte)
+                                           
+                                           	end
+                                           ;--------------------------------------------------------
+                                           ; File Created by SDCC : free open source ANSI-C Compiler
+                                           ; Version 2.7.4 #4943 (Oct 27 2007) (UNIX)
+                                           ; This file was generated Fri Jun 13 14:34:03 2008
+                                           ;--------------------------------------------------------
+                                           ; PIC port for the 14-bit core
+                                           ;--------------------------------------------------------
+                                           ;	.module extruder2
+                                           	list	p=16f648a
+                                           	radix dec
+                                           	include "p16f648a.inc"
+                                                   LIST
+                                           ; P16F648A.INC  Standard Header File, Version 1.00    Microchip Technology, Inc.
+                                                   NOLIST
+                                           ;--------------------------------------------------------
+                                           ; external declarations
+                                           ;--------------------------------------------------------
+                                           	extern	_flashLED
+                                           	extern	_LEDon
+                                           	extern	_setFlash
+                                           	extern	_uartTransmit
+                                           	extern	_sendReply
+                                           	extern	_sendMessage
+                                           	extern	_sendDataByte
+                                           	extern	_endMessage
+                                           	extern	_sendMessageISR
+                                           	extern	_sendDataByteISR
+                                           	extern	_endMessageISR
+                                           	extern	_releaseLock
+                                           	extern	_serialInterruptHandler
+                                           	extern	_packetReady
+                                           	extern	_uartNotifyReceive
+                                           	extern	_serial_init
+                                           	extern	_delay_10us
+                                           	extern	_clearwdt
+                                           	extern	_CCP1CON_bits
+                                           	extern	_CMCON_bits
+                                           	extern	_EECON1_bits
+                                           	extern	_INTCON_bits
+                                           	extern	_OPTION_REG_bits
+                                           	extern	_PCON_bits
+                                           	extern	_PIE1_bits
+                                           	extern	_PIR1_bits
+                                           	extern	_PORTA_bits
+                                           	extern	_PORTB_bits
+                                           	extern	_RCSTA_bits
+                                           	extern	_STATUS_bits
+                                           	extern	_T1CON_bits
+                                           	extern	_T2CON_bits
+                                           	extern	_TRISA_bits
+                                           	extern	_TRISB_bits
+                                           	extern	_TXSTA_bits
+                                           	extern	_VRCON_bits
+                                           	extern	_interruptTemp
+                                           	extern	_buffer
+                                           	extern	_serialStatus
+                                           	extern	_INDF
+                                           	extern	_TMR0
+                                           	extern	_PCL
+                                           	extern	_STATUS
+                                           	extern	_FSR
+                                           	extern	_PORTA
+                                           	extern	_PORTB
+                                           	extern	_PCLATH
+                                           	extern	_INTCON
+                                           	extern	_PIR1
+                                           	extern	_TMR1L
+                                           	extern	_TMR1H
+                                           	extern	_T1CON
+                                           	extern	_TMR2
+                                           	extern	_T2CON
+                                           	extern	_CCPR1L
+                                           	extern	_CCPR1H
+                                           	extern	_CCP1CON
+                                           	extern	_RCSTA
+                                           	extern	_TXREG
+                                           	extern	_RCREG
+                                           	extern	_CMCON
+                                           	extern	_OPTION_REG
+                                           	extern	_TRISA
+                                           	extern	_TRISB
+                                           	extern	_PIE1
+                                           	extern	_PCON
+                                           	extern	_PR2
+                                           	extern	_TXSTA
+                                           	extern	_SPBRG
+                                           	extern	_EEDATA
+                                           	extern	_EEADR
+                                           	extern	_EECON1
+                                           	extern	_EECON2
+                                           	extern	_VRCON
+                                           
+                                           	extern PSAVE
+                                           	extern SSAVE
+                                           	extern WSAVE
+                                           	extern STK12
+                                           	extern STK11
+                                           	extern STK10
+                                           	extern STK09
+                                           	extern STK08
+                                           	extern STK07
+                                           	extern STK06
+                                           	extern STK05
+                                           	extern STK04
+                                           	extern STK03
+                                           	extern STK02
+                                           	extern STK01
+                                           	extern STK00
+                                           ;--------------------------------------------------------
+                                           ; global declarations
+                                           ;--------------------------------------------------------
+                                           	global	_processCommand
+                                           	global	_checkTemperature
+                                           	global	_motorTick
+                                           	global	_timerTick
+                                           	global	_pwmSet
+                                           	global	_init2
+                                           	global	_extruder_stop
+                                           	global	_extruder_forward
+                                           	global	_extruder_reverse
+                                           	global	_heater_off
+                                           	global	_heater_on
+                                           	global	_change_log
+                                           	global	_set_cooler
+                                           	global	_solenoid_delay
+                                           	global	_solenoid
+                                           	global	_setSpeed
+                                           	global	_dummy
+                                           	global	_PWMPeriod
+                                           
+                                           ;--------------------------------------------------------
+                                           ; global definitions
+                                           ;--------------------------------------------------------
+                                           UD_extruder2_0	udata
+                                           _PWMPeriod	res	1
+                                           
+                                           ;--------------------------------------------------------
+                                           ; absolute symbol definitions
+                                           ;--------------------------------------------------------
+                                           ;--------------------------------------------------------
+                                           ; compiler-defined variables
+                                           ;--------------------------------------------------------
+                                           UDL_extruder2_0	udata
+                                           r0x1026	res	1
+                                           r0x1027	res	1
+                                           r0x101E	res	1
+                                           r0x101F	res	1
+                                           r0x1022	res	1
+                                           r0x1023	res	1
+                                           r0x1024	res	1
+                                           r0x1025	res	1
+                                           r0x1020	res	1
+                                           r0x1021	res	1
+                                           r0x1019	res	1
+                                           r0x101A	res	1
+                                           r0x101B	res	1
+                                           r0x101C	res	1
+                                           r0x101D	res	1
+                                           _portaval	res	1
+                                           _extrude_click	res	1
+                                           _material_click	res	1
+                                           _lastPortA	res	1
+                                           _seekNotify	res	1
+                                           _currentDirection	res	1
+                                           _seekSpeed	res	1
+                                           _lastPortB	res	1
+                                           _requestedHeat0	res	1
+                                           _requestedHeat1	res	1
+                                           _temperatureLimit0	res	1
+                                           _temperatureLimit1	res	1
+                                           _heatCounter	res	1
+                                           _lastTemperature	res	1
+                                           _temperatureVRef	res	1
+                                           _temperatureNotUpdatedCounter	res	1
+                                           _currentPosition	res	2
+                                           _seekPosition	res	2
+                                           ;--------------------------------------------------------
+                                           ; initialized data
+                                           ;--------------------------------------------------------
+                                           
+                                           ID_extruder2_0	idata
+                                           _pulseCounter1
+                                           	db	0x64
+                                           
+                                           
+                                           ID_extruder2_1	idata
+                                           _pulseCounter2
+                                           	db	0x14
+                                           
+                                           
+                                           ID_extruder2_2	idata
+                                           _solenoid_on
+                                           	db	0x00
+                                           
+                                           ;--------------------------------------------------------
+                                           ; overlayable items in internal ram 
+                                           ;--------------------------------------------------------
+                                           ;	udata_ovr
+                                           ;--------------------------------------------------------
+                                           ; code
+                                           ;--------------------------------------------------------
+                                           code_extruder2	code
+                                           ;***
+                                           ;  pBlock Stats: dbName = C
+                                           ;***
+                                           ;entry:  _dummy	;Function start
+                                           ; 2 exit points
+                                           ;has an exit
+                                           ;; Starting pCode block
+                                           _dummy	;Function start
+                                           ; 2 exit points
+                                           ;	.line	764; "extruder2.c"	INTCON = 0;
+00003a   1283     bcf	0x3, 0x5             	BANKSEL	_INTCON
+00003b   1303     bcf	0x3, 0x6             
+00003c   018b     clrf	0xb                 	CLRF	_INTCON
+00003d   0008     return                   	RETURN	
+                                           ; exit point of _dummy
+                                           
+                                           ;***
+                                           ;  pBlock Stats: dbName = C
+                                           ;***
+                                           ;entry:  _processCommand	;Function start
+                                           ; 2 exit points
+                                           ;has an exit
+                                           ;functions called:
+                                           ;   _sendReply
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _endMessage
+                                           ;   _sendReply
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _endMessage
+                                           ;   _sendReply
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _endMessage
+                                           ;   _setSpeed
+                                           ;   _setSpeed
+                                           ;   _sendReply
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _endMessage
+                                           ;   _setSpeed
+                                           ;   _setSpeed
+                                           ;   _extruder_stop
+                                           ;   _sendReply
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _endMessage
+                                           ;   _sendReply
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _endMessage
+                                           ;   _set_cooler
+                                           ;   _sendReply
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _endMessage
+                                           ;   _sendReply
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _endMessage
+                                           ;   _solenoid
+                                           ;   _solenoid
+                                           ;   _sendReply
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _endMessage
+                                           ;   _sendReply
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _endMessage
+                                           ;   _sendReply
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _endMessage
+                                           ;   _setSpeed
+                                           ;   _setSpeed
+                                           ;   _sendReply
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _endMessage
+                                           ;   _setSpeed
+                                           ;   _setSpeed
+                                           ;   _extruder_stop
+                                           ;   _sendReply
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _endMessage
+                                           ;   _sendReply
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _endMessage
+                                           ;   _set_cooler
+                                           ;   _sendReply
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _endMessage
+                                           ;   _sendReply
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _endMessage
+                                           ;   _solenoid
+                                           ;   _solenoid
+                                           ;5 compiler assigned registers:
+                                           ;   r0x1019
+                                           ;   r0x101A
+                                           ;   r0x101B
+                                           ;   r0x101C
+                                           ;   r0x101D
+                                           ;; Starting pCode block
+                                           _processCommand	;Function start
+                                           ; 2 exit points
+                                           ;	.line	574; "extruder2.c"	switch(buffer[0]) {
+00003e   1683     bsf	0x3, 0x5             	BANKSEL	_buffer
+00003f   1303     bcf	0x3, 0x6             
+000040   0820     movf	0x20, w             	MOVF	(_buffer + 0),W
+000041   1283     bcf	0x3, 0x5             	BANKSEL	r0x1019
+000042   1303     bcf	0x3, 0x6             
+000043   00ce     movwf	0x4e               	MOVWF	r0x1019
+000044   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+000045   289b     goto	0x9b                	GOTO	_00273_DS_
+000046   084e     movf	0x4e, w             	MOVF	r0x1019,W
+000047   3a01     xorlw	0x1                	XORLW	0x01
+000048   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+000049   28fe     goto	0xfe                	GOTO	_00285_DS_
+00004a   084e     movf	0x4e, w             	MOVF	r0x1019,W
+00004b   3a02     xorlw	0x2                	XORLW	0x02
+00004c   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+00004d   2907     goto	0x107               	GOTO	_00286_DS_
+00004e   084e     movf	0x4e, w             	MOVF	r0x1019,W
+00004f   3a03     xorlw	0x3                	XORLW	0x03
+000050   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+000051   2910     goto	0x110               	GOTO	_00287_DS_
+000052   084e     movf	0x4e, w             	MOVF	r0x1019,W
+000053   3a04     xorlw	0x4                	XORLW	0x04
+000054   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+000055   2923     goto	0x123               	GOTO	_00288_DS_
+000056   084e     movf	0x4e, w             	MOVF	r0x1019,W
+000057   3a05     xorlw	0x5                	XORLW	0x05
+000058   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+000059   2940     goto	0x140               	GOTO	_00289_DS_
+00005a   084e     movf	0x4e, w             	MOVF	r0x1019,W
+00005b   3a06     xorlw	0x6                	XORLW	0x06
+00005c   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+00005d   299e     goto	0x19e               	GOTO	_00295_DS_
+00005e   084e     movf	0x4e, w             	MOVF	r0x1019,W
+00005f   3a07     xorlw	0x7                	XORLW	0x07
+000060   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+000061   29a0     goto	0x1a0               	GOTO	_00296_DS_
+000062   084e     movf	0x4e, w             	MOVF	r0x1019,W
+000063   3a08     xorlw	0x8                	XORLW	0x08
+000064   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+000065   29a7     goto	0x1a7               	GOTO	_00297_DS_
+000066   084e     movf	0x4e, w             	MOVF	r0x1019,W
+000067   3a09     xorlw	0x9                	XORLW	0x09
+000068   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+000069   29c6     goto	0x1c6               	GOTO	_00298_DS_
+00006a   084e     movf	0x4e, w             	MOVF	r0x1019,W
+00006b   3a0a     xorlw	0xa                	XORLW	0x0a
+00006c   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+00006d   29e5     goto	0x1e5               	GOTO	_00299_DS_
+00006e   084e     movf	0x4e, w             	MOVF	r0x1019,W
+00006f   3a0b     xorlw	0xb                	XORLW	0x0b
+000070   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+000071   29fa     goto	0x1fa               	GOTO	_00300_DS_
+000072   084e     movf	0x4e, w             	MOVF	r0x1019,W
+000073   3a0c     xorlw	0xc                	XORLW	0x0c
+000074   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+000075   2a9b     goto	0x29b               	GOTO	_00307_DS_
+000076   084e     movf	0x4e, w             	MOVF	r0x1019,W
+000077   3a0d     xorlw	0xd                	XORLW	0x0d
+000078   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+000079   2a9e     goto	0x29e               	GOTO	_00308_DS_
+00007a   084e     movf	0x4e, w             	MOVF	r0x1019,W
+00007b   3a32     xorlw	0x32               	XORLW	0x32
+00007c   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+00007d   2a02     goto	0x202               	GOTO	_00301_DS_
+00007e   084e     movf	0x4e, w             	MOVF	r0x1019,W
+00007f   3a33     xorlw	0x33               	XORLW	0x33
+000080   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+000081   2a0d     goto	0x20d               	GOTO	_00302_DS_
+000082   084e     movf	0x4e, w             	MOVF	r0x1019,W
+000083   3a34     xorlw	0x34               	XORLW	0x34
+000084   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+000085   2a1b     goto	0x21b               	GOTO	_00303_DS_
+000086   084e     movf	0x4e, w             	MOVF	r0x1019,W
+000087   3a35     xorlw	0x35               	XORLW	0x35
+000088   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+000089   2a28     goto	0x228               	GOTO	_00304_DS_
+00008a   084e     movf	0x4e, w             	MOVF	r0x1019,W
+00008b   3a36     xorlw	0x36               	XORLW	0x36
+00008c   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+00008d   2a43     goto	0x243               	GOTO	_00305_DS_
+00008e   084e     movf	0x4e, w             	MOVF	r0x1019,W
+00008f   3a37     xorlw	0x37               	XORLW	0x37
+000090   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+000091   2a6c     goto	0x26c               	GOTO	_00306_DS_
+000092   084e     movf	0x4e, w             	MOVF	r0x1019,W
+000093   3afe     xorlw	0xfe               	XORLW	0xfe
+000094   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+000095   28ae     goto	0xae                	GOTO	_00274_DS_
+000096   084e     movf	0x4e, w             	MOVF	r0x1019,W
+000097   3aff     xorlw	0xff               	XORLW	0xff
+000098   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+000099   28ef     goto	0xef                	GOTO	_00284_DS_
+00009a   2aa0     goto	0x2a0               	GOTO	_00309_DS_
+                                           _00273_DS_
+                                           ;	.line	576; "extruder2.c"	sendReply();
+00009b   158a     bsf	0xa, 0x3             	PAGESEL	_sendReply
+00009c   20cd     call	0xcd                	CALL	_sendReply
+00009d   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	577; "extruder2.c"	sendDataByte(CMD_VERSION);  // Response type 0
+00009e   3000     movlw	0                  	MOVLW	0x00
+00009f   158a     bsf	0xa, 0x3             	PAGESEL	_sendDataByte
+0000a0   212f     call	0x12f               	CALL	_sendDataByte
+0000a1   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	578; "extruder2.c"	sendDataByte(MAJOR_VERSION_NUMBER);
+0000a2   3001     movlw	0x1                	MOVLW	0x01
+0000a3   158a     bsf	0xa, 0x3             	PAGESEL	_sendDataByte
+0000a4   212f     call	0x12f               	CALL	_sendDataByte
+0000a5   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	579; "extruder2.c"	sendDataByte(MINOR_VERSION_NUMBER);
+0000a6   3000     movlw	0                  	MOVLW	0x00
+0000a7   158a     bsf	0xa, 0x3             	PAGESEL	_sendDataByte
+0000a8   212f     call	0x12f               	CALL	_sendDataByte
+0000a9   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	580; "extruder2.c"	endMessage();
+0000aa   158a     bsf	0xa, 0x3             	PAGESEL	_endMessage
+0000ab   2039     call	0x39                	CALL	_endMessage
+0000ac   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	581; "extruder2.c"	break;
+0000ad   2aa0     goto	0x2a0               	GOTO	_00309_DS_
+                                           _00274_DS_
+                                           ;	.line	584; "extruder2.c"	sendReply();
+0000ae   158a     bsf	0xa, 0x3             	PAGESEL	_sendReply
+0000af   20cd     call	0xcd                	CALL	_sendReply
+0000b0   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	585; "extruder2.c"	sendDataByte(CMD_CHECKHOSTVERSION);    
+0000b1   30fe     movlw	0xfe               	MOVLW	0xfe
+0000b2   158a     bsf	0xa, 0x3             	PAGESEL	_sendDataByte
+0000b3   212f     call	0x12f               	CALL	_sendDataByte
+0000b4   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	586; "extruder2.c"	if(buffer[1] > OLDHOST_MAJOR_VERSION_NUMBER)
+0000b5   1683     bsf	0x3, 0x5             	BANKSEL	_buffer
+0000b6   1303     bcf	0x3, 0x6             
+0000b7   0821     movf	0x21, w             	MOVF	(_buffer + 1),W
+0000b8   1283     bcf	0x3, 0x5             	BANKSEL	r0x1019
+0000b9   1303     bcf	0x3, 0x6             
+0000ba   00ce     movwf	0x4e               	MOVWF	r0x1019
+0000bb   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+0000bc   28c2     goto	0xc2                	GOTO	_00282_DS_
+                                           ;	.line	587; "extruder2.c"	sendDataByte(0xff);    
+0000bd   30ff     movlw	0xff               	MOVLW	0xff
+0000be   158a     bsf	0xa, 0x3             	PAGESEL	_sendDataByte
+0000bf   212f     call	0x12f               	CALL	_sendDataByte
+0000c0   118a     bcf	0xa, 0x3             	PAGESEL	$
+0000c1   28e3     goto	0xe3                	GOTO	_00283_DS_
+                                           _00282_DS_
+                                           ;	.line	588; "extruder2.c"	else if (buffer[1] == OLDHOST_MAJOR_VERSION_NUMBER)
+0000c2   1683     bsf	0x3, 0x5             	BANKSEL	_buffer
+0000c3   1303     bcf	0x3, 0x6             
+0000c4   0821     movf	0x21, w             	MOVF	(_buffer + 1),W
+0000c5   1283     bcf	0x3, 0x5             	BANKSEL	r0x1019
+0000c6   1303     bcf	0x3, 0x6             
+0000c7   00ce     movwf	0x4e               	MOVWF	r0x1019
+0000c8   084e     movf	0x4e, w             	MOVF	r0x1019,W
+0000c9   1d03     btfss	0x3, 0x2           	BTFSS	STATUS,2
+0000ca   28df     goto	0xdf                	GOTO	_00279_DS_
+                                           ;	.line	590; "extruder2.c"	if (buffer[2] >= OLDHOST_MINOR_VERSION_NUMBER)
+0000cb   1683     bsf	0x3, 0x5             	BANKSEL	_buffer
+0000cc   1303     bcf	0x3, 0x6             
+0000cd   0822     movf	0x22, w             	MOVF	(_buffer + 2),W
+0000ce   1283     bcf	0x3, 0x5             	BANKSEL	r0x1019
+0000cf   1303     bcf	0x3, 0x6             
+0000d0   00ce     movwf	0x4e               	MOVWF	r0x1019
+                                           ;unsigned compare: left < lit(0x8=8), size=1
+0000d1   3008     movlw	0x8                	MOVLW	0x08
+0000d2   024e     subwf	0x4e, w            	SUBWF	r0x1019,W
+0000d3   1c03     btfss	0x3, 0             	BTFSS	STATUS,0
+0000d4   28da     goto	0xda                	GOTO	_00276_DS_
+                                           ;genSkipc:3694: created from rifx:0xbf8b93d0
+                                           ;	.line	591; "extruder2.c"	sendDataByte(0xff);
+0000d5   30ff     movlw	0xff               	MOVLW	0xff
+0000d6   158a     bsf	0xa, 0x3             	PAGESEL	_sendDataByte
+0000d7   212f     call	0x12f               	CALL	_sendDataByte
+0000d8   118a     bcf	0xa, 0x3             	PAGESEL	$
+0000d9   28e3     goto	0xe3                	GOTO	_00283_DS_
+                                           _00276_DS_
+                                           ;	.line	593; "extruder2.c"	sendDataByte(0);    
+0000da   3000     movlw	0                  	MOVLW	0x00
+0000db   158a     bsf	0xa, 0x3             	PAGESEL	_sendDataByte
+0000dc   212f     call	0x12f               	CALL	_sendDataByte
+0000dd   118a     bcf	0xa, 0x3             	PAGESEL	$
+0000de   28e3     goto	0xe3                	GOTO	_00283_DS_
+                                           _00279_DS_
+                                           ;	.line	595; "extruder2.c"	sendDataByte(0);
+0000df   3000     movlw	0                  	MOVLW	0x00
+0000e0   158a     bsf	0xa, 0x3             	PAGESEL	_sendDataByte
+0000e1   212f     call	0x12f               	CALL	_sendDataByte
+0000e2   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           _00283_DS_
+                                           ;	.line	596; "extruder2.c"	sendDataByte(OLDHOST_MAJOR_VERSION_NUMBER);
+0000e3   3000     movlw	0                  	MOVLW	0x00
+0000e4   158a     bsf	0xa, 0x3             	PAGESEL	_sendDataByte
+0000e5   212f     call	0x12f               	CALL	_sendDataByte
+0000e6   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	597; "extruder2.c"	sendDataByte(OLDHOST_MINOR_VERSION_NUMBER);
+0000e7   3008     movlw	0x8                	MOVLW	0x08
+0000e8   158a     bsf	0xa, 0x3             	PAGESEL	_sendDataByte
+0000e9   212f     call	0x12f               	CALL	_sendDataByte
+0000ea   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	598; "extruder2.c"	endMessage();
+0000eb   158a     bsf	0xa, 0x3             	PAGESEL	_endMessage
+0000ec   2039     call	0x39                	CALL	_endMessage
+0000ed   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	599; "extruder2.c"	break;    
+0000ee   2aa0     goto	0x2a0               	GOTO	_00309_DS_
+                                           _00284_DS_
+                                           ;	.line	602; "extruder2.c"	sendReply();
+0000ef   158a     bsf	0xa, 0x3             	PAGESEL	_sendReply
+0000f0   20cd     call	0xcd                	CALL	_sendReply
+0000f1   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	603; "extruder2.c"	sendDataByte(CMD_GETMODULETYPE);
+0000f2   30ff     movlw	0xff               	MOVLW	0xff
+0000f3   158a     bsf	0xa, 0x3             	PAGESEL	_sendDataByte
+0000f4   212f     call	0x12f               	CALL	_sendDataByte
+0000f5   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	604; "extruder2.c"	sendDataByte(THERMOPLASTIC_EXTRUDER_TYPE);
+0000f6   3001     movlw	0x1                	MOVLW	0x01
+0000f7   158a     bsf	0xa, 0x3             	PAGESEL	_sendDataByte
+0000f8   212f     call	0x12f               	CALL	_sendDataByte
+0000f9   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	605; "extruder2.c"	endMessage();
+0000fa   158a     bsf	0xa, 0x3             	PAGESEL	_endMessage
+0000fb   2039     call	0x39                	CALL	_endMessage
+0000fc   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	606; "extruder2.c"	break;
+0000fd   2aa0     goto	0x2a0               	GOTO	_00309_DS_
+                                           _00285_DS_
+                                           ;	.line	610; "extruder2.c"	seekSpeed = buffer[1];
+0000fe   1683     bsf	0x3, 0x5             	BANKSEL	_buffer
+0000ff   1303     bcf	0x3, 0x6             
+000100   0821     movf	0x21, w             	MOVF	(_buffer + 1),W
+000101   1283     bcf	0x3, 0x5             	BANKSEL	_seekSpeed
+000102   1303     bcf	0x3, 0x6             
+000103   00d9     movwf	0x59               	MOVWF	_seekSpeed
+                                           ;	.line	611; "extruder2.c"	setSpeed(0);
+000104   3000     movlw	0                  	MOVLW	0x00
+000105   2449     call	0x449               	CALL	_setSpeed
+                                           ;	.line	612; "extruder2.c"	break;
+000106   2aa0     goto	0x2a0               	GOTO	_00309_DS_
+                                           _00286_DS_
+                                           ;	.line	615; "extruder2.c"	seekSpeed = buffer[1];
+000107   1683     bsf	0x3, 0x5             	BANKSEL	_buffer
+000108   1303     bcf	0x3, 0x6             
+000109   0821     movf	0x21, w             	MOVF	(_buffer + 1),W
+00010a   1283     bcf	0x3, 0x5             	BANKSEL	_seekSpeed
+00010b   1303     bcf	0x3, 0x6             
+00010c   00d9     movwf	0x59               	MOVWF	_seekSpeed
+                                           ;	.line	616; "extruder2.c"	setSpeed(1);
+00010d   3001     movlw	0x1                	MOVLW	0x01
+00010e   2449     call	0x449               	CALL	_setSpeed
+                                           ;	.line	617; "extruder2.c"	break;
+00010f   2aa0     goto	0x2a0               	GOTO	_00309_DS_
+                                           _00287_DS_
+                                           ;	.line	621; "extruder2.c"	currentPosition.bytes[0] = buffer[1];
+000110   1683     bsf	0x3, 0x5             	BANKSEL	_buffer
+000111   1303     bcf	0x3, 0x6             
+000112   0821     movf	0x21, w             	MOVF	(_buffer + 1),W
+000113   1283     bcf	0x3, 0x5             	BANKSEL	r0x1019
+000114   1303     bcf	0x3, 0x6             
+000115   00ce     movwf	0x4e               	MOVWF	r0x1019
+000116   1283     bcf	0x3, 0x5             	BANKSEL	_currentPosition
+000117   1303     bcf	0x3, 0x6             
+000118   00e3     movwf	0x63               	MOVWF	(_currentPosition + 0)
+                                           ;	.line	622; "extruder2.c"	currentPosition.bytes[1] = buffer[2];
+000119   1683     bsf	0x3, 0x5             	BANKSEL	_buffer
+00011a   1303     bcf	0x3, 0x6             
+00011b   0822     movf	0x22, w             	MOVF	(_buffer + 2),W
+00011c   1283     bcf	0x3, 0x5             	BANKSEL	r0x1019
+00011d   1303     bcf	0x3, 0x6             
+00011e   00ce     movwf	0x4e               	MOVWF	r0x1019
+00011f   1283     bcf	0x3, 0x5             	BANKSEL	_currentPosition
+000120   1303     bcf	0x3, 0x6             
+000121   00e4     movwf	0x64               	MOVWF	(_currentPosition + 1)
+                                           ;	.line	623; "extruder2.c"	break;
+000122   2aa0     goto	0x2a0               	GOTO	_00309_DS_
+                                           _00288_DS_
+                                           ;	.line	627; "extruder2.c"	sendReply();
+000123   158a     bsf	0xa, 0x3             	PAGESEL	_sendReply
+000124   20cd     call	0xcd                	CALL	_sendReply
+000125   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	628; "extruder2.c"	sendDataByte(CMD_GETPOS);
+000126   3004     movlw	0x4                	MOVLW	0x04
+000127   158a     bsf	0xa, 0x3             	PAGESEL	_sendDataByte
+000128   212f     call	0x12f               	CALL	_sendDataByte
+000129   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	629; "extruder2.c"	sendDataByte(currentPosition.bytes[0]);
+00012a   1283     bcf	0x3, 0x5             	BANKSEL	_currentPosition
+00012b   1303     bcf	0x3, 0x6             
+00012c   0863     movf	0x63, w             	MOVF	(_currentPosition + 0),W
+00012d   1283     bcf	0x3, 0x5             	BANKSEL	r0x1019
+00012e   1303     bcf	0x3, 0x6             
+00012f   00ce     movwf	0x4e               	MOVWF	r0x1019
+000130   158a     bsf	0xa, 0x3             	PAGESEL	_sendDataByte
+000131   212f     call	0x12f               	CALL	_sendDataByte
+000132   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	630; "extruder2.c"	sendDataByte(currentPosition.bytes[1]);
+000133   1283     bcf	0x3, 0x5             	BANKSEL	_currentPosition
+000134   1303     bcf	0x3, 0x6             
+000135   0864     movf	0x64, w             	MOVF	(_currentPosition + 1),W
+000136   1283     bcf	0x3, 0x5             	BANKSEL	r0x1019
+000137   1303     bcf	0x3, 0x6             
+000138   00ce     movwf	0x4e               	MOVWF	r0x1019
+000139   158a     bsf	0xa, 0x3             	PAGESEL	_sendDataByte
+00013a   212f     call	0x12f               	CALL	_sendDataByte
+00013b   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	631; "extruder2.c"	endMessage();
+00013c   158a     bsf	0xa, 0x3             	PAGESEL	_endMessage
+00013d   2039     call	0x39                	CALL	_endMessage
+00013e   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	632; "extruder2.c"	break;
+00013f   2aa0     goto	0x2a0               	GOTO	_00309_DS_
+                                           _00289_DS_
+                                           ;	.line	636; "extruder2.c"	seekPosition.bytes[0] = buffer[2];
+000140   1683     bsf	0x3, 0x5             	BANKSEL	_buffer
+000141   1303     bcf	0x3, 0x6             
+000142   0822     movf	0x22, w             	MOVF	(_buffer + 2),W
+000143   1283     bcf	0x3, 0x5             	BANKSEL	r0x1019
+000144   1303     bcf	0x3, 0x6             
+000145   00ce     movwf	0x4e               	MOVWF	r0x1019
+000146   1283     bcf	0x3, 0x5             	BANKSEL	_seekPosition
+000147   1303     bcf	0x3, 0x6             
+000148   00e5     movwf	0x65               	MOVWF	(_seekPosition + 0)
+                                           ;	.line	637; "extruder2.c"	seekPosition.bytes[1] = buffer[3];
+000149   1683     bsf	0x3, 0x5             	BANKSEL	_buffer
+00014a   1303     bcf	0x3, 0x6             
+00014b   0823     movf	0x23, w             	MOVF	(_buffer + 3),W
+00014c   1283     bcf	0x3, 0x5             	BANKSEL	r0x1019
+00014d   1303     bcf	0x3, 0x6             
+00014e   00ce     movwf	0x4e               	MOVWF	r0x1019
+00014f   1283     bcf	0x3, 0x5             	BANKSEL	_seekPosition
+000150   1303     bcf	0x3, 0x6             
+000151   00e6     movwf	0x66               	MOVWF	(_seekPosition + 1)
+                                           ;	.line	639; "extruder2.c"	if (seekPosition.ival != currentPosition.ival) {
+000152   0865     movf	0x65, w             	MOVF	(_seekPosition + 0),W
+000153   1283     bcf	0x3, 0x5             	BANKSEL	r0x1019
+000154   1303     bcf	0x3, 0x6             
+000155   00ce     movwf	0x4e               	MOVWF	r0x1019
+000156   1283     bcf	0x3, 0x5             	BANKSEL	_seekPosition
+000157   1303     bcf	0x3, 0x6             
+000158   0866     movf	0x66, w             	MOVF	(_seekPosition + 1),W
+000159   1283     bcf	0x3, 0x5             	BANKSEL	r0x101A
+00015a   1303     bcf	0x3, 0x6             
+00015b   00cf     movwf	0x4f               	MOVWF	r0x101A
+00015c   1283     bcf	0x3, 0x5             	BANKSEL	_currentPosition
+00015d   1303     bcf	0x3, 0x6             
+00015e   0863     movf	0x63, w             	MOVF	(_currentPosition + 0),W
+00015f   1283     bcf	0x3, 0x5             	BANKSEL	r0x101B
+000160   1303     bcf	0x3, 0x6             
+000161   00d0     movwf	0x50               	MOVWF	r0x101B
+000162   1283     bcf	0x3, 0x5             	BANKSEL	_currentPosition
+000163   1303     bcf	0x3, 0x6             
+000164   0864     movf	0x64, w             	MOVF	(_currentPosition + 1),W
+000165   1283     bcf	0x3, 0x5             	BANKSEL	r0x101C
+000166   1303     bcf	0x3, 0x6             
+000167   00d1     movwf	0x51               	MOVWF	r0x101C
+000168   0850     movf	0x50, w             	MOVF	r0x101B,W
+000169   064e     xorwf	0x4e, w            	XORWF	r0x1019,W
+00016a   1d03     btfss	0x3, 0x2           	BTFSS	STATUS,2
+00016b   2970     goto	0x170               	GOTO	_00362_DS_
+00016c   0851     movf	0x51, w             	MOVF	r0x101C,W
+                                           ;	.line	640; "extruder2.c"	seekSpeed = buffer[1];
+00016d   064f     xorwf	0x4f, w            	XORWF	r0x101A,W
+00016e   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+00016f   2aa0     goto	0x2a0               	GOTO	_00309_DS_
+                                           _00362_DS_
+000170   1683     bsf	0x3, 0x5             	BANKSEL	_buffer
+000171   1303     bcf	0x3, 0x6             
+000172   0821     movf	0x21, w             	MOVF	(_buffer + 1),W
+000173   1283     bcf	0x3, 0x5             	BANKSEL	_seekSpeed
+000174   1303     bcf	0x3, 0x6             
+000175   00d9     movwf	0x59               	MOVWF	_seekSpeed
+                                           ;	.line	641; "extruder2.c"	if (currentPosition.ival > seekPosition.ival)
+000176   1283     bcf	0x3, 0x5             	BANKSEL	_currentPosition
+000177   1303     bcf	0x3, 0x6             
+000178   0863     movf	0x63, w             	MOVF	(_currentPosition + 0),W
+000179   1283     bcf	0x3, 0x5             	BANKSEL	r0x1019
+00017a   1303     bcf	0x3, 0x6             
+00017b   00ce     movwf	0x4e               	MOVWF	r0x1019
+                                           ;;100	MOVF	(_currentPosition + 1),W
+00017c   1283     bcf	0x3, 0x5             	BANKSEL	_seekPosition
+00017d   1303     bcf	0x3, 0x6             
+00017e   0865     movf	0x65, w             	MOVF	(_seekPosition + 0),W
+00017f   1283     bcf	0x3, 0x5             	BANKSEL	r0x101B
+000180   1303     bcf	0x3, 0x6             
+000181   00d0     movwf	0x50               	MOVWF	r0x101B
+000182   1283     bcf	0x3, 0x5             	BANKSEL	_seekPosition
+000183   1303     bcf	0x3, 0x6             
+000184   0866     movf	0x66, w             	MOVF	(_seekPosition + 1),W
+000185   1283     bcf	0x3, 0x5             	BANKSEL	r0x101C
+000186   1303     bcf	0x3, 0x6             
+000187   00d1     movwf	0x51               	MOVWF	r0x101C
+000188   3e80     addlw	0x80               	ADDLW	0x80
+000189   00d2     movwf	0x52               	MOVWF	r0x101D
+                                           ;;99	MOVF	r0x101A,W
+00018a   1283     bcf	0x3, 0x5             	BANKSEL	_currentPosition
+00018b   1303     bcf	0x3, 0x6             
+00018c   0864     movf	0x64, w             	MOVF	(_currentPosition + 1),W
+00018d   1283     bcf	0x3, 0x5             	BANKSEL	r0x101A
+00018e   1303     bcf	0x3, 0x6             
+00018f   00cf     movwf	0x4f               	MOVWF	r0x101A
+000190   3e80     addlw	0x80               	ADDLW	0x80
+000191   0252     subwf	0x52, w            	SUBWF	r0x101D,W
+000192   1d03     btfss	0x3, 0x2           	BTFSS	STATUS,2
+000193   2996     goto	0x196               	GOTO	_00363_DS_
+000194   084e     movf	0x4e, w             	MOVF	r0x1019,W
+000195   0250     subwf	0x50, w            	SUBWF	r0x101B,W
+                                           _00363_DS_
+000196   1803     btfsc	0x3, 0             	BTFSC	STATUS,0
+000197   299b     goto	0x19b               	GOTO	_00291_DS_
+                                           ;genSkipc:3694: created from rifx:0xbf8b93d0
+                                           ;	.line	642; "extruder2.c"	setSpeed(1);
+000198   3001     movlw	0x1                	MOVLW	0x01
+000199   2449     call	0x449               	CALL	_setSpeed
+00019a   2aa0     goto	0x2a0               	GOTO	_00309_DS_
+                                           _00291_DS_
+                                           ;	.line	644; "extruder2.c"	setSpeed(0);
+00019b   3000     movlw	0                  	MOVLW	0x00
+00019c   2449     call	0x449               	CALL	_setSpeed
+                                           ;	.line	647; "extruder2.c"	break;
+00019d   2aa0     goto	0x2a0               	GOTO	_00309_DS_
+                                           _00295_DS_
+                                           ;	.line	652; "extruder2.c"	extruder_stop();
+00019e   2555     call	0x555               	CALL	_extruder_stop
+                                           ;	.line	653; "extruder2.c"	break;
+00019f   2aa0     goto	0x2a0               	GOTO	_00309_DS_
+                                           _00296_DS_
+                                           ;	.line	657; "extruder2.c"	seekNotify = buffer[1];
+0001a0   1683     bsf	0x3, 0x5             	BANKSEL	_buffer
+0001a1   1303     bcf	0x3, 0x6             
+0001a2   0821     movf	0x21, w             	MOVF	(_buffer + 1),W
+0001a3   1283     bcf	0x3, 0x5             	BANKSEL	_seekNotify
+0001a4   1303     bcf	0x3, 0x6             
+0001a5   00d7     movwf	0x57               	MOVWF	_seekNotify
+                                           ;	.line	658; "extruder2.c"	break;
+0001a6   2aa0     goto	0x2a0               	GOTO	_00309_DS_
+                                           _00297_DS_
+                                           ;	.line	661; "extruder2.c"	sendReply();
+0001a7   158a     bsf	0xa, 0x3             	PAGESEL	_sendReply
+0001a8   20cd     call	0xcd                	CALL	_sendReply
+0001a9   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	662; "extruder2.c"	sendDataByte(CMD_ISEMPTY);
+0001aa   3008     movlw	0x8                	MOVLW	0x08
+0001ab   158a     bsf	0xa, 0x3             	PAGESEL	_sendDataByte
+0001ac   212f     call	0x12f               	CALL	_sendDataByte
+0001ad   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	664; "extruder2.c"	sendDataByte(!RA5);   
+0001ae   1283     bcf	0x3, 0x5             	BANKSEL	r0x1019
+0001af   1303     bcf	0x3, 0x6             
+0001b0   01ce     clrf	0x4e                	CLRF	r0x1019
+0001b1   1283     bcf	0x3, 0x5             	BANKSEL	_PORTA_bits
+0001b2   1303     bcf	0x3, 0x6             
+0001b3   1e85     btfss	0x5, 0x5           	BTFSS	_PORTA_bits,5
+0001b4   29b8     goto	0x1b8               	GOTO	_00001_DS_
+0001b5   1283     bcf	0x3, 0x5             	BANKSEL	r0x1019
+0001b6   1303     bcf	0x3, 0x6             
+0001b7   0ace     incf	0x4e, f             	INCF	r0x1019,F
+                                           _00001_DS_
+0001b8   1283     bcf	0x3, 0x5             	BANKSEL	r0x1019
+0001b9   1303     bcf	0x3, 0x6             
+0001ba   084e     movf	0x4e, w             	MOVF	r0x1019,W
+0001bb   3000     movlw	0                  	MOVLW	0x00
+0001bc   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+0001bd   3001     movlw	0x1                	MOVLW	0x01
+0001be   00cf     movwf	0x4f               	MOVWF	r0x101A
+0001bf   158a     bsf	0xa, 0x3             	PAGESEL	_sendDataByte
+0001c0   212f     call	0x12f               	CALL	_sendDataByte
+0001c1   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	668; "extruder2.c"	endMessage();
+0001c2   158a     bsf	0xa, 0x3             	PAGESEL	_endMessage
+0001c3   2039     call	0x39                	CALL	_endMessage
+0001c4   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	669; "extruder2.c"	break;
+0001c5   2aa0     goto	0x2a0               	GOTO	_00309_DS_
+                                           _00298_DS_
+                                           ;	.line	672; "extruder2.c"	GIE=0;
+0001c6   1283     bcf	0x3, 0x5             	BANKSEL	_INTCON_bits
+0001c7   1303     bcf	0x3, 0x6             
+0001c8   138b     bcf	0xb, 0x7             	BCF	_INTCON_bits,7
+                                           ;	.line	673; "extruder2.c"	requestedHeat0 = buffer[1];
+0001c9   1683     bsf	0x3, 0x5             	BANKSEL	_buffer
+0001ca   1303     bcf	0x3, 0x6             
+0001cb   0821     movf	0x21, w             	MOVF	(_buffer + 1),W
+0001cc   1283     bcf	0x3, 0x5             	BANKSEL	_requestedHeat0
+0001cd   1303     bcf	0x3, 0x6             
+0001ce   00db     movwf	0x5b               	MOVWF	_requestedHeat0
+                                           ;	.line	674; "extruder2.c"	requestedHeat1 = buffer[2];
+0001cf   1683     bsf	0x3, 0x5             	BANKSEL	_buffer
+0001d0   1303     bcf	0x3, 0x6             
+0001d1   0822     movf	0x22, w             	MOVF	(_buffer + 2),W
+0001d2   1283     bcf	0x3, 0x5             	BANKSEL	_requestedHeat1
+0001d3   1303     bcf	0x3, 0x6             
+0001d4   00dc     movwf	0x5c               	MOVWF	_requestedHeat1
+                                           ;	.line	675; "extruder2.c"	temperatureLimit0 = buffer[3];
+0001d5   1683     bsf	0x3, 0x5             	BANKSEL	_buffer
+0001d6   1303     bcf	0x3, 0x6             
+0001d7   0823     movf	0x23, w             	MOVF	(_buffer + 3),W
+0001d8   1283     bcf	0x3, 0x5             	BANKSEL	_temperatureLimit0
+0001d9   1303     bcf	0x3, 0x6             
+0001da   00dd     movwf	0x5d               	MOVWF	_temperatureLimit0
+                                           ;	.line	676; "extruder2.c"	temperatureLimit1 = buffer[4];
+0001db   1683     bsf	0x3, 0x5             	BANKSEL	_buffer
+0001dc   1303     bcf	0x3, 0x6             
+0001dd   0824     movf	0x24, w             	MOVF	(_buffer + 4),W
+0001de   1283     bcf	0x3, 0x5             	BANKSEL	_temperatureLimit1
+0001df   1303     bcf	0x3, 0x6             
+0001e0   00de     movwf	0x5e               	MOVWF	_temperatureLimit1
+                                           ;	.line	677; "extruder2.c"	GIE=1;
+0001e1   1283     bcf	0x3, 0x5             	BANKSEL	_INTCON_bits
+0001e2   1303     bcf	0x3, 0x6             
+0001e3   178b     bsf	0xb, 0x7             	BSF	_INTCON_bits,7
+                                           ;	.line	678; "extruder2.c"	break;
+0001e4   2aa0     goto	0x2a0               	GOTO	_00309_DS_
+                                           _00299_DS_
+                                           ;	.line	681; "extruder2.c"	sendReply();
+0001e5   158a     bsf	0xa, 0x3             	PAGESEL	_sendReply
+0001e6   20cd     call	0xcd                	CALL	_sendReply
+0001e7   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	682; "extruder2.c"	sendDataByte(CMD_GETTEMP);
+0001e8   300a     movlw	0xa                	MOVLW	0x0a
+0001e9   158a     bsf	0xa, 0x3             	PAGESEL	_sendDataByte
+0001ea   212f     call	0x12f               	CALL	_sendDataByte
+0001eb   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	683; "extruder2.c"	sendDataByte(lastTemperature);
+0001ec   1283     bcf	0x3, 0x5             	BANKSEL	_lastTemperature
+0001ed   1303     bcf	0x3, 0x6             
+0001ee   0860     movf	0x60, w             	MOVF	_lastTemperature,W
+0001ef   158a     bsf	0xa, 0x3             	PAGESEL	_sendDataByte
+0001f0   212f     call	0x12f               	CALL	_sendDataByte
+0001f1   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	684; "extruder2.c"	sendDataByte(0);
+0001f2   3000     movlw	0                  	MOVLW	0x00
+0001f3   158a     bsf	0xa, 0x3             	PAGESEL	_sendDataByte
+0001f4   212f     call	0x12f               	CALL	_sendDataByte
+0001f5   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	685; "extruder2.c"	endMessage();
+0001f6   158a     bsf	0xa, 0x3             	PAGESEL	_endMessage
+0001f7   2039     call	0x39                	CALL	_endMessage
+0001f8   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	686; "extruder2.c"	break;
+0001f9   2aa0     goto	0x2a0               	GOTO	_00309_DS_
+                                           _00300_DS_
+                                           ;	.line	689; "extruder2.c"	set_cooler(buffer[1]);
+0001fa   1683     bsf	0x3, 0x5             	BANKSEL	_buffer
+0001fb   1303     bcf	0x3, 0x6             
+0001fc   0821     movf	0x21, w             	MOVF	(_buffer + 1),W
+0001fd   1283     bcf	0x3, 0x5             	BANKSEL	r0x1019
+0001fe   1303     bcf	0x3, 0x6             
+0001ff   00ce     movwf	0x4e               	MOVWF	r0x1019
+000200   24fe     call	0x4fe               	CALL	_set_cooler
+                                           ;	.line	697; "extruder2.c"	break;
+000201   2aa0     goto	0x2a0               	GOTO	_00309_DS_
+                                           _00301_DS_
+                                           ;	.line	702; "extruder2.c"	PWMPeriod = buffer[1];
+000202   1683     bsf	0x3, 0x5             	BANKSEL	_buffer
+000203   1303     bcf	0x3, 0x6             
+000204   0821     movf	0x21, w             	MOVF	(_buffer + 1),W
+000205   1283     bcf	0x3, 0x5             	BANKSEL	_PWMPeriod
+000206   1303     bcf	0x3, 0x6             
+000207   00ea     movwf	0x6a               	MOVWF	_PWMPeriod
+                                           ;	.line	703; "extruder2.c"	PR2 = PWMPeriod;
+000208   086a     movf	0x6a, w             	MOVF	_PWMPeriod,W
+000209   1683     bsf	0x3, 0x5             	BANKSEL	_PR2
+00020a   1303     bcf	0x3, 0x6             
+00020b   0092     movwf	0x12               	MOVWF	_PR2
+                                           ;	.line	704; "extruder2.c"	break;
+00020c   2aa0     goto	0x2a0               	GOTO	_00309_DS_
+                                           _00302_DS_
+                                           ;	.line	708; "extruder2.c"	T2CON = BIN(00000100) | (buffer[1] & 3);
+00020d   1683     bsf	0x3, 0x5             	BANKSEL	_buffer
+00020e   1303     bcf	0x3, 0x6             
+00020f   0821     movf	0x21, w             	MOVF	(_buffer + 1),W
+000210   1283     bcf	0x3, 0x5             	BANKSEL	r0x1019
+000211   1303     bcf	0x3, 0x6             
+000212   00ce     movwf	0x4e               	MOVWF	r0x1019
+000213   3003     movlw	0x3                	MOVLW	0x03
+000214   05ce     andwf	0x4e, f            	ANDWF	r0x1019,F
+000215   3004     movlw	0x4                	MOVLW	0x04
+000216   044e     iorwf	0x4e, w            	IORWF	r0x1019,W
+000217   1283     bcf	0x3, 0x5             	BANKSEL	_T2CON
+000218   1303     bcf	0x3, 0x6             
+000219   0092     movwf	0x12               	MOVWF	_T2CON
+                                           ;	.line	709; "extruder2.c"	break;
+00021a   2aa0     goto	0x2a0               	GOTO	_00309_DS_
+                                           _00303_DS_
+                                           ;	.line	712; "extruder2.c"	GIE=0;
+00021b   1283     bcf	0x3, 0x5             	BANKSEL	_INTCON_bits
+00021c   1303     bcf	0x3, 0x6             
+00021d   138b     bcf	0xb, 0x7             	BCF	_INTCON_bits,7
+                                           ;	.line	713; "extruder2.c"	temperatureVRef = buffer[1];
+00021e   1683     bsf	0x3, 0x5             	BANKSEL	_buffer
+00021f   1303     bcf	0x3, 0x6             
+000220   0821     movf	0x21, w             	MOVF	(_buffer + 1),W
+000221   1283     bcf	0x3, 0x5             	BANKSEL	_temperatureVRef
+000222   1303     bcf	0x3, 0x6             
+000223   00e1     movwf	0x61               	MOVWF	_temperatureVRef
+                                           ;	.line	714; "extruder2.c"	GIE=1;
+000224   1283     bcf	0x3, 0x5             	BANKSEL	_INTCON_bits
+000225   1303     bcf	0x3, 0x6             
+000226   178b     bsf	0xb, 0x7             	BSF	_INTCON_bits,7
+                                           ;	.line	715; "extruder2.c"	break;
+000227   2aa0     goto	0x2a0               	GOTO	_00309_DS_
+                                           _00304_DS_
+                                           ;	.line	718; "extruder2.c"	GIE=0;
+000228   1283     bcf	0x3, 0x5             	BANKSEL	_INTCON_bits
+000229   1303     bcf	0x3, 0x6             
+00022a   138b     bcf	0xb, 0x7             	BCF	_INTCON_bits,7
+                                           ;	.line	719; "extruder2.c"	OPTION_REG = (OPTION_REG & BIN(11111000)) | (buffer[1] & BIN(111));
+00022b   30f8     movlw	0xf8               	MOVLW	0xf8
+00022c   1683     bsf	0x3, 0x5             	BANKSEL	_OPTION_REG
+00022d   1303     bcf	0x3, 0x6             
+00022e   0501     andwf	0x1, w             	ANDWF	_OPTION_REG,W
+00022f   1283     bcf	0x3, 0x5             	BANKSEL	r0x1019
+000230   1303     bcf	0x3, 0x6             
+000231   00ce     movwf	0x4e               	MOVWF	r0x1019
+000232   1683     bsf	0x3, 0x5             	BANKSEL	_buffer
+000233   1303     bcf	0x3, 0x6             
+000234   0821     movf	0x21, w             	MOVF	(_buffer + 1),W
+000235   1283     bcf	0x3, 0x5             	BANKSEL	r0x101A
+000236   1303     bcf	0x3, 0x6             
+000237   00cf     movwf	0x4f               	MOVWF	r0x101A
+000238   3007     movlw	0x7                	MOVLW	0x07
+000239   05cf     andwf	0x4f, f            	ANDWF	r0x101A,F
+00023a   084f     movf	0x4f, w             	MOVF	r0x101A,W
+00023b   044e     iorwf	0x4e, w            	IORWF	r0x1019,W
+00023c   1683     bsf	0x3, 0x5             	BANKSEL	_OPTION_REG
+00023d   1303     bcf	0x3, 0x6             
+00023e   0081     movwf	0x1                	MOVWF	_OPTION_REG
+                                           ;	.line	720; "extruder2.c"	GIE=1;
+00023f   1283     bcf	0x3, 0x5             	BANKSEL	_INTCON_bits
+000240   1303     bcf	0x3, 0x6             
+000241   178b     bsf	0xb, 0x7             	BSF	_INTCON_bits,7
+                                           ;	.line	721; "extruder2.c"	break;
+000242   2aa0     goto	0x2a0               	GOTO	_00309_DS_
+                                           _00305_DS_
+                                           ;	.line	724; "extruder2.c"	sendReply();
+000243   158a     bsf	0xa, 0x3             	PAGESEL	_sendReply
+000244   20cd     call	0xcd                	CALL	_sendReply
+000245   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	725; "extruder2.c"	sendDataByte(CMD_GETDEBUGINFO);
+000246   3036     movlw	0x36               	MOVLW	0x36
+000247   158a     bsf	0xa, 0x3             	PAGESEL	_sendDataByte
+000248   212f     call	0x12f               	CALL	_sendDataByte
+000249   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	726; "extruder2.c"	sendDataByte(heatCounter);
+00024a   1283     bcf	0x3, 0x5             	BANKSEL	_heatCounter
+00024b   1303     bcf	0x3, 0x6             
+00024c   085f     movf	0x5f, w             	MOVF	_heatCounter,W
+00024d   158a     bsf	0xa, 0x3             	PAGESEL	_sendDataByte
+00024e   212f     call	0x12f               	CALL	_sendDataByte
+00024f   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	727; "extruder2.c"	sendDataByte(PORTA);
+000250   1283     bcf	0x3, 0x5             	BANKSEL	_PORTA
+000251   1303     bcf	0x3, 0x6             
+000252   0805     movf	0x5, w              	MOVF	_PORTA,W
+000253   158a     bsf	0xa, 0x3             	PAGESEL	_sendDataByte
+000254   212f     call	0x12f               	CALL	_sendDataByte
+000255   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	728; "extruder2.c"	sendDataByte(TRISA);
+000256   1683     bsf	0x3, 0x5             	BANKSEL	_TRISA
+000257   1303     bcf	0x3, 0x6             
+000258   0805     movf	0x5, w              	MOVF	_TRISA,W
+000259   158a     bsf	0xa, 0x3             	PAGESEL	_sendDataByte
+00025a   212f     call	0x12f               	CALL	_sendDataByte
+00025b   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	729; "extruder2.c"	sendDataByte(OPTION_REG);
+00025c   1683     bsf	0x3, 0x5             	BANKSEL	_OPTION_REG
+00025d   1303     bcf	0x3, 0x6             
+00025e   0801     movf	0x1, w              	MOVF	_OPTION_REG,W
+00025f   158a     bsf	0xa, 0x3             	PAGESEL	_sendDataByte
+000260   212f     call	0x12f               	CALL	_sendDataByte
+000261   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	730; "extruder2.c"	sendDataByte(temperatureVRef);
+000262   1283     bcf	0x3, 0x5             	BANKSEL	_temperatureVRef
+000263   1303     bcf	0x3, 0x6             
+000264   0861     movf	0x61, w             	MOVF	_temperatureVRef,W
+000265   158a     bsf	0xa, 0x3             	PAGESEL	_sendDataByte
+000266   212f     call	0x12f               	CALL	_sendDataByte
+000267   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	731; "extruder2.c"	endMessage();
+000268   158a     bsf	0xa, 0x3             	PAGESEL	_endMessage
+000269   2039     call	0x39                	CALL	_endMessage
+00026a   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	732; "extruder2.c"	break;
+00026b   2aa0     goto	0x2a0               	GOTO	_00309_DS_
+                                           _00306_DS_
+                                           ;	.line	735; "extruder2.c"	sendReply();
+00026c   158a     bsf	0xa, 0x3             	PAGESEL	_sendReply
+00026d   20cd     call	0xcd                	CALL	_sendReply
+00026e   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	736; "extruder2.c"	sendDataByte(CMD_GETTEMPINFO);
+00026f   3037     movlw	0x37               	MOVLW	0x37
+000270   158a     bsf	0xa, 0x3             	PAGESEL	_sendDataByte
+000271   212f     call	0x12f               	CALL	_sendDataByte
+000272   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	737; "extruder2.c"	sendDataByte(requestedHeat0);
+000273   1283     bcf	0x3, 0x5             	BANKSEL	_requestedHeat0
+000274   1303     bcf	0x3, 0x6             
+000275   085b     movf	0x5b, w             	MOVF	_requestedHeat0,W
+000276   158a     bsf	0xa, 0x3             	PAGESEL	_sendDataByte
+000277   212f     call	0x12f               	CALL	_sendDataByte
+000278   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	738; "extruder2.c"	sendDataByte(requestedHeat1);
+000279   1283     bcf	0x3, 0x5             	BANKSEL	_requestedHeat1
+00027a   1303     bcf	0x3, 0x6             
+00027b   085c     movf	0x5c, w             	MOVF	_requestedHeat1,W
+00027c   158a     bsf	0xa, 0x3             	PAGESEL	_sendDataByte
+00027d   212f     call	0x12f               	CALL	_sendDataByte
+00027e   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	739; "extruder2.c"	sendDataByte(temperatureLimit0);
+00027f   1283     bcf	0x3, 0x5             	BANKSEL	_temperatureLimit0
+000280   1303     bcf	0x3, 0x6             
+000281   085d     movf	0x5d, w             	MOVF	_temperatureLimit0,W
+000282   158a     bsf	0xa, 0x3             	PAGESEL	_sendDataByte
+000283   212f     call	0x12f               	CALL	_sendDataByte
+000284   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	740; "extruder2.c"	sendDataByte(temperatureLimit1);
+000285   1283     bcf	0x3, 0x5             	BANKSEL	_temperatureLimit1
+000286   1303     bcf	0x3, 0x6             
+000287   085e     movf	0x5e, w             	MOVF	_temperatureLimit1,W
+000288   158a     bsf	0xa, 0x3             	PAGESEL	_sendDataByte
+000289   212f     call	0x12f               	CALL	_sendDataByte
+00028a   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	741; "extruder2.c"	sendDataByte(lastTemperature);
+00028b   1283     bcf	0x3, 0x5             	BANKSEL	_lastTemperature
+00028c   1303     bcf	0x3, 0x6             
+00028d   0860     movf	0x60, w             	MOVF	_lastTemperature,W
+00028e   158a     bsf	0xa, 0x3             	PAGESEL	_sendDataByte
+00028f   212f     call	0x12f               	CALL	_sendDataByte
+000290   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	742; "extruder2.c"	sendDataByte(temperatureNotUpdatedCounter);
+000291   1283     bcf	0x3, 0x5             	BANKSEL	_temperatureNotUpdatedCounter
+000292   1303     bcf	0x3, 0x6             
+000293   0862     movf	0x62, w             	MOVF	_temperatureNotUpdatedCounter,W
+000294   158a     bsf	0xa, 0x3             	PAGESEL	_sendDataByte
+000295   212f     call	0x12f               	CALL	_sendDataByte
+000296   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	743; "extruder2.c"	endMessage();
+000297   158a     bsf	0xa, 0x3             	PAGESEL	_endMessage
+000298   2039     call	0x39                	CALL	_endMessage
+000299   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	744; "extruder2.c"	break;
+00029a   2aa0     goto	0x2a0               	GOTO	_00309_DS_
+                                           _00307_DS_
+                                           ;	.line	747; "extruder2.c"	solenoid(1);
+00029b   3001     movlw	0x1                	MOVLW	0x01
+00029c   24d2     call	0x4d2               	CALL	_solenoid
+                                           ;	.line	748; "extruder2.c"	break;
+00029d   2aa0     goto	0x2a0               	GOTO	_00309_DS_
+                                           _00308_DS_
+                                           ;	.line	751; "extruder2.c"	solenoid(0);
+00029e   3000     movlw	0                  	MOVLW	0x00
+00029f   24d2     call	0x4d2               	CALL	_solenoid
+                                           _00309_DS_
+0002a0   1283     bcf	0x3, 0x5             	BANKSEL _currentPosition
+0002a1   1303     bcf	0x3, 0x6             
+0002a2   0008     return                   	RETURN	
+                                           ; exit point of _processCommand
+                                           
+                                           ;***
+                                           ;  pBlock Stats: dbName = C
+                                           ;***
+                                           ;entry:  _checkTemperature	;Function start
+                                           ; 2 exit points
+                                           ;has an exit
+                                           ;functions called:
+                                           ;   _delay_10us
+                                           ;   _delay_10us
+                                           ;   _delay_10us
+                                           ;   _delay_10us
+                                           ;   _delay_10us
+                                           ;   _delay_10us
+                                           ;   _delay_10us
+                                           ;   _delay_10us
+                                           ;   _delay_10us
+                                           ;   _delay_10us
+                                           ;2 compiler assigned registers:
+                                           ;   r0x1020
+                                           ;   r0x1021
+                                           ;; Starting pCode block
+                                           _checkTemperature	;Function start
+                                           ; 2 exit points
+                                           ;	.line	489; "extruder2.c"	for (i=temperatureNotUpdatedCounter; i>0; i--) {
+0002a3   1283     bcf	0x3, 0x5             	BANKSEL	_temperatureNotUpdatedCounter
+0002a4   1303     bcf	0x3, 0x6             
+0002a5   0862     movf	0x62, w             	MOVF	_temperatureNotUpdatedCounter,W
+0002a6   1283     bcf	0x3, 0x5             	BANKSEL	r0x1020
+0002a7   1303     bcf	0x3, 0x6             
+0002a8   00cc     movwf	0x4c               	MOVWF	r0x1020
+                                           _00261_DS_
+0002a9   3000     movlw	0                  	MOVLW	0x00
+0002aa   1283     bcf	0x3, 0x5             	BANKSEL	r0x1020
+0002ab   1303     bcf	0x3, 0x6             
+0002ac   044c     iorwf	0x4c, w            	IORWF	r0x1020,W
+0002ad   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+0002ae   2ab2     goto	0x2b2               	GOTO	_00267_DS_
+0002af   3001     movlw	0x1                	MOVLW	0x01
+0002b0   00cd     movwf	0x4d               	MOVWF	r0x1021
+0002b1   2ab5     goto	0x2b5               	GOTO	_00268_DS_
+                                           _00267_DS_
+0002b2   1283     bcf	0x3, 0x5             	BANKSEL	r0x1021
+0002b3   1303     bcf	0x3, 0x6             
+0002b4   01cd     clrf	0x4d                	CLRF	r0x1021
+                                           _00268_DS_
+0002b5   3000     movlw	0                  	MOVLW	0x00
+0002b6   1283     bcf	0x3, 0x5             	BANKSEL	r0x1021
+0002b7   1303     bcf	0x3, 0x6             
+0002b8   044d     iorwf	0x4d, w            	IORWF	r0x1021,W
+0002b9   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+0002ba   2ac0     goto	0x2c0               	GOTO	_00264_DS_
+0002bb   0000     nop                      	nop
+                                           	
+                                           ;	.line	489; "extruder2.c"	for (i=temperatureNotUpdatedCounter; i>0; i--) {
+0002bc   1283     bcf	0x3, 0x5             	BANKSEL	r0x1020
+0002bd   1303     bcf	0x3, 0x6             
+0002be   03cc     decf	0x4c, f             	DECF	r0x1020,F
+0002bf   2aa9     goto	0x2a9               	GOTO	_00261_DS_
+                                           _00264_DS_
+                                           ;	.line	498; "extruder2.c"	T0CS = 0;
+0002c0   1683     bsf	0x3, 0x5             	BANKSEL	_OPTION_REG_bits
+0002c1   1303     bcf	0x3, 0x6             
+0002c2   1281     bcf	0x1, 0x5             	BCF	_OPTION_REG_bits,5
+                                           ;	.line	499; "extruder2.c"	PSA = 0;
+0002c3   1181     bcf	0x1, 0x3             	BCF	_OPTION_REG_bits,3
+                                           ;	.line	500; "extruder2.c"	CMCON = BIN(00000010);
+0002c4   3002     movlw	0x2                	MOVLW	0x02
+0002c5   1283     bcf	0x3, 0x5             	BANKSEL	_CMCON
+0002c6   1303     bcf	0x3, 0x6             
+0002c7   009f     movwf	0x1f               	MOVWF	_CMCON
+                                           ;	.line	503; "extruder2.c"	VRCON = BIN(10000000) | temperatureVRef;
+0002c8   3080     movlw	0x80               	MOVLW	0x80
+0002c9   1283     bcf	0x3, 0x5             	BANKSEL	_temperatureVRef
+0002ca   1303     bcf	0x3, 0x6             
+0002cb   0461     iorwf	0x61, w            	IORWF	_temperatureVRef,W
+0002cc   1683     bsf	0x3, 0x5             	BANKSEL	_VRCON
+0002cd   1303     bcf	0x3, 0x6             
+0002ce   009f     movwf	0x1f               	MOVWF	_VRCON
+                                           ;	.line	504; "extruder2.c"	delay_10us();
+0002cf   118a     bcf	0xa, 0x3             	PAGESEL	_delay_10us
+0002d0   26b8     call	0x6b8               	CALL	_delay_10us
+0002d1   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	508; "extruder2.c"	GIE = 0;
+0002d2   1283     bcf	0x3, 0x5             	BANKSEL	_INTCON_bits
+0002d3   1303     bcf	0x3, 0x6             
+0002d4   138b     bcf	0xb, 0x7             	BCF	_INTCON_bits,7
+                                           ;	.line	509; "extruder2.c"	T0IF = 0;
+0002d5   110b     bcf	0xb, 0x2             	BCF	_INTCON_bits,2
+                                           ;	.line	510; "extruder2.c"	portaval &= BIN(00111101);
+0002d6   303d     movlw	0x3d               	MOVLW	0x3d
+0002d7   1283     bcf	0x3, 0x5             	BANKSEL	_portaval
+0002d8   1303     bcf	0x3, 0x6             
+0002d9   05d3     andwf	0x53, f            	ANDWF	_portaval,F
+                                           ;	.line	511; "extruder2.c"	portaval |= BIN(10000000);
+0002da   17d3     bsf	0x53, 0x7            	BSF	_portaval,7
+                                           ;	.line	512; "extruder2.c"	TRISA = BIN(01000010) | PORTATRIS;
+0002db   3062     movlw	0x62               	MOVLW	0x62
+0002dc   1683     bsf	0x3, 0x5             	BANKSEL	_TRISA
+0002dd   1303     bcf	0x3, 0x6             
+0002de   0085     movwf	0x5                	MOVWF	_TRISA
+                                           ;	.line	513; "extruder2.c"	PORTA = portaval;  //must be set after TRISA
+0002df   1283     bcf	0x3, 0x5             	BANKSEL	_portaval
+0002e0   1303     bcf	0x3, 0x6             
+0002e1   0853     movf	0x53, w             	MOVF	_portaval,W
+0002e2   1283     bcf	0x3, 0x5             	BANKSEL	_PORTA
+0002e3   1303     bcf	0x3, 0x6             
+0002e4   0085     movwf	0x5                	MOVWF	_PORTA
+                                           ;	.line	514; "extruder2.c"	TMR0 = 0; 
+0002e5   0181     clrf	0x1                 	CLRF	_TMR0
+                                           ;	.line	515; "extruder2.c"	interruptTemp = 0;
+0002e6   1283     bcf	0x3, 0x5             	BANKSEL	_interruptTemp
+0002e7   1303     bcf	0x3, 0x6             
+0002e8   01e7     clrf	0x67                	CLRF	_interruptTemp
+                                           ;	.line	516; "extruder2.c"	GIE = 1;
+0002e9   1283     bcf	0x3, 0x5             	BANKSEL	_INTCON_bits
+0002ea   1303     bcf	0x3, 0x6             
+0002eb   178b     bsf	0xb, 0x7             	BSF	_INTCON_bits,7
+                                           _00248_DS_
+                                           ;	.line	522; "extruder2.c"	while (C2OUT) 
+0002ec   1283     bcf	0x3, 0x5             	BANKSEL	_CMCON_bits
+0002ed   1303     bcf	0x3, 0x6             
+0002ee   1b9f     btfsc	0x1f, 0x7          	BTFSC	_CMCON_bits,7
+0002ef   2aec     goto	0x2ec               	GOTO	_00248_DS_
+                                           ;	.line	524; "extruder2.c"	GIE = 0;
+0002f0   138b     bcf	0xb, 0x7             	BCF	_INTCON_bits,7
+                                           ;	.line	525; "extruder2.c"	tmpLastTemperature = TMR0;
+0002f1   0801     movf	0x1, w              	MOVF	_TMR0,W
+0002f2   1283     bcf	0x3, 0x5             	BANKSEL	r0x1020
+0002f3   1303     bcf	0x3, 0x6             
+0002f4   00cc     movwf	0x4c               	MOVWF	r0x1020
+                                           ;	.line	526; "extruder2.c"	if (T0IF) {
+0002f5   1283     bcf	0x3, 0x5             	BANKSEL	_INTCON_bits
+0002f6   1303     bcf	0x3, 0x6             
+0002f7   1d0b     btfss	0xb, 0x2           	BTFSS	_INTCON_bits,2
+0002f8   2afd     goto	0x2fd               	GOTO	_00252_DS_
+                                           ;	.line	527; "extruder2.c"	tmpLastTemperature = 255;
+0002f9   30ff     movlw	0xff               	MOVLW	0xff
+0002fa   1283     bcf	0x3, 0x5             	BANKSEL	r0x1020
+0002fb   1303     bcf	0x3, 0x6             
+0002fc   00cc     movwf	0x4c               	MOVWF	r0x1020
+                                           _00252_DS_
+                                           ;	.line	529; "extruder2.c"	if (interruptTemp == 1) {
+0002fd   1283     bcf	0x3, 0x5             	BANKSEL	_interruptTemp
+0002fe   1303     bcf	0x3, 0x6             
+0002ff   0867     movf	0x67, w             	MOVF	_interruptTemp,W
+000300   3a01     xorlw	0x1                	XORLW	0x01
+000301   1d03     btfss	0x3, 0x2           	BTFSS	STATUS,2
+000302   2b07     goto	0x307               	GOTO	_00254_DS_
+                                           ;	.line	530; "extruder2.c"	temperatureNotUpdatedCounter++;
+000303   1283     bcf	0x3, 0x5             	BANKSEL	_temperatureNotUpdatedCounter
+000304   1303     bcf	0x3, 0x6             
+000305   0ae2     incf	0x62, f             	INCF	_temperatureNotUpdatedCounter,F
+000306   2b10     goto	0x310               	GOTO	_00255_DS_
+                                           _00254_DS_
+                                           ;	.line	532; "extruder2.c"	lastTemperature = tmpLastTemperature;
+000307   1283     bcf	0x3, 0x5             	BANKSEL	r0x1020
+000308   1303     bcf	0x3, 0x6             
+000309   084c     movf	0x4c, w             	MOVF	r0x1020,W
+00030a   1283     bcf	0x3, 0x5             	BANKSEL	_lastTemperature
+00030b   1303     bcf	0x3, 0x6             
+00030c   00e0     movwf	0x60               	MOVWF	_lastTemperature
+                                           ;	.line	533; "extruder2.c"	temperatureNotUpdatedCounter = 0;
+00030d   1283     bcf	0x3, 0x5             	BANKSEL	_temperatureNotUpdatedCounter
+00030e   1303     bcf	0x3, 0x6             
+00030f   01e2     clrf	0x62                	CLRF	_temperatureNotUpdatedCounter
+                                           _00255_DS_
+                                           ;	.line	535; "extruder2.c"	GIE = 1;
+000310   1283     bcf	0x3, 0x5             	BANKSEL	_INTCON_bits
+000311   1303     bcf	0x3, 0x6             
+000312   178b     bsf	0xb, 0x7             	BSF	_INTCON_bits,7
+                                           ;	.line	537; "extruder2.c"	if (temperatureNotUpdatedCounter == 255)
+000313   1283     bcf	0x3, 0x5             	BANKSEL	_temperatureNotUpdatedCounter
+000314   1303     bcf	0x3, 0x6             
+000315   0862     movf	0x62, w             	MOVF	_temperatureNotUpdatedCounter,W
+                                           ;	.line	538; "extruder2.c"	temperatureNotUpdatedCounter--;  //to prevent an overflow
+000316   3aff     xorlw	0xff               	XORLW	0xff
+                                           ;	.line	540; "extruder2.c"	delay_10us(); //to handle interrupts
+000317   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+000318   03e2     decf	0x62, f             	DECF	_temperatureNotUpdatedCounter,F
+000319   118a     bcf	0xa, 0x3             	PAGESEL	_delay_10us
+00031a   26b8     call	0x6b8               	CALL	_delay_10us
+00031b   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	545; "extruder2.c"	GIE = 0;
+00031c   1283     bcf	0x3, 0x5             	BANKSEL	_INTCON_bits
+00031d   1303     bcf	0x3, 0x6             
+00031e   138b     bcf	0xb, 0x7             	BCF	_INTCON_bits,7
+                                           ;	.line	546; "extruder2.c"	portaval &= BIN(00111101);
+00031f   303d     movlw	0x3d               	MOVLW	0x3d
+000320   1283     bcf	0x3, 0x5             	BANKSEL	_portaval
+000321   1303     bcf	0x3, 0x6             
+000322   05d3     andwf	0x53, f            	ANDWF	_portaval,F
+                                           ;	.line	547; "extruder2.c"	TRISA = BIN(00000000) | PORTATRIS;
+000323   3020     movlw	0x20               	MOVLW	0x20
+000324   1683     bsf	0x3, 0x5             	BANKSEL	_TRISA
+000325   1303     bcf	0x3, 0x6             
+000326   0085     movwf	0x5                	MOVWF	_TRISA
+                                           ;	.line	548; "extruder2.c"	PORTA = portaval;
+000327   1283     bcf	0x3, 0x5             	BANKSEL	_portaval
+000328   1303     bcf	0x3, 0x6             
+000329   0853     movf	0x53, w             	MOVF	_portaval,W
+00032a   1283     bcf	0x3, 0x5             	BANKSEL	_PORTA
+00032b   1303     bcf	0x3, 0x6             
+00032c   0085     movwf	0x5                	MOVWF	_PORTA
+                                           ;	.line	549; "extruder2.c"	GIE = 1;
+00032d   178b     bsf	0xb, 0x7             	BSF	_INTCON_bits,7
+                                           ;	.line	552; "extruder2.c"	VRCON = BIN(10100000); //should be 1010xxxx to not output value
+00032e   30a0     movlw	0xa0               	MOVLW	0xa0
+00032f   1683     bsf	0x3, 0x5             	BANKSEL	_VRCON
+000330   1303     bcf	0x3, 0x6             
+000331   009f     movwf	0x1f               	MOVWF	_VRCON
+                                           ;	.line	555; "extruder2.c"	delay_10us();
+000332   118a     bcf	0xa, 0x3             	PAGESEL	_delay_10us
+000333   26b8     call	0x6b8               	CALL	_delay_10us
+000334   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           _00258_DS_
+                                           ;	.line	557; "extruder2.c"	while (!C2OUT)
+000335   1283     bcf	0x3, 0x5             	BANKSEL	_CMCON_bits
+000336   1303     bcf	0x3, 0x6             
+000337   1f9f     btfss	0x1f, 0x7          	BTFSS	_CMCON_bits,7
+000338   2b35     goto	0x335               	GOTO	_00258_DS_
+                                           ;	.line	560; "extruder2.c"	delay_10us();
+000339   118a     bcf	0xa, 0x3             	PAGESEL	_delay_10us
+00033a   26b8     call	0x6b8               	CALL	_delay_10us
+00033b   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	561; "extruder2.c"	delay_10us();
+00033c   118a     bcf	0xa, 0x3             	PAGESEL	_delay_10us
+00033d   26b8     call	0x6b8               	CALL	_delay_10us
+00033e   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	563; "extruder2.c"	TRISA = BIN(11000010) | PORTATRIS;
+00033f   30e2     movlw	0xe2               	MOVLW	0xe2
+000340   1683     bsf	0x3, 0x5             	BANKSEL	_TRISA
+000341   1303     bcf	0x3, 0x6             
+000342   0085     movwf	0x5                	MOVWF	_TRISA
+                                           ;	.line	564; "extruder2.c"	VRCON = 0;  // Turn off vref
+000343   019f     clrf	0x1f                	CLRF	_VRCON
+000344   1283     bcf	0x3, 0x5             	BANKSEL _currentPosition
+000345   1303     bcf	0x3, 0x6             
+000346   0008     return                   	RETURN	
+                                           ; exit point of _checkTemperature
+                                           
+                                           ;***
+                                           ;  pBlock Stats: dbName = C
+                                           ;***
+                                           ;entry:  _motorTick	;Function start
+                                           ; 2 exit points
+                                           ;has an exit
+                                           ;functions called:
+                                           ;   _change_log
+                                           ;   _extruder_stop
+                                           ;   _sendMessageISR
+                                           ;   _sendDataByteISR
+                                           ;   _sendDataByteISR
+                                           ;   _endMessageISR
+                                           ;   _change_log
+                                           ;   _extruder_stop
+                                           ;   _sendMessageISR
+                                           ;   _sendDataByteISR
+                                           ;   _sendDataByteISR
+                                           ;   _endMessageISR
+                                           ;4 compiler assigned registers:
+                                           ;   r0x1022
+                                           ;   r0x1023
+                                           ;   r0x1024
+                                           ;   r0x1025
+                                           ;; Starting pCode block
+                                           _motorTick	;Function start
+                                           ; 2 exit points
+                                           ;	.line	440; "extruder2.c"	RBIF = 0;
+000347   1283     bcf	0x3, 0x5             	BANKSEL	_INTCON_bits
+000348   1303     bcf	0x3, 0x6             
+000349   100b     bcf	0xb, 0               	BCF	_INTCON_bits,0
+                                           ;	.line	442; "extruder2.c"	change_log();  //not correct for UNIVERSIAL_PCB
+00034a   250c     call	0x50c               	CALL	_change_log
+                                           ;	.line	444; "extruder2.c"	if (extrude_click) {
+00034b   1283     bcf	0x3, 0x5             	BANKSEL	_extrude_click
+00034c   1303     bcf	0x3, 0x6             
+00034d   0854     movf	0x54, w             	MOVF	_extrude_click,W
+00034e   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+00034f   2baf     goto	0x3af               	GOTO	_00239_DS_
+                                           ;	.line	447; "extruder2.c"	if (currentDirection)
+000350   1283     bcf	0x3, 0x5             	BANKSEL	_currentDirection
+000351   1303     bcf	0x3, 0x6             
+000352   0858     movf	0x58, w             	MOVF	_currentDirection,W
+000353   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+000354   2b70     goto	0x370               	GOTO	_00233_DS_
+                                           ;	.line	448; "extruder2.c"	currentPosition.ival--;
+000355   1283     bcf	0x3, 0x5             	BANKSEL	_currentPosition
+000356   1303     bcf	0x3, 0x6             
+000357   0863     movf	0x63, w             	MOVF	(_currentPosition + 0),W
+000358   1283     bcf	0x3, 0x5             	BANKSEL	r0x1022
+000359   1303     bcf	0x3, 0x6             
+00035a   00c8     movwf	0x48               	MOVWF	r0x1022
+00035b   1283     bcf	0x3, 0x5             	BANKSEL	_currentPosition
+00035c   1303     bcf	0x3, 0x6             
+00035d   0864     movf	0x64, w             	MOVF	(_currentPosition + 1),W
+00035e   1283     bcf	0x3, 0x5             	BANKSEL	r0x1023
+00035f   1303     bcf	0x3, 0x6             
+000360   00c9     movwf	0x49               	MOVWF	r0x1023
+000361   30ff     movlw	0xff               	MOVLW	0xff
+000362   07c8     addwf	0x48, f            	ADDWF	r0x1022,F
+000363   1c03     btfss	0x3, 0             	BTFSS	STATUS,0
+000364   03c9     decf	0x49, f             	DECF	r0x1023,F
+                                           ;gen.c:9306: size=1/2, offset=0, AOP_TYPE(res)=13
+000365   0848     movf	0x48, w             	MOVF	r0x1022,W
+000366   1283     bcf	0x3, 0x5             	BANKSEL	_currentPosition
+000367   1303     bcf	0x3, 0x6             
+000368   00e3     movwf	0x63               	MOVWF	(_currentPosition + 0)
+                                           ;gen.c:9306: size=0/2, offset=1, AOP_TYPE(res)=13
+000369   1283     bcf	0x3, 0x5             	BANKSEL	r0x1023
+00036a   1303     bcf	0x3, 0x6             
+00036b   0849     movf	0x49, w             	MOVF	r0x1023,W
+00036c   1283     bcf	0x3, 0x5             	BANKSEL	_currentPosition
+00036d   1303     bcf	0x3, 0x6             
+00036e   00e4     movwf	0x64               	MOVWF	(_currentPosition + 1)
+00036f   2b89     goto	0x389               	GOTO	_00234_DS_
+                                           _00233_DS_
+                                           ;	.line	450; "extruder2.c"	currentPosition.ival++;
+000370   1283     bcf	0x3, 0x5             	BANKSEL	_currentPosition
+000371   1303     bcf	0x3, 0x6             
+000372   0863     movf	0x63, w             	MOVF	(_currentPosition + 0),W
+000373   1283     bcf	0x3, 0x5             	BANKSEL	r0x1022
+000374   1303     bcf	0x3, 0x6             
+000375   00c8     movwf	0x48               	MOVWF	r0x1022
+000376   1283     bcf	0x3, 0x5             	BANKSEL	_currentPosition
+000377   1303     bcf	0x3, 0x6             
+000378   0864     movf	0x64, w             	MOVF	(_currentPosition + 1),W
+000379   1283     bcf	0x3, 0x5             	BANKSEL	r0x1023
+00037a   1303     bcf	0x3, 0x6             
+00037b   00c9     movwf	0x49               	MOVWF	r0x1023
+00037c   0ac8     incf	0x48, f             	INCF	r0x1022,F
+00037d   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+00037e   0ac9     incf	0x49, f             	INCF	r0x1023,F
+                                           ;gen.c:9306: size=1/2, offset=0, AOP_TYPE(res)=13
+00037f   0848     movf	0x48, w             	MOVF	r0x1022,W
+000380   1283     bcf	0x3, 0x5             	BANKSEL	_currentPosition
+000381   1303     bcf	0x3, 0x6             
+000382   00e3     movwf	0x63               	MOVWF	(_currentPosition + 0)
+                                           ;gen.c:9306: size=0/2, offset=1, AOP_TYPE(res)=13
+000383   1283     bcf	0x3, 0x5             	BANKSEL	r0x1023
+000384   1303     bcf	0x3, 0x6             
+000385   0849     movf	0x49, w             	MOVF	r0x1023,W
+000386   1283     bcf	0x3, 0x5             	BANKSEL	_currentPosition
+000387   1303     bcf	0x3, 0x6             
+000388   00e4     movwf	0x64               	MOVWF	(_currentPosition + 1)
+                                           _00234_DS_
+                                           ;	.line	452; "extruder2.c"	if ((seekSpeed != 0) && (currentPosition.ival == seekPosition.ival)) {
+000389   3000     movlw	0                  	MOVLW	0x00
+00038a   1283     bcf	0x3, 0x5             	BANKSEL	_seekSpeed
+00038b   1303     bcf	0x3, 0x6             
+00038c   0459     iorwf	0x59, w            	IORWF	_seekSpeed,W
+00038d   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+00038e   2baf     goto	0x3af               	GOTO	_00239_DS_
+00038f   1283     bcf	0x3, 0x5             	BANKSEL	_currentPosition
+000390   1303     bcf	0x3, 0x6             
+000391   0863     movf	0x63, w             	MOVF	(_currentPosition + 0),W
+000392   1283     bcf	0x3, 0x5             	BANKSEL	r0x1022
+000393   1303     bcf	0x3, 0x6             
+000394   00c8     movwf	0x48               	MOVWF	r0x1022
+000395   1283     bcf	0x3, 0x5             	BANKSEL	_currentPosition
+000396   1303     bcf	0x3, 0x6             
+000397   0864     movf	0x64, w             	MOVF	(_currentPosition + 1),W
+000398   1283     bcf	0x3, 0x5             	BANKSEL	r0x1023
+000399   1303     bcf	0x3, 0x6             
+00039a   00c9     movwf	0x49               	MOVWF	r0x1023
+00039b   1283     bcf	0x3, 0x5             	BANKSEL	_seekPosition
+00039c   1303     bcf	0x3, 0x6             
+00039d   0865     movf	0x65, w             	MOVF	(_seekPosition + 0),W
+00039e   1283     bcf	0x3, 0x5             	BANKSEL	r0x1024
+00039f   1303     bcf	0x3, 0x6             
+0003a0   00ca     movwf	0x4a               	MOVWF	r0x1024
+0003a1   1283     bcf	0x3, 0x5             	BANKSEL	_seekPosition
+0003a2   1303     bcf	0x3, 0x6             
+0003a3   0866     movf	0x66, w             	MOVF	(_seekPosition + 1),W
+0003a4   1283     bcf	0x3, 0x5             	BANKSEL	r0x1025
+0003a5   1303     bcf	0x3, 0x6             
+0003a6   00cb     movwf	0x4b               	MOVWF	r0x1025
+0003a7   084a     movf	0x4a, w             	MOVF	r0x1024,W
+0003a8   0648     xorwf	0x48, w            	XORWF	r0x1022,W
+0003a9   1d03     btfss	0x3, 0x2           	BTFSS	STATUS,2
+0003aa   2baf     goto	0x3af               	GOTO	_00239_DS_
+0003ab   084b     movf	0x4b, w             	MOVF	r0x1025,W
+                                           ;	.line	454; "extruder2.c"	extruder_stop();
+0003ac   0649     xorwf	0x49, w            	XORWF	r0x1023,W
+                                           ;	.line	458; "extruder2.c"	if (material_click) {
+0003ad   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+0003ae   2555     call	0x555               	CALL	_extruder_stop
+                                           _00239_DS_
+0003af   3000     movlw	0                  	MOVLW	0x00
+0003b0   1283     bcf	0x3, 0x5             	BANKSEL	_material_click
+0003b1   1303     bcf	0x3, 0x6             
+0003b2   0455     iorwf	0x55, w            	IORWF	_material_click,W
+0003b3   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+0003b4   2bcc     goto	0x3cc               	GOTO	_00243_DS_
+                                           ;	.line	459; "extruder2.c"	if (sendMessageISR(seekNotify)) { 
+0003b5   1283     bcf	0x3, 0x5             	BANKSEL	_seekNotify
+0003b6   1303     bcf	0x3, 0x6             
+0003b7   0857     movf	0x57, w             	MOVF	_seekNotify,W
+0003b8   158a     bsf	0xa, 0x3             	PAGESEL	_sendMessageISR
+0003b9   20fa     call	0xfa                	CALL	_sendMessageISR
+0003ba   118a     bcf	0xa, 0x3             	PAGESEL	$
+0003bb   1283     bcf	0x3, 0x5             	BANKSEL	r0x1022
+0003bc   1303     bcf	0x3, 0x6             
+0003bd   00c8     movwf	0x48               	MOVWF	r0x1022
+0003be   0848     movf	0x48, w             	MOVF	r0x1022,W
+0003bf   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+0003c0   2bcc     goto	0x3cc               	GOTO	_00243_DS_
+                                           ;	.line	463; "extruder2.c"	sendDataByteISR(CMD_ISEMPTY);
+0003c1   3008     movlw	0x8                	MOVLW	0x08
+0003c2   158a     bsf	0xa, 0x3             	PAGESEL	_sendDataByteISR
+0003c3   212d     call	0x12d               	CALL	_sendDataByteISR
+0003c4   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	464; "extruder2.c"	sendDataByteISR(1);
+0003c5   3001     movlw	0x1                	MOVLW	0x01
+0003c6   158a     bsf	0xa, 0x3             	PAGESEL	_sendDataByteISR
+0003c7   212d     call	0x12d               	CALL	_sendDataByteISR
+0003c8   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	465; "extruder2.c"	endMessageISR();
+0003c9   158a     bsf	0xa, 0x3             	PAGESEL	_endMessageISR
+0003ca   205b     call	0x5b                	CALL	_endMessageISR
+0003cb   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           _00243_DS_
+0003cc   1283     bcf	0x3, 0x5             	BANKSEL _currentPosition
+0003cd   1303     bcf	0x3, 0x6             
+                                           	
+0003ce   0008     return                   	RETURN	
+                                           ; exit point of _motorTick
+                                           
+                                           ;***
+                                           ;  pBlock Stats: dbName = C
+                                           ;***
+                                           ;entry:  _timerTick	;Function start
+                                           ; 2 exit points
+                                           ;has an exit
+                                           ;functions called:
+                                           ;   _heater_off
+                                           ;   _heater_off
+                                           ;   _heater_off
+                                           ;   _heater_off
+                                           ;   _heater_on
+                                           ;   _heater_off
+                                           ;   _heater_off
+                                           ;   _heater_off
+                                           ;   _heater_off
+                                           ;   _heater_on
+                                           ;; Starting pCode block
+                                           _timerTick	;Function start
+                                           ; 2 exit points
+                                           ;unsigned compare: left < lit(0x10=16), size=1
+                                           ;	.line	385; "extruder2.c"	if ((lastTemperature < 0x10) || (temperatureNotUpdatedCounter > 100)) { 
+0003cf   3010     movlw	0x10               	MOVLW	0x10
+0003d0   1283     bcf	0x3, 0x5             	BANKSEL	_lastTemperature
+0003d1   1303     bcf	0x3, 0x6             
+0003d2   0260     subwf	0x60, w            	SUBWF	_lastTemperature,W
+0003d3   1c03     btfss	0x3, 0             	BTFSS	STATUS,0
+0003d4   2bdb     goto	0x3db               	GOTO	_00194_DS_
+                                           ;genSkipc:3694: created from rifx:0xbf8b93d0
+                                           ;swapping arguments (AOP_TYPEs 1/3)
+                                           ;unsigned compare: left >= lit(0x65=101), size=1
+0003d5   3065     movlw	0x65               	MOVLW	0x65
+0003d6   1283     bcf	0x3, 0x5             	BANKSEL	_temperatureNotUpdatedCounter
+0003d7   1303     bcf	0x3, 0x6             
+0003d8   0262     subwf	0x62, w            	SUBWF	_temperatureNotUpdatedCounter,W
+0003d9   1c03     btfss	0x3, 0             	BTFSS	STATUS,0
+0003da   2bdd     goto	0x3dd               	GOTO	_00195_DS_
+                                           ;genSkipc:3694: created from rifx:0xbf8b93d0
+                                           _00194_DS_
+                                           ;	.line	388; "extruder2.c"	heater_off();  
+0003db   2543     call	0x543               	CALL	_heater_off
+0003dc   2c18     goto	0x418               	GOTO	_00196_DS_
+                                           _00195_DS_
+                                           ;	.line	389; "extruder2.c"	} else if (lastTemperature <= temperatureLimit1) {
+0003dd   1283     bcf	0x3, 0x5             	BANKSEL	_lastTemperature
+0003de   1303     bcf	0x3, 0x6             
+0003df   0860     movf	0x60, w             	MOVF	_lastTemperature,W
+0003e0   1283     bcf	0x3, 0x5             	BANKSEL	_temperatureLimit1
+0003e1   1303     bcf	0x3, 0x6             
+0003e2   025e     subwf	0x5e, w            	SUBWF	_temperatureLimit1,W
+0003e3   1c03     btfss	0x3, 0             	BTFSS	STATUS,0
+0003e4   2be7     goto	0x3e7               	GOTO	_00192_DS_
+                                           ;genSkipc:3694: created from rifx:0xbf8b93d0
+                                           ;	.line	391; "extruder2.c"	heater_off();
+0003e5   2543     call	0x543               	CALL	_heater_off
+0003e6   2c18     goto	0x418               	GOTO	_00196_DS_
+                                           _00192_DS_
+                                           ;	.line	392; "extruder2.c"	} else if ((lastTemperature <= temperatureLimit0) &&
+0003e7   1283     bcf	0x3, 0x5             	BANKSEL	_lastTemperature
+0003e8   1303     bcf	0x3, 0x6             
+0003e9   0860     movf	0x60, w             	MOVF	_lastTemperature,W
+0003ea   1283     bcf	0x3, 0x5             	BANKSEL	_temperatureLimit0
+0003eb   1303     bcf	0x3, 0x6             
+0003ec   025d     subwf	0x5d, w            	SUBWF	_temperatureLimit0,W
+0003ed   1c03     btfss	0x3, 0             	BTFSS	STATUS,0
+0003ee   2bff     goto	0x3ff               	GOTO	_00187_DS_
+                                           ;genSkipc:3694: created from rifx:0xbf8b93d0
+                                           ;	.line	393; "extruder2.c"	(heatCounter >= requestedHeat1) && (requestedHeat1 != 255)) {
+0003ef   1283     bcf	0x3, 0x5             	BANKSEL	_requestedHeat1
+0003f0   1303     bcf	0x3, 0x6             
+0003f1   085c     movf	0x5c, w             	MOVF	_requestedHeat1,W
+0003f2   1283     bcf	0x3, 0x5             	BANKSEL	_heatCounter
+0003f3   1303     bcf	0x3, 0x6             
+0003f4   025f     subwf	0x5f, w            	SUBWF	_heatCounter,W
+0003f5   1c03     btfss	0x3, 0             	BTFSS	STATUS,0
+0003f6   2bff     goto	0x3ff               	GOTO	_00187_DS_
+                                           ;genSkipc:3694: created from rifx:0xbf8b93d0
+0003f7   1283     bcf	0x3, 0x5             	BANKSEL	_requestedHeat1
+0003f8   1303     bcf	0x3, 0x6             
+0003f9   085c     movf	0x5c, w             	MOVF	_requestedHeat1,W
+                                           ;	.line	395; "extruder2.c"	heater_off();
+0003fa   3aff     xorlw	0xff               	XORLW	0xff
+0003fb   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+0003fc   2bff     goto	0x3ff               	GOTO	_00187_DS_
+0003fd   2543     call	0x543               	CALL	_heater_off
+0003fe   2c18     goto	0x418               	GOTO	_00196_DS_
+                                           _00187_DS_
+                                           ;	.line	396; "extruder2.c"	} else if ((lastTemperature > temperatureLimit0) &&
+0003ff   1283     bcf	0x3, 0x5             	BANKSEL	_lastTemperature
+000400   1303     bcf	0x3, 0x6             
+000401   0860     movf	0x60, w             	MOVF	_lastTemperature,W
+000402   1283     bcf	0x3, 0x5             	BANKSEL	_temperatureLimit0
+000403   1303     bcf	0x3, 0x6             
+000404   025d     subwf	0x5d, w            	SUBWF	_temperatureLimit0,W
+000405   1803     btfsc	0x3, 0             	BTFSC	STATUS,0
+000406   2c17     goto	0x417               	GOTO	_00182_DS_
+                                           ;genSkipc:3694: created from rifx:0xbf8b93d0
+                                           ;	.line	397; "extruder2.c"	(heatCounter >= requestedHeat0) && (requestedHeat0 != 255)) {
+000407   1283     bcf	0x3, 0x5             	BANKSEL	_requestedHeat0
+000408   1303     bcf	0x3, 0x6             
+000409   085b     movf	0x5b, w             	MOVF	_requestedHeat0,W
+00040a   1283     bcf	0x3, 0x5             	BANKSEL	_heatCounter
+00040b   1303     bcf	0x3, 0x6             
+00040c   025f     subwf	0x5f, w            	SUBWF	_heatCounter,W
+00040d   1c03     btfss	0x3, 0             	BTFSS	STATUS,0
+00040e   2c17     goto	0x417               	GOTO	_00182_DS_
+                                           ;genSkipc:3694: created from rifx:0xbf8b93d0
+00040f   1283     bcf	0x3, 0x5             	BANKSEL	_requestedHeat0
+000410   1303     bcf	0x3, 0x6             
+000411   085b     movf	0x5b, w             	MOVF	_requestedHeat0,W
+                                           ;	.line	399; "extruder2.c"	heater_off();
+000412   3aff     xorlw	0xff               	XORLW	0xff
+000413   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+000414   2c17     goto	0x417               	GOTO	_00182_DS_
+000415   2543     call	0x543               	CALL	_heater_off
+000416   2c18     goto	0x418               	GOTO	_00196_DS_
+                                           _00182_DS_
+                                           ;	.line	402; "extruder2.c"	heater_on();
+000417   253b     call	0x53b               	CALL	_heater_on
+                                           _00196_DS_
+                                           ;	.line	404; "extruder2.c"	heatCounter++;
+000418   1283     bcf	0x3, 0x5             	BANKSEL	_heatCounter
+000419   1303     bcf	0x3, 0x6             
+00041a   0adf     incf	0x5f, f             	INCF	_heatCounter,F
+                                           ;	.line	405; "extruder2.c"	TMR1H = HEATER_PWM_PERIOD;
+00041b   30ff     movlw	0xff               	MOVLW	0xff
+00041c   1283     bcf	0x3, 0x5             	BANKSEL	_TMR1H
+00041d   1303     bcf	0x3, 0x6             
+00041e   008f     movwf	0xf                	MOVWF	_TMR1H
+                                           ;	.line	406; "extruder2.c"	TMR1L = 0;
+00041f   018e     clrf	0xe                 	CLRF	_TMR1L
+                                           ;	.line	408; "extruder2.c"	if(solenoid_on)
+000420   1283     bcf	0x3, 0x5             	BANKSEL	_solenoid_on
+000421   1303     bcf	0x3, 0x6             
+000422   086d     movf	0x6d, w             	MOVF	_solenoid_on,W
+000423   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+000424   2c46     goto	0x446               	GOTO	_00205_DS_
+                                           ;	.line	410; "extruder2.c"	if(pulseCounter2 == 0)
+000425   1283     bcf	0x3, 0x5             	BANKSEL	_pulseCounter2
+000426   1303     bcf	0x3, 0x6             
+000427   086c     movf	0x6c, w             	MOVF	_pulseCounter2,W
+000428   1d03     btfss	0x3, 0x2           	BTFSS	STATUS,2
+000429   2c43     goto	0x443               	GOTO	_00202_DS_
+                                           ;	.line	412; "extruder2.c"	if(pulseCounter1 == 0)
+00042a   1283     bcf	0x3, 0x5             	BANKSEL	_pulseCounter1
+00042b   1303     bcf	0x3, 0x6             
+00042c   086b     movf	0x6b, w             	MOVF	_pulseCounter1,W
+00042d   1d03     btfss	0x3, 0x2           	BTFSS	STATUS,2
+00042e   2c3b     goto	0x43b               	GOTO	_00199_DS_
+                                           ;	.line	414; "extruder2.c"	portaval &= BIN(11111010);
+00042f   30fa     movlw	0xfa               	MOVLW	0xfa
+000430   1283     bcf	0x3, 0x5             	BANKSEL	_portaval
+000431   1303     bcf	0x3, 0x6             
+000432   05d3     andwf	0x53, f            	ANDWF	_portaval,F
+                                           ;	.line	415; "extruder2.c"	PORTA = portaval;
+000433   0853     movf	0x53, w             	MOVF	_portaval,W
+000434   1283     bcf	0x3, 0x5             	BANKSEL	_PORTA
+000435   1303     bcf	0x3, 0x6             
+000436   0085     movwf	0x5                	MOVWF	_PORTA
+                                           ;	.line	416; "extruder2.c"	solenoid_on = 0;
+000437   1283     bcf	0x3, 0x5             	BANKSEL	_solenoid_on
+000438   1303     bcf	0x3, 0x6             
+000439   01ed     clrf	0x6d                	CLRF	_solenoid_on
+00043a   2c46     goto	0x446               	GOTO	_00205_DS_
+                                           _00199_DS_
+                                           ;	.line	419; "extruder2.c"	pulseCounter1--;
+00043b   1283     bcf	0x3, 0x5             	BANKSEL	_pulseCounter1
+00043c   1303     bcf	0x3, 0x6             
+00043d   03eb     decf	0x6b, f             	DECF	_pulseCounter1,F
+                                           ;	.line	420; "extruder2.c"	pulseCounter2 = PC2;
+00043e   3014     movlw	0x14               	MOVLW	0x14
+00043f   1283     bcf	0x3, 0x5             	BANKSEL	_pulseCounter2
+000440   1303     bcf	0x3, 0x6             
+000441   00ec     movwf	0x6c               	MOVWF	_pulseCounter2
+000442   2c46     goto	0x446               	GOTO	_00205_DS_
+                                           _00202_DS_
+                                           ;	.line	423; "extruder2.c"	pulseCounter2--;
+000443   1283     bcf	0x3, 0x5             	BANKSEL	_pulseCounter2
+000444   1303     bcf	0x3, 0x6             
+000445   03ec     decf	0x6c, f             	DECF	_pulseCounter2,F
+                                           _00205_DS_
+000446   1283     bcf	0x3, 0x5             	BANKSEL _currentPosition
+000447   1303     bcf	0x3, 0x6             
+000448   0008     return                   	RETURN	
+                                           ; exit point of _timerTick
+                                           
+                                           ;***
+                                           ;  pBlock Stats: dbName = C
+                                           ;***
+                                           ;entry:  _setSpeed	;Function start
+                                           ; 2 exit points
+                                           ;has an exit
+                                           ;functions called:
+                                           ;   _extruder_stop
+                                           ;   _extruder_forward
+                                           ;   _extruder_reverse
+                                           ;   _pwmSet
+                                           ;   _extruder_stop
+                                           ;   _extruder_forward
+                                           ;   _extruder_reverse
+                                           ;   _pwmSet
+                                           ;1 compiler assigned register :
+                                           ;   r0x101E
+                                           ;; Starting pCode block
+                                           _setSpeed	;Function start
+                                           ; 2 exit points
+                                           ;	.line	354; "extruder2.c"	void setSpeed(byte direction)
+000449   1283     bcf	0x3, 0x5             	BANKSEL	r0x101E
+00044a   1303     bcf	0x3, 0x6             
+00044b   00c6     movwf	0x46               	MOVWF	r0x101E
+                                           ;	.line	356; "extruder2.c"	if (seekSpeed == 0) 
+00044c   1283     bcf	0x3, 0x5             	BANKSEL	_seekSpeed
+00044d   1303     bcf	0x3, 0x6             
+00044e   0859     movf	0x59, w             	MOVF	_seekSpeed,W
+00044f   1d03     btfss	0x3, 0x2           	BTFSS	STATUS,2
+000450   2c53     goto	0x453               	GOTO	_00174_DS_
+                                           ;	.line	358; "extruder2.c"	extruder_stop();
+000451   2555     call	0x555               	CALL	_extruder_stop
+                                           ;	.line	359; "extruder2.c"	return;
+000452   2c66     goto	0x466               	GOTO	_00176_DS_
+                                           _00174_DS_
+                                           ;	.line	362; "extruder2.c"	if (direction == 0) 
+000453   3000     movlw	0                  	MOVLW	0x00
+000454   1283     bcf	0x3, 0x5             	BANKSEL	r0x101E
+000455   1303     bcf	0x3, 0x6             
+000456   0446     iorwf	0x46, w            	IORWF	r0x101E,W
+000457   1d03     btfss	0x3, 0x2           	BTFSS	STATUS,2
+000458   2c5b     goto	0x45b               	GOTO	_00171_DS_
+                                           ;	.line	363; "extruder2.c"	extruder_forward();
+000459   2550     call	0x550               	CALL	_extruder_forward
+00045a   2c5c     goto	0x45c               	GOTO	_00175_DS_
+                                           _00171_DS_
+                                           ;	.line	365; "extruder2.c"	extruder_reverse();
+00045b   254b     call	0x54b               	CALL	_extruder_reverse
+                                           _00175_DS_
+                                           ;	.line	367; "extruder2.c"	pwmSet(0);    
+00045c   3000     movlw	0                  	MOVLW	0x00
+00045d   2467     call	0x467               	CALL	_pwmSet
+                                           ;	.line	368; "extruder2.c"	currentDirection = direction;
+00045e   1283     bcf	0x3, 0x5             	BANKSEL	r0x101E
+00045f   1303     bcf	0x3, 0x6             
+000460   0846     movf	0x46, w             	MOVF	r0x101E,W
+000461   1283     bcf	0x3, 0x5             	BANKSEL	_currentDirection
+000462   1303     bcf	0x3, 0x6             
+000463   00d8     movwf	0x58               	MOVWF	_currentDirection
+000464   1283     bcf	0x3, 0x5             	BANKSEL _currentPosition
+000465   1303     bcf	0x3, 0x6             
+                                           	
+                                           _00176_DS_
+000466   0008     return                   	RETURN	
+                                           ; exit point of _setSpeed
+                                           
+                                           ;***
+                                           ;  pBlock Stats: dbName = C
+                                           ;***
+                                           ;entry:  _pwmSet	;Function start
+                                           ; 2 exit points
+                                           ;has an exit
+                                           ;1 compiler assigned register :
+                                           ;   r0x101F
+                                           ;; Starting pCode block
+                                           _pwmSet	;Function start
+                                           ; 2 exit points
+                                           ;	.line	326; "extruder2.c"	void pwmSet(byte fastOverRide)
+000467   1283     bcf	0x3, 0x5             	BANKSEL	r0x101F
+000468   1303     bcf	0x3, 0x6             
+000469   00c7     movwf	0x47               	MOVWF	r0x101F
+                                           ;	.line	328; "extruder2.c"	CCP1CON = BIN(00111100);
+00046a   303c     movlw	0x3c               	MOVLW	0x3c
+00046b   1283     bcf	0x3, 0x5             	BANKSEL	_CCP1CON
+00046c   1303     bcf	0x3, 0x6             
+00046d   0097     movwf	0x17               	MOVWF	_CCP1CON
+                                           ;	.line	329; "extruder2.c"	CCPR1L = seekSpeed;
+00046e   1283     bcf	0x3, 0x5             	BANKSEL	_seekSpeed
+00046f   1303     bcf	0x3, 0x6             
+000470   0859     movf	0x59, w             	MOVF	_seekSpeed,W
+000471   1283     bcf	0x3, 0x5             	BANKSEL	_CCPR1L
+000472   1303     bcf	0x3, 0x6             
+000473   0095     movwf	0x15               	MOVWF	_CCPR1L
+                                           ;	.line	330; "extruder2.c"	if (fastOverRide || seekSpeed == 255)
+000474   1283     bcf	0x3, 0x5             	BANKSEL	r0x101F
+000475   1303     bcf	0x3, 0x6             
+000476   0847     movf	0x47, w             	MOVF	r0x101F,W
+000477   1d03     btfss	0x3, 0x2           	BTFSS	STATUS,2
+000478   2c7f     goto	0x47f               	GOTO	_00163_DS_
+000479   1283     bcf	0x3, 0x5             	BANKSEL	_seekSpeed
+00047a   1303     bcf	0x3, 0x6             
+00047b   0859     movf	0x59, w             	MOVF	_seekSpeed,W
+00047c   3aff     xorlw	0xff               	XORLW	0xff
+00047d   1d03     btfss	0x3, 0x2           	BTFSS	STATUS,2
+00047e   2c83     goto	0x483               	GOTO	_00164_DS_
+                                           _00163_DS_
+                                           ;	.line	331; "extruder2.c"	PR2 = 0;
+00047f   1683     bsf	0x3, 0x5             	BANKSEL	_PR2
+000480   1303     bcf	0x3, 0x6             
+000481   0192     clrf	0x12                	CLRF	_PR2
+000482   2c89     goto	0x489               	GOTO	_00165_DS_
+                                           _00164_DS_
+                                           ;	.line	333; "extruder2.c"	PR2 = PWMPeriod;
+000483   1283     bcf	0x3, 0x5             	BANKSEL	_PWMPeriod
+000484   1303     bcf	0x3, 0x6             
+000485   086a     movf	0x6a, w             	MOVF	_PWMPeriod,W
+000486   1683     bsf	0x3, 0x5             	BANKSEL	_PR2
+000487   1303     bcf	0x3, 0x6             
+000488   0092     movwf	0x12               	MOVWF	_PR2
+                                           _00165_DS_
+000489   1283     bcf	0x3, 0x5             	BANKSEL _currentPosition
+00048a   1303     bcf	0x3, 0x6             
+00048b   0008     return                   	RETURN	
+                                           ; exit point of _pwmSet
+                                           
+                                           ;***
+                                           ;  pBlock Stats: dbName = C
+                                           ;***
+                                           ;entry:  _init2	;Function start
+                                           ; 2 exit points
+                                           ;has an exit
+                                           ;; Starting pCode block
+                                           _init2	;Function start
+                                           ; 2 exit points
+                                           ;	.line	298; "extruder2.c"	PWMPeriod = 255;
+00048c   30ff     movlw	0xff               	MOVLW	0xff
+00048d   1283     bcf	0x3, 0x5             	BANKSEL	_PWMPeriod
+00048e   1303     bcf	0x3, 0x6             
+00048f   00ea     movwf	0x6a               	MOVWF	_PWMPeriod
+                                           ;	.line	299; "extruder2.c"	currentDirection = 0;
+000490   1283     bcf	0x3, 0x5             	BANKSEL	_currentDirection
+000491   1303     bcf	0x3, 0x6             
+000492   01d8     clrf	0x58                	CLRF	_currentDirection
+                                           ;	.line	300; "extruder2.c"	seekSpeed = 0;
+000493   1283     bcf	0x3, 0x5             	BANKSEL	_seekSpeed
+000494   1303     bcf	0x3, 0x6             
+000495   01d9     clrf	0x59                	CLRF	_seekSpeed
+                                           ;	.line	301; "extruder2.c"	seekNotify = 255;
+000496   30ff     movlw	0xff               	MOVLW	0xff
+000497   1283     bcf	0x3, 0x5             	BANKSEL	_seekNotify
+000498   1303     bcf	0x3, 0x6             
+000499   00d7     movwf	0x57               	MOVWF	_seekNotify
+                                           ;	.line	302; "extruder2.c"	lastPortB = 0;
+00049a   1283     bcf	0x3, 0x5             	BANKSEL	_lastPortB
+00049b   1303     bcf	0x3, 0x6             
+00049c   01da     clrf	0x5a                	CLRF	_lastPortB
+                                           ;	.line	303; "extruder2.c"	lastPortA = 0;
+00049d   1283     bcf	0x3, 0x5             	BANKSEL	_lastPortA
+00049e   1303     bcf	0x3, 0x6             
+00049f   01d6     clrf	0x56                	CLRF	_lastPortA
+                                           ;	.line	304; "extruder2.c"	extrude_click = 0;
+0004a0   1283     bcf	0x3, 0x5             	BANKSEL	_extrude_click
+0004a1   1303     bcf	0x3, 0x6             
+0004a2   01d4     clrf	0x54                	CLRF	_extrude_click
+                                           ;	.line	305; "extruder2.c"	material_click = 0;
+0004a3   1283     bcf	0x3, 0x5             	BANKSEL	_material_click
+0004a4   1303     bcf	0x3, 0x6             
+0004a5   01d5     clrf	0x55                	CLRF	_material_click
+                                           ;gen.c:9306: size=0/1, offset=0, AOP_TYPE(res)=13
+                                           ;	.line	306; "extruder2.c"	currentPosition.bytes[0] = 0;
+0004a6   1283     bcf	0x3, 0x5             	BANKSEL	_currentPosition
+0004a7   1303     bcf	0x3, 0x6             
+0004a8   01e3     clrf	0x63                	CLRF	(_currentPosition + 0)
+                                           ;gen.c:9306: size=0/1, offset=0, AOP_TYPE(res)=13
+                                           ;	.line	307; "extruder2.c"	currentPosition.bytes[1] = 0;
+0004a9   01e4     clrf	0x64                	CLRF	(_currentPosition + 1)
+                                           ;gen.c:9306: size=0/1, offset=0, AOP_TYPE(res)=13
+                                           ;	.line	308; "extruder2.c"	seekPosition.bytes[0] = 0;
+0004aa   1283     bcf	0x3, 0x5             	BANKSEL	_seekPosition
+0004ab   1303     bcf	0x3, 0x6             
+0004ac   01e5     clrf	0x65                	CLRF	(_seekPosition + 0)
+                                           ;gen.c:9306: size=0/1, offset=0, AOP_TYPE(res)=13
+                                           ;	.line	309; "extruder2.c"	seekPosition.bytes[1] = 0;
+0004ad   01e6     clrf	0x66                	CLRF	(_seekPosition + 1)
+                                           ;	.line	310; "extruder2.c"	requestedHeat0 = 0;
+0004ae   1283     bcf	0x3, 0x5             	BANKSEL	_requestedHeat0
+0004af   1303     bcf	0x3, 0x6             
+0004b0   01db     clrf	0x5b                	CLRF	_requestedHeat0
+                                           ;	.line	311; "extruder2.c"	requestedHeat1 = 0;
+0004b1   1283     bcf	0x3, 0x5             	BANKSEL	_requestedHeat1
+0004b2   1303     bcf	0x3, 0x6             
+0004b3   01dc     clrf	0x5c                	CLRF	_requestedHeat1
+                                           ;	.line	312; "extruder2.c"	temperatureLimit0 = 0;
+0004b4   1283     bcf	0x3, 0x5             	BANKSEL	_temperatureLimit0
+0004b5   1303     bcf	0x3, 0x6             
+0004b6   01dd     clrf	0x5d                	CLRF	_temperatureLimit0
+                                           ;	.line	313; "extruder2.c"	temperatureLimit1 = 0;
+0004b7   1283     bcf	0x3, 0x5             	BANKSEL	_temperatureLimit1
+0004b8   1303     bcf	0x3, 0x6             
+0004b9   01de     clrf	0x5e                	CLRF	_temperatureLimit1
+                                           ;	.line	314; "extruder2.c"	heatCounter = 0;
+0004ba   1283     bcf	0x3, 0x5             	BANKSEL	_heatCounter
+0004bb   1303     bcf	0x3, 0x6             
+0004bc   01df     clrf	0x5f                	CLRF	_heatCounter
+                                           ;	.line	315; "extruder2.c"	lastTemperature = 255;
+0004bd   30ff     movlw	0xff               	MOVLW	0xff
+0004be   1283     bcf	0x3, 0x5             	BANKSEL	_lastTemperature
+0004bf   1303     bcf	0x3, 0x6             
+0004c0   00e0     movwf	0x60               	MOVWF	_lastTemperature
+                                           ;	.line	316; "extruder2.c"	temperatureVRef = 0; //set to 0, should be set by the host software
+0004c1   1283     bcf	0x3, 0x5             	BANKSEL	_temperatureVRef
+0004c2   1303     bcf	0x3, 0x6             
+0004c3   01e1     clrf	0x61                	CLRF	_temperatureVRef
+                                           ;	.line	317; "extruder2.c"	portaval = 0;
+0004c4   1283     bcf	0x3, 0x5             	BANKSEL	_portaval
+0004c5   1303     bcf	0x3, 0x6             
+0004c6   01d3     clrf	0x53                	CLRF	_portaval
+                                           ;	.line	318; "extruder2.c"	PORTA = portaval;
+0004c7   0853     movf	0x53, w             	MOVF	_portaval,W
+0004c8   1283     bcf	0x3, 0x5             	BANKSEL	_PORTA
+0004c9   1303     bcf	0x3, 0x6             
+0004ca   0085     movwf	0x5                	MOVWF	_PORTA
+                                           ;	.line	319; "extruder2.c"	TMR1H = HEATER_PWM_PERIOD;
+0004cb   30ff     movlw	0xff               	MOVLW	0xff
+0004cc   008f     movwf	0xf                	MOVWF	_TMR1H
+                                           ;	.line	320; "extruder2.c"	TMR1L = 0;
+0004cd   018e     clrf	0xe                 	CLRF	_TMR1L
+                                           ;	.line	321; "extruder2.c"	temperatureNotUpdatedCounter=0;
+0004ce   1283     bcf	0x3, 0x5             	BANKSEL	_temperatureNotUpdatedCounter
+0004cf   1303     bcf	0x3, 0x6             
+0004d0   01e2     clrf	0x62                	CLRF	_temperatureNotUpdatedCounter
+0004d1   0008     return                   	RETURN	
+                                           ; exit point of _init2
+                                           
+                                           ;***
+                                           ;  pBlock Stats: dbName = C
+                                           ;***
+                                           ;entry:  _solenoid	;Function start
+                                           ; 2 exit points
+                                           ;has an exit
+                                           ;functions called:
+                                           ;   _solenoid_delay
+                                           ;   _solenoid_delay
+                                           ;1 compiler assigned register :
+                                           ;   r0x101E
+                                           ;; Starting pCode block
+                                           _solenoid	;Function start
+                                           ; 2 exit points
+                                           ;	.line	207; "extruder2.c"	void solenoid(byte on)
+0004d2   1283     bcf	0x3, 0x5             	BANKSEL	r0x101E
+0004d3   1303     bcf	0x3, 0x6             
+0004d4   00c6     movwf	0x46               	MOVWF	r0x101E
+                                           ;	.line	209; "extruder2.c"	portaval &= BIN(11111010);
+0004d5   30fa     movlw	0xfa               	MOVLW	0xfa
+0004d6   1283     bcf	0x3, 0x5             	BANKSEL	_portaval
+0004d7   1303     bcf	0x3, 0x6             
+0004d8   05d3     andwf	0x53, f            	ANDWF	_portaval,F
+                                           ;	.line	210; "extruder2.c"	if(on)
+0004d9   1283     bcf	0x3, 0x5             	BANKSEL	r0x101E
+0004da   1303     bcf	0x3, 0x6             
+0004db   0846     movf	0x46, w             	MOVF	r0x101E,W
+0004dc   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+0004dd   2ce2     goto	0x4e2               	GOTO	_00153_DS_
+                                           ;	.line	211; "extruder2.c"	portaval |= BIN(00000001);
+0004de   1283     bcf	0x3, 0x5             	BANKSEL	_portaval
+0004df   1303     bcf	0x3, 0x6             
+0004e0   1453     bsf	0x53, 0              	BSF	_portaval,0
+0004e1   2ce5     goto	0x4e5               	GOTO	_00154_DS_
+                                           _00153_DS_
+                                           ;	.line	213; "extruder2.c"	portaval |= BIN(00000100);
+0004e2   1283     bcf	0x3, 0x5             	BANKSEL	_portaval
+0004e3   1303     bcf	0x3, 0x6             
+0004e4   1553     bsf	0x53, 0x2            	BSF	_portaval,2
+                                           _00154_DS_
+                                           ;	.line	214; "extruder2.c"	PORTA = portaval;	
+0004e5   1283     bcf	0x3, 0x5             	BANKSEL	_portaval
+0004e6   1303     bcf	0x3, 0x6             
+0004e7   0853     movf	0x53, w             	MOVF	_portaval,W
+0004e8   1283     bcf	0x3, 0x5             	BANKSEL	_PORTA
+0004e9   1303     bcf	0x3, 0x6             
+0004ea   0085     movwf	0x5                	MOVWF	_PORTA
+                                           ;	.line	215; "extruder2.c"	solenoid_delay();
+0004eb   24ed     call	0x4ed               	CALL	_solenoid_delay
+0004ec   0008     return                   	RETURN	
+                                           ; exit point of _solenoid
+                                           
+                                           ;***
+                                           ;  pBlock Stats: dbName = C
+                                           ;***
+                                           ;entry:  _solenoid_delay	;Function start
+                                           ; 2 exit points
+                                           ;has an exit
+                                           ;functions called:
+                                           ;   _pwmSet
+                                           ;   _pwmSet
+                                           ;; Starting pCode block
+                                           _solenoid_delay	;Function start
+                                           ; 2 exit points
+                                           ;	.line	196; "extruder2.c"	pwmSet(1);
+0004ed   3001     movlw	0x1                	MOVLW	0x01
+0004ee   118a     bcf	0xa, 0x3             	PAGESEL	_pwmSet
+0004ef   2467     call	0x467               	CALL	_pwmSet
+0004f0   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	197; "extruder2.c"	pulseCounter1 = PC1;
+0004f1   3064     movlw	0x64               	MOVLW	0x64
+0004f2   1283     bcf	0x3, 0x5             	BANKSEL	_pulseCounter1
+0004f3   1303     bcf	0x3, 0x6             
+0004f4   00eb     movwf	0x6b               	MOVWF	_pulseCounter1
+                                           ;	.line	198; "extruder2.c"	pulseCounter2 = PC2; 
+0004f5   3014     movlw	0x14               	MOVLW	0x14
+0004f6   1283     bcf	0x3, 0x5             	BANKSEL	_pulseCounter2
+0004f7   1303     bcf	0x3, 0x6             
+0004f8   00ec     movwf	0x6c               	MOVWF	_pulseCounter2
+                                           ;	.line	199; "extruder2.c"	solenoid_on = 1;
+0004f9   3001     movlw	0x1                	MOVLW	0x01
+0004fa   1283     bcf	0x3, 0x5             	BANKSEL	_solenoid_on
+0004fb   1303     bcf	0x3, 0x6             
+0004fc   00ed     movwf	0x6d               	MOVWF	_solenoid_on
+0004fd   0008     return                   	RETURN	
+                                           ; exit point of _solenoid_delay
+                                           
+                                           ;***
+                                           ;  pBlock Stats: dbName = C
+                                           ;***
+                                           ;entry:  _set_cooler	;Function start
+                                           ; 2 exit points
+                                           ;has an exit
+                                           ;1 compiler assigned register :
+                                           ;   r0x101E
+                                           ;; Starting pCode block
+                                           _set_cooler	;Function start
+                                           ; 2 exit points
+                                           ;	.line	177; "extruder2.c"	void set_cooler(byte b)
+0004fe   1283     bcf	0x3, 0x5             	BANKSEL	r0x101E
+0004ff   1303     bcf	0x3, 0x6             
+000500   00c6     movwf	0x46               	MOVWF	r0x101E
+                                           ;	.line	179; "extruder2.c"	if (b)
+000501   0846     movf	0x46, w             	MOVF	r0x101E,W
+000502   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+000503   2d08     goto	0x508               	GOTO	_00141_DS_
+                                           ;	.line	180; "extruder2.c"	RB6 = 1;
+000504   1283     bcf	0x3, 0x5             	BANKSEL	_PORTB_bits
+000505   1303     bcf	0x3, 0x6             
+000506   1706     bsf	0x6, 0x6             	BSF	_PORTB_bits,6
+000507   2d0b     goto	0x50b               	GOTO	_00143_DS_
+                                           _00141_DS_
+                                           ;	.line	183; "extruder2.c"	RB6 = 0;
+000508   1283     bcf	0x3, 0x5             	BANKSEL	_PORTB_bits
+000509   1303     bcf	0x3, 0x6             
+00050a   1306     bcf	0x6, 0x6             	BCF	_PORTB_bits,6
+                                           _00143_DS_
+00050b   0008     return                   	RETURN	
+                                           ; exit point of _set_cooler
+                                           
+                                           ;***
+                                           ;  pBlock Stats: dbName = C
+                                           ;***
+                                           ;entry:  _change_log	;Function start
+                                           ; 2 exit points
+                                           ;has an exit
+                                           ;2 compiler assigned registers:
+                                           ;   r0x1026
+                                           ;   r0x1027
+                                           ;; Starting pCode block
+                                           _change_log	;Function start
+                                           ; 2 exit points
+                                           ;	.line	150; "extruder2.c"	extrude_click = 0;
+00050c   1283     bcf	0x3, 0x5             	BANKSEL	_extrude_click
+00050d   1303     bcf	0x3, 0x6             
+00050e   01d4     clrf	0x54                	CLRF	_extrude_click
+                                           ;	.line	151; "extruder2.c"	material_click = 0;
+00050f   1283     bcf	0x3, 0x5             	BANKSEL	_material_click
+000510   1303     bcf	0x3, 0x6             
+000511   01d5     clrf	0x55                	CLRF	_material_click
+                                           ;	.line	165; "extruder2.c"	current = RA5;  // Store so it doesn't change half way through processing
+000512   1283     bcf	0x3, 0x5             	BANKSEL	r0x1026
+000513   1303     bcf	0x3, 0x6             
+000514   01c4     clrf	0x44                	CLRF	r0x1026
+000515   1283     bcf	0x3, 0x5             	BANKSEL	_PORTA_bits
+000516   1303     bcf	0x3, 0x6             
+000517   1e85     btfss	0x5, 0x5           	BTFSS	_PORTA_bits,5
+000518   2d1c     goto	0x51c               	GOTO	_00002_DS_
+000519   1283     bcf	0x3, 0x5             	BANKSEL	r0x1026
+00051a   1303     bcf	0x3, 0x6             
+00051b   0ac4     incf	0x44, f             	INCF	r0x1026,F
+                                           _00002_DS_
+                                           ;	.line	166; "extruder2.c"	changes = lastPortA ^ current;  
+00051c   1283     bcf	0x3, 0x5             	BANKSEL	_lastPortA
+00051d   1303     bcf	0x3, 0x6             
+00051e   0856     movf	0x56, w             	MOVF	_lastPortA,W
+00051f   1283     bcf	0x3, 0x5             	BANKSEL	r0x1027
+000520   1303     bcf	0x3, 0x6             
+000521   00c5     movwf	0x45               	MOVWF	r0x1027
+000522   0844     movf	0x44, w             	MOVF	r0x1026,W
+000523   06c5     xorwf	0x45, f            	XORWF	r0x1027,F
+                                           ;	.line	167; "extruder2.c"	if (changes) {
+000524   0845     movf	0x45, w             	MOVF	r0x1027,W
+000525   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+000526   2d34     goto	0x534               	GOTO	_00129_DS_
+                                           ;	.line	169; "extruder2.c"	if (!current && seekNotify != 255) {
+000527   0844     movf	0x44, w             	MOVF	r0x1026,W
+000528   1d03     btfss	0x3, 0x2           	BTFSS	STATUS,2
+000529   2d34     goto	0x534               	GOTO	_00129_DS_
+00052a   1283     bcf	0x3, 0x5             	BANKSEL	_seekNotify
+00052b   1303     bcf	0x3, 0x6             
+00052c   0857     movf	0x57, w             	MOVF	_seekNotify,W
+                                           ;	.line	170; "extruder2.c"	material_click = 1;
+00052d   3aff     xorlw	0xff               	XORLW	0xff
+00052e   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+00052f   2d34     goto	0x534               	GOTO	_00129_DS_
+000530   3001     movlw	0x1                	MOVLW	0x01
+000531   1283     bcf	0x3, 0x5             	BANKSEL	_material_click
+000532   1303     bcf	0x3, 0x6             
+000533   00d5     movwf	0x55               	MOVWF	_material_click
+                                           _00129_DS_
+                                           ;	.line	173; "extruder2.c"	lastPortA = current;
+000534   1283     bcf	0x3, 0x5             	BANKSEL	r0x1026
+000535   1303     bcf	0x3, 0x6             
+000536   0844     movf	0x44, w             	MOVF	r0x1026,W
+000537   1283     bcf	0x3, 0x5             	BANKSEL	_lastPortA
+000538   1303     bcf	0x3, 0x6             
+000539   00d6     movwf	0x56               	MOVWF	_lastPortA
+00053a   0008     return                   	RETURN	
+                                           ; exit point of _change_log
+                                           
+                                           ;***
+                                           ;  pBlock Stats: dbName = C
+                                           ;***
+                                           ;entry:  _heater_on	;Function start
+                                           ; 2 exit points
+                                           ;has an exit
+                                           ;; Starting pCode block
+                                           _heater_on	;Function start
+                                           ; 2 exit points
+                                           ;	.line	141; "extruder2.c"	portaval |= BIN(00001000);
+00053b   1283     bcf	0x3, 0x5             	BANKSEL	_portaval
+00053c   1303     bcf	0x3, 0x6             
+00053d   15d3     bsf	0x53, 0x3            	BSF	_portaval,3
+                                           ;	.line	142; "extruder2.c"	PORTA = portaval;
+00053e   0853     movf	0x53, w             	MOVF	_portaval,W
+00053f   1283     bcf	0x3, 0x5             	BANKSEL	_PORTA
+000540   1303     bcf	0x3, 0x6             
+000541   0085     movwf	0x5                	MOVWF	_PORTA
+000542   0008     return                   	RETURN	
+                                           ; exit point of _heater_on
+                                           
+                                           ;***
+                                           ;  pBlock Stats: dbName = C
+                                           ;***
+                                           ;entry:  _heater_off	;Function start
+                                           ; 2 exit points
+                                           ;has an exit
+                                           ;; Starting pCode block
+                                           _heater_off	;Function start
+                                           ; 2 exit points
+                                           ;	.line	136; "extruder2.c"	portaval &= BIN(11110111);
+000543   1283     bcf	0x3, 0x5             	BANKSEL	_portaval
+000544   1303     bcf	0x3, 0x6             
+000545   11d3     bcf	0x53, 0x3            	BCF	_portaval,3
+                                           ;	.line	137; "extruder2.c"	PORTA = portaval;
+000546   0853     movf	0x53, w             	MOVF	_portaval,W
+000547   1283     bcf	0x3, 0x5             	BANKSEL	_PORTA
+000548   1303     bcf	0x3, 0x6             
+000549   0085     movwf	0x5                	MOVWF	_PORTA
+00054a   0008     return                   	RETURN	
+                                           ; exit point of _heater_off
+                                           
+                                           ;***
+                                           ;  pBlock Stats: dbName = C
+                                           ;***
+                                           ;entry:  _extruder_reverse	;Function start
+                                           ; 2 exit points
+                                           ;has an exit
+                                           ;; Starting pCode block
+                                           _extruder_reverse	;Function start
+                                           ; 2 exit points
+                                           ;	.line	131; "extruder2.c"	RB4 = 0;
+00054b   1283     bcf	0x3, 0x5             	BANKSEL	_PORTB_bits
+00054c   1303     bcf	0x3, 0x6             
+00054d   1206     bcf	0x6, 0x4             	BCF	_PORTB_bits,4
+                                           ;	.line	132; "extruder2.c"	RB5 = 1;
+00054e   1686     bsf	0x6, 0x5             	BSF	_PORTB_bits,5
+00054f   0008     return                   	RETURN	
+                                           ; exit point of _extruder_reverse
+                                           
+                                           ;***
+                                           ;  pBlock Stats: dbName = C
+                                           ;***
+                                           ;entry:  _extruder_forward	;Function start
+                                           ; 2 exit points
+                                           ;has an exit
+                                           ;; Starting pCode block
+                                           _extruder_forward	;Function start
+                                           ; 2 exit points
+                                           ;	.line	126; "extruder2.c"	RB5 = 0;
+000550   1283     bcf	0x3, 0x5             	BANKSEL	_PORTB_bits
+000551   1303     bcf	0x3, 0x6             
+000552   1286     bcf	0x6, 0x5             	BCF	_PORTB_bits,5
+                                           ;	.line	127; "extruder2.c"	RB4 = 1;
+000553   1606     bsf	0x6, 0x4             	BSF	_PORTB_bits,4
+000554   0008     return                   	RETURN	
+                                           ; exit point of _extruder_forward
+                                           
+                                           ;***
+                                           ;  pBlock Stats: dbName = C
+                                           ;***
+                                           ;entry:  _extruder_stop	;Function start
+                                           ; 2 exit points
+                                           ;has an exit
+                                           ;; Starting pCode block
+                                           _extruder_stop	;Function start
+                                           ; 2 exit points
+                                           ;	.line	121; "extruder2.c"	RB4 = 0;
+000555   1283     bcf	0x3, 0x5             	BANKSEL	_PORTB_bits
+000556   1303     bcf	0x3, 0x6             
+000557   1206     bcf	0x6, 0x4             	BCF	_PORTB_bits,4
+                                           ;	.line	122; "extruder2.c"	RB5 = 0;
+000558   1286     bcf	0x6, 0x5             	BCF	_PORTB_bits,5
+000559   0008     return                   	RETURN	
+                                           ; exit point of _extruder_stop
+                                           
+                                           
+                                           ;	code size estimation:
+                                           ;	  685+  366 =  1051 instructions ( 2834 byte)
+                                           
+                                           	end
+                                                   LIST
+                                           ; P16F648A.INC  Standard Header File, Version 1.00    Microchip Technology, Inc.
+                                                   NOLIST
+                                                   LIST
+                                           ; P16F648A.INC  Standard Header File, Version 1.00    Microchip Technology, Inc.
+                                                   NOLIST
+                                                   LIST
+                                           ; P16F877.INC  Standard Header File, Version 1.00    Microchip Technology, Inc.
+                                                   NOLIST
+                                                   LIST
+                                           ; P16F877.INC  Standard Header File, Version 1.00    Microchip Technology, Inc.
+                                                   NOLIST
+                                                   LIST
+                                           ; P16F648A.INC  Standard Header File, Version 1.00    Microchip Technology, Inc.
+                                                   NOLIST

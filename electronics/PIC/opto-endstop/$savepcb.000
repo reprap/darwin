@@ -1,0 +1,107 @@
+PCBNEW-BOARD Version 1 date 26/3/2007-16:49:04
+
+$GENERAL
+LayerCount 2
+Ly 1FFF8001
+Links 0
+NoConn 0
+Di -5075 -1325 5075 1325
+Ndraw 0
+Ntrack 0
+Nzone 0
+Nmodule 1
+Nnets 0
+$EndGENERAL
+
+$SHEETDESCR
+Sheet A3 16535 11700
+Title ""
+Date "26 mar 2007"
+Rev ""
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndSHEETDESCR
+
+$SETUP
+InternalUnit 0.000100 INCH
+GridSize 250 250
+UserGridSize 0.010000 0.010000 mm
+ZoneGridSize 250
+Layers 2
+TrackWidth 170
+TrackWidthHistory 170
+TrackClearence 60
+ZoneClearence 150
+DrawSegmWidth 150
+EdgeSegmWidth 150
+ViaSize 450
+ViaDrill 250
+ViaSizeHistory 450
+TextPcbWidth 120
+TextPcbSize 600 800
+EdgeModWidth 150
+TextModSize 600 600
+TextModWidth 120
+PadSize 550 550
+PadDrill 320
+AuxiliaryAxisOrg 0 0
+$EndSETUP
+
+$MODULE U1
+Po 0 0 0 15 4607F97D 4607F6E5 ~~
+Li U1
+Cd Connecteur 5 pins
+Kw CONN DEV
+Sc 4607F6E5
+Op 0 0 0
+T0 0 0 681 428 0 120 N V 21 "U1"
+T1 0 1500 600 400 0 120 N I 21 "H21LOI"
+DS 0 0 3750 0 150 21
+DS 5000 1250 -5000 1250 150 21
+DS -5000 1250 -5000 -1250 150 21
+DS -5000 -1250 5000 -1250 150 21
+DS 5000 -1250 5000 1250 150 21
+$PAD
+Sh "1" R 550 550 0 0 0
+Dr 320 0 0
+At STD N 00E0FFFF
+Ne 2 "N-000003"
+Po -1500 -500
+$EndPAD
+$PAD
+Sh "2" C 550 550 0 0 0
+Dr 320 0 0
+At STD N 00E0FFFF
+Ne 4 "N-000002"
+Po -1500 500
+$EndPAD
+$PAD
+Sh "3" C 550 550 0 0 0
+Dr 320 0 0
+At STD N 00E0FFFF
+Ne 1 "N-000004"
+Po 1000 500
+$EndPAD
+$PAD
+Sh "4" C 550 550 0 0 0
+Dr 320 0 0
+At STD N 00E0FFFF
+Ne 3 "N-000001"
+Po 1500 0
+$EndPAD
+$PAD
+Sh "5" C 550 550 0 0 0
+Dr 320 0 0
+At STD N 00E0FFFF
+Ne 4 "N-000002"
+Po 1000 -500
+$EndPAD
+$EndMODULE  U1
+$TRACK
+$EndTRACK
+$ZONE
+$EndZONE
+$EndBOARD

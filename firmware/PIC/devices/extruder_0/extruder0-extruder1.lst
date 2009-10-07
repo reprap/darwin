@@ -1,0 +1,825 @@
+gpasm-0.13.4 beta               extruder0-extruder1.asm6-13-2008  14:34:03          PAGE  1
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+               00001 ;--------------------------------------------------------
+               00002 ; File Created by SDCC : free open source ANSI-C Compiler
+               00003 ; Version 2.7.4 #4943 (Oct 27 2007) (UNIX)
+               00004 ; This file was generated Fri Jun 13 14:34:03 2008
+               00005 ;--------------------------------------------------------
+               00006 ; PIC port for the 14-bit core
+               00007 ;--------------------------------------------------------
+               00008 ;       .module extruder1
+               00009         list    p=16f648a
+               00010         radix dec
+               00011         include "p16f648a.inc"
+               00001         LIST
+               00002 ; P16F648A.INC  Standard Header File, Version 1.00    Microchip Technology, Inc.
+               00264         LIST
+               00012 ;--------------------------------------------------------
+               00013 ; config word 
+               00014 ;--------------------------------------------------------
+002007 0000    00015         __config 0x3f10
+               00016 ;--------------------------------------------------------
+               00017 ; external declarations
+               00018 ;--------------------------------------------------------
+               00019         extern  _init2
+               00020         extern  _processCommand
+               00021         extern  _motorTick
+               00022         extern  _timerTick
+               00023         extern  _checkTemperature
+               00024         extern  _flashLED
+               00025         extern  _LEDon
+               00026         extern  _setFlash
+               00027         extern  _uartTransmit
+               00028         extern  _sendReply
+               00029         extern  _sendMessage
+               00030         extern  _sendDataByte
+               00031         extern  _endMessage
+               00032         extern  _sendMessageISR
+               00033         extern  _sendDataByteISR
+               00034         extern  _endMessageISR
+               00035         extern  _releaseLock
+               00036         extern  _serialInterruptHandler
+               00037         extern  _packetReady
+               00038         extern  _uartNotifyReceive
+               00039         extern  _serial_init
+               00040         extern  _delay_10us
+               00041         extern  _clearwdt
+               00042         extern  _CCP1CON_bits
+               00043         extern  _CMCON_bits
+               00044         extern  _EECON1_bits
+               00045         extern  _INTCON_bits
+               00046         extern  _OPTION_REG_bits
+               00047         extern  _PCON_bits
+               00048         extern  _PIE1_bits
+               00049         extern  _PIR1_bits
+               00050         extern  _PORTA_bits
+               00051         extern  _PORTB_bits
+gpasm-0.13.4 beta               extruder0-extruder1.asm6-13-2008  14:34:03          PAGE  2
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+               00052         extern  _RCSTA_bits
+               00053         extern  _STATUS_bits
+               00054         extern  _T1CON_bits
+               00055         extern  _T2CON_bits
+               00056         extern  _TRISA_bits
+               00057         extern  _TRISB_bits
+               00058         extern  _TXSTA_bits
+               00059         extern  _VRCON_bits
+               00060         extern  _PWMPeriod
+               00061         extern  _buffer
+               00062         extern  _serialStatus
+               00063         extern  _INDF
+               00064         extern  _TMR0
+               00065         extern  _PCL
+               00066         extern  _STATUS
+               00067         extern  _FSR
+               00068         extern  _PORTA
+               00069         extern  _PORTB
+               00070         extern  _PCLATH
+               00071         extern  _INTCON
+               00072         extern  _PIR1
+               00073         extern  _TMR1L
+               00074         extern  _TMR1H
+               00075         extern  _T1CON
+               00076         extern  _TMR2
+               00077         extern  _T2CON
+               00078         extern  _CCPR1L
+               00079         extern  _CCPR1H
+               00080         extern  _CCP1CON
+               00081         extern  _RCSTA
+               00082         extern  _TXREG
+               00083         extern  _RCREG
+               00084         extern  _CMCON
+               00085         extern  _OPTION_REG
+               00086         extern  _TRISA
+               00087         extern  _TRISB
+               00088         extern  _PIE1
+               00089         extern  _PCON
+               00090         extern  _PR2
+               00091         extern  _TXSTA
+               00092         extern  _SPBRG
+               00093         extern  _EEDATA
+               00094         extern  _EEADR
+               00095         extern  _EECON1
+               00096         extern  _EECON2
+               00097         extern  _VRCON
+               00098         extern  ___sdcc_saved_fsr
+               00099         extern  __sdcc_gsinit_startup
+               00100 ;--------------------------------------------------------
+               00101 ; global declarations
+               00102 ;--------------------------------------------------------
+               00103         global  _init1
+               00104         global  _main
+               00105         global  _deviceAddress
+gpasm-0.13.4 beta               extruder0-extruder1.asm6-13-2008  14:34:03          PAGE  3
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+               00106         global  _interruptTemp
+               00107 
+               00108         global PSAVE
+               00109         global SSAVE
+               00110         global WSAVE
+               00111         global STK12
+               00112         global STK11
+               00113         global STK10
+               00114         global STK09
+               00115         global STK08
+               00116         global STK07
+               00117         global STK06
+               00118         global STK05
+               00119         global STK04
+               00120         global STK03
+               00121         global STK02
+               00122         global STK01
+               00123         global STK00
+               00124 
+               00125 sharebank udata_ovr 0x0070
+               00126 PSAVE   res 1
+               00127 SSAVE   res 1
+               00128 WSAVE   res 1
+               00129 STK12   res 1
+               00130 STK11   res 1
+               00131 STK10   res 1
+               00132 STK09   res 1
+               00133 STK08   res 1
+               00134 STK07   res 1
+               00135 STK06   res 1
+               00136 STK05   res 1
+               00137 STK04   res 1
+               00138 STK03   res 1
+               00139 STK02   res 1
+               00140 STK01   res 1
+               00141 STK00   res 1
+               00142 
+               00143 ;--------------------------------------------------------
+               00144 ; global definitions
+               00145 ;--------------------------------------------------------
+               00146 UD_extruder1_0  udata
+               00147 _interruptTemp  res     1
+               00148 
+               00149 ;--------------------------------------------------------
+               00150 ; absolute symbol definitions
+               00151 ;--------------------------------------------------------
+               00152 ;--------------------------------------------------------
+               00153 ; compiler-defined variables
+               00154 ;--------------------------------------------------------
+               00155 UDL_extruder1_0 udata
+               00156 r0x1003 res     1
+               00157 ;--------------------------------------------------------
+               00158 ; initialized data
+               00159 ;--------------------------------------------------------
+gpasm-0.13.4 beta               extruder0-extruder1.asm6-13-2008  14:34:03          PAGE  4
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+               00160 
+               00161 ID_extruder1_0  idata
+0000           00162 _deviceAddress
+               00163         db      0x08
+               00164 
+               00165 ;--------------------------------------------------------
+               00166 ; overlayable items in internal ram 
+               00167 ;--------------------------------------------------------
+               00168 ;       udata_ovr
+               00169 ;--------------------------------------------------------
+               00170 ; reset vector 
+               00171 ;--------------------------------------------------------
+               00172 STARTUP code
+0000 0000      00173         nop
+0001 0000      00174         pagesel __sdcc_gsinit_startup
+0002 2800      00175         goto    __sdcc_gsinit_startup
+               00176 ;--------------------------------------------------------
+               00177 ; interrupt and initialization code
+               00178 ;--------------------------------------------------------
+               00179 c_interrupt     code    0x4
+0004           00180 __sdcc_interrupt
+               00181 ;***
+               00182 ;  pBlock Stats: dbName = I
+               00183 ;***
+               00184 ;entry:  _isr   ;Function start
+               00185 ; 0 exit points
+               00186 ;functions called:
+               00187 ;   _serialInterruptHandler
+               00188 ;   _motorTick
+               00189 ;   _timerTick
+               00190 ;   _serialInterruptHandler
+               00191 ;   _motorTick
+               00192 ;   _timerTick
+               00193 ;; Starting pCode block
+0004           00194 _isr    ;Function start
+               00195 ; 0 exit points
+               00196 ;       .line   50; "extruder1.c"       static void isr() interrupt 0 {
+0004 0080      00197         MOVWF   WSAVE
+0005 0E03      00198         SWAPF   STATUS,W
+0006 0183      00199         CLRF    STATUS
+0007 0080      00200         MOVWF   SSAVE
+0008 080A      00201         MOVF    PCLATH,W
+0009 018A      00202         CLRF    PCLATH
+000A 0080      00203         MOVWF   PSAVE
+000B 0804      00204         MOVF    FSR,W
+000C 0000 0000 00205         BANKSEL ___sdcc_saved_fsr
+000E 0080      00206         MOVWF   ___sdcc_saved_fsr
+               00207 ;       .line   51; "extruder1.c"       interruptTemp = 1; //set flag, to check if the measurement is finishing during our isr
+000F 3001      00208         MOVLW   0x01
+0010 0000 0000 00209         BANKSEL _interruptTemp
+0012 0080      00210         MOVWF   _interruptTemp
+               00211 ;       .line   53; "extruder1.c"       serialInterruptHandler();
+0013 0000      00212         PAGESEL _serialInterruptHandler
+0014 2000      00213         CALL    _serialInterruptHandler
+gpasm-0.13.4 beta               extruder0-extruder1.asm6-13-2008  14:34:03          PAGE  5
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+0015 0000      00214         PAGESEL $
+               00215 ;       .line   55; "extruder1.c"       if (RBIF) 
+0016 0000 0000 00216         BANKSEL _INTCON_bits
+0018 1C00      00217         BTFSS   _INTCON_bits,0
+0019 2800      00218         GOTO    _00106_DS_
+               00219 ;       .line   56; "extruder1.c"       motorTick();  //should not occur in UNIVERSAL_PCB
+001A 0000      00220         PAGESEL _motorTick
+001B 2000      00221         CALL    _motorTick
+001C 0000      00222         PAGESEL $
+001D           00223 _00106_DS_
+               00224 ;       .line   58; "extruder1.c"       if (TMR1IF) {
+001D 0000 0000 00225         BANKSEL _PIR1_bits
+001F 1C00      00226         BTFSS   _PIR1_bits,0
+0020 2800      00227         GOTO    _00108_DS_
+               00228 ;       .line   59; "extruder1.c"       timerTick();
+0021 0000      00229         PAGESEL _timerTick
+0022 2000      00230         CALL    _timerTick
+0023 0000      00231         PAGESEL $
+               00232 ;       .line   60; "extruder1.c"       TMR1IF = 0;
+0024 0000 0000 00233         BANKSEL _PIR1_bits
+0026 1000      00234         BCF     _PIR1_bits,0
+0027           00235 _00108_DS_
+               00236 ;       .line   62; "extruder1.c"       if (C2OUT) {
+0027 0000 0000 00237         BANKSEL _CMCON_bits
+0029 1F80      00238         BTFSS   _CMCON_bits,7
+002A 2800      00239         GOTO    _00111_DS_
+               00240 ;       .line   63; "extruder1.c"       interruptTemp = 0; //measurement is not finished
+002B 0000 0000 00241         BANKSEL _interruptTemp
+002D 0180      00242         CLRF    _interruptTemp
+002E           00243 _00111_DS_
+002E 0000 0000 00244         BANKSEL ___sdcc_saved_fsr
+0030 0800      00245         MOVF    ___sdcc_saved_fsr,W
+0031 0084      00246         MOVWF   FSR
+0032 0800      00247         MOVF    PSAVE,W
+0033 008A      00248         MOVWF   PCLATH
+0034 0183      00249         CLRF    STATUS
+0035 0E00      00250         SWAPF   SSAVE,W
+0036 0083      00251         MOVWF   STATUS
+0037 0E80      00252         SWAPF   WSAVE,F
+0038 0E00      00253         SWAPF   WSAVE,W
+0039           00254 END_OF_INTERRUPT
+0039 0009      00255         RETFIE  
+               00256 
+               00257 ;--------------------------------------------------------
+               00258 ; code
+               00259 ;--------------------------------------------------------
+               00260 code_extruder1  code
+               00261 ;***
+               00262 ;  pBlock Stats: dbName = M
+               00263 ;***
+               00264 ;entry:  _main  ;Function start
+               00265 ; 2 exit points
+               00266 ;has an exit
+               00267 ;functions called:
+gpasm-0.13.4 beta               extruder0-extruder1.asm6-13-2008  14:34:03          PAGE  6
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+               00268 ;   _init2
+               00269 ;   _init1
+               00270 ;   _serial_init
+               00271 ;   _uartTransmit
+               00272 ;   _uartTransmit
+               00273 ;   _packetReady
+               00274 ;   _processCommand
+               00275 ;   _releaseLock
+               00276 ;   _checkTemperature
+               00277 ;   _delay_10us
+               00278 ;   _init2
+               00279 ;   _init1
+               00280 ;   _serial_init
+               00281 ;   _uartTransmit
+               00282 ;   _uartTransmit
+               00283 ;   _packetReady
+               00284 ;   _processCommand
+               00285 ;   _releaseLock
+               00286 ;   _checkTemperature
+               00287 ;   _delay_10us
+               00288 ;1 compiler assigned register :
+               00289 ;   r0x1003
+               00290 ;; Starting pCode block
+0000           00291 _main   ;Function start
+               00292 ; 2 exit points
+               00293 ;       .line   140; "extruder1.c"      init2();  // Order is important here, otherwise interrupts will occur
+0000 0000      00294         PAGESEL _init2
+0001 2000      00295         CALL    _init2
+0002 0000      00296         PAGESEL $
+               00297 ;       .line   143; "extruder1.c"      init1();
+0003 2000      00298         CALL    _init1
+               00299 ;       .line   144; "extruder1.c"      serial_init();
+0004 0000      00300         PAGESEL _serial_init
+0005 2000      00301         CALL    _serial_init
+0006 0000      00302         PAGESEL $
+               00303 ;       .line   147; "extruder1.c"      GIE=0;
+0007 0000 0000 00304         BANKSEL _INTCON_bits
+0009 1380      00305         BCF     _INTCON_bits,7
+               00306 ;       .line   148; "extruder1.c"      uartTransmit(0);
+000A 3000      00307         MOVLW   0x00
+000B 0000      00308         PAGESEL _uartTransmit
+000C 2000      00309         CALL    _uartTransmit
+000D 0000      00310         PAGESEL $
+               00311 ;       .line   149; "extruder1.c"      uartTransmit(0);
+000E 3000      00312         MOVLW   0x00
+000F 0000      00313         PAGESEL _uartTransmit
+0010 2000      00314         CALL    _uartTransmit
+0011 0000      00315         PAGESEL $
+               00316 ;       .line   150; "extruder1.c"      GIE=1;
+0012 0000 0000 00317         BANKSEL _INTCON_bits
+0014 1780      00318         BSF     _INTCON_bits,7
+0015           00319 _00123_DS_
+               00320 ;       .line   153; "extruder1.c"      if (packetReady()) {
+0015 0000      00321         PAGESEL _packetReady
+gpasm-0.13.4 beta               extruder0-extruder1.asm6-13-2008  14:34:03          PAGE  7
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+0016 2000      00322         CALL    _packetReady
+0017 0000      00323         PAGESEL $
+0018 0000 0000 00324         BANKSEL r0x1003
+001A 0080      00325         MOVWF   r0x1003
+001B 0800      00326         MOVF    r0x1003,W
+001C 1903      00327         BTFSC   STATUS,2
+001D 2800      00328         GOTO    _00121_DS_
+               00329 ;       .line   154; "extruder1.c"      processCommand();
+001E 0000      00330         PAGESEL _processCommand
+001F 2000      00331         CALL    _processCommand
+0020 0000      00332         PAGESEL $
+               00333 ;       .line   155; "extruder1.c"      releaseLock();
+0021 0000      00334         PAGESEL _releaseLock
+0022 2000      00335         CALL    _releaseLock
+0023 0000      00336         PAGESEL $
+0024           00337 _00121_DS_
+               00338 ;       .line   158; "extruder1.c"      checkTemperature();
+0024 0000      00339         PAGESEL _checkTemperature
+0025 2000      00340         CALL    _checkTemperature
+0026 0000      00341         PAGESEL $
+               00342 ;       .line   160; "extruder1.c"      delay_10us();
+0027 0000      00343         PAGESEL _delay_10us
+0028 2000      00344         CALL    _delay_10us
+0029 0000      00345         PAGESEL $
+002A 2800      00346         GOTO    _00123_DS_
+002B 0008      00347         RETURN  
+               00348 ; exit point of _main
+               00349 
+               00350 ;***
+               00351 ;  pBlock Stats: dbName = C
+               00352 ;***
+               00353 ;entry:  _init1 ;Function start
+               00354 ; 2 exit points
+               00355 ;has an exit
+               00356 ;; Starting pCode block
+002C           00357 _init1  ;Function start
+               00358 ; 2 exit points
+               00359 ;       .line   69; "extruder1.c"       INTCON = BIN(00000000);     // Interrupts disabled
+002C 0000 0000 00360         BANKSEL _INTCON
+002E 0180      00361         CLRF    _INTCON
+               00362 ;       .line   70; "extruder1.c"       PIR1 = 0;                   // Clear peripheral interrupt flags
+002F 0180      00363         CLRF    _PIR1
+               00364 ;       .line   71; "extruder1.c"       PIE1 = BIN(00000000);       // All peripheral interrupts initially disabled
+0030 0000 0000 00365         BANKSEL _PIE1
+0032 0180      00366         CLRF    _PIE1
+               00367 ;       .line   73; "extruder1.c"       OPTION_REG = BIN(01010111); // Disable TMR0 on RA4, 1:256 Prescaler for TMR0, pullups on
+0033 3057      00368         MOVLW   0x57
+0034 0080      00369         MOVWF   _OPTION_REG
+               00370 ;       .line   76; "extruder1.c"       SPBRG = 12;                 // 12 = ~19200 baud @ 4MHz
+0035 300C      00371         MOVLW   0x0c
+0036 0080      00372         MOVWF   _SPBRG
+               00373 ;       .line   78; "extruder1.c"       TXSTA = BIN(00000100);      // 8 bit high speed 
+0037 3004      00374         MOVLW   0x04
+0038 0080      00375         MOVWF   _TXSTA
+gpasm-0.13.4 beta               extruder0-extruder1.asm6-13-2008  14:34:03          PAGE  8
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+               00376 ;       .line   79; "extruder1.c"       RCSTA = BIN(10000000);      // Enable port for 8 bit receive
+0039 3080      00377         MOVLW   0x80
+003A 0000 0000 00378         BANKSEL _RCSTA
+003C 0080      00379         MOVWF   _RCSTA
+               00380 ;       .line   80; "extruder1.c"       CREN = 1;  // Start reception
+003D 1600      00381         BSF     _RCSTA_bits,4
+               00382 ;       .line   81; "extruder1.c"       TXEN = 1;  // Enable transmit
+003E 0000 0000 00383         BANKSEL _TXSTA_bits
+0040 1680      00384         BSF     _TXSTA_bits,5
+               00385 ;       .line   82; "extruder1.c"       RCIE = 1;  // Enable receive interrupts
+0041 1680      00386         BSF     _PIE1_bits,5
+               00387 ;       .line   92; "extruder1.c"       RBIE = 1;  // Enable RB port change interrupt 
+0042 0000 0000 00388         BANKSEL _INTCON_bits
+0044 1580      00389         BSF     _INTCON_bits,3
+               00390 ;       .line   94; "extruder1.c"       PEIE = 1;  // Peripheral interrupts on
+0045 1700      00391         BSF     _INTCON_bits,6
+               00392 ;       .line   96; "extruder1.c"       TRISA = BIN(11000010) | PORTATRIS;  // Turn off A/D lines,
+0046 30E2      00393         MOVLW   0xe2
+0047 0000 0000 00394         BANKSEL _TRISA
+0049 0080      00395         MOVWF   _TRISA
+               00396 ;       .line   99; "extruder1.c"       TRISB = BIN(10000111);
+004A 3087      00397         MOVLW   0x87
+004B 0080      00398         MOVWF   _TRISB
+               00399 ;       .line   100; "extruder1.c"      PORTA = 0;
+004C 0000 0000 00400         BANKSEL _PORTA
+004E 0180      00401         CLRF    _PORTA
+               00402 ;       .line   101; "extruder1.c"      PORTB = BIN(10000001);   // Fan off; pullup on RB7
+004F 3081      00403         MOVLW   0x81
+0050 0080      00404         MOVWF   _PORTB
+               00405 ;       .line   113; "extruder1.c"      CMCON = BIN(00000010);   // Comparator: compare RA0 to int. ref.
+0051 3002      00406         MOVLW   0x02
+0052 0080      00407         MOVWF   _CMCON
+               00408 ;       .line   115; "extruder1.c"      TMR1IE = 0;
+0053 0000 0000 00409         BANKSEL _PIE1_bits
+0055 1000      00410         BCF     _PIE1_bits,0
+               00411 ;       .line   116; "extruder1.c"      T1CON = BIN(00000000);   // Timer 1 in clock mode with 1:1 scale
+0056 0000 0000 00412         BANKSEL _T1CON
+0058 0180      00413         CLRF    _T1CON
+               00414 ;       .line   117; "extruder1.c"      TMR1IE = 1;              // Enable timer interrupt
+0059 0000 0000 00415         BANKSEL _PIE1_bits
+005B 1400      00416         BSF     _PIE1_bits,0
+               00417 ;       .line   118; "extruder1.c"      TMR1ON = 1;
+005C 0000 0000 00418         BANKSEL _T1CON_bits
+005E 1400      00419         BSF     _T1CON_bits,0
+               00420 ;       .line   120; "extruder1.c"      PR2 = PWMPeriod;          // Initial PWM period
+005F 0000 0000 00421         BANKSEL _PWMPeriod
+0061 0800      00422         MOVF    _PWMPeriod,W
+0062 0000 0000 00423         BANKSEL _PR2
+0064 0080      00424         MOVWF   _PR2
+               00425 ;       .line   121; "extruder1.c"      CCP1CON = BIN(00001100);  // Enable PWM mode
+0065 300C      00426         MOVLW   0x0c
+0066 0000 0000 00427         BANKSEL _CCP1CON
+0068 0080      00428         MOVWF   _CCP1CON
+               00429 ;       .line   122; "extruder1.c"      CCPR1L = 0;               // Start turned off
+gpasm-0.13.4 beta               extruder0-extruder1.asm6-13-2008  14:34:03          PAGE  9
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+0069 0180      00430         CLRF    _CCPR1L
+               00431 ;       .line   124; "extruder1.c"      T2CON = BIN(00000100);    // Enable timer 2 and set prescale to 1
+006A 3004      00432         MOVLW   0x04
+006B 0080      00433         MOVWF   _T2CON
+               00434 ;       .line   125; "extruder1.c"      GIE = 1;   // Now turn on interrupts
+006C 1780      00435         BSF     _INTCON_bits,7
+006D 0008      00436         RETURN  
+               00437 ; exit point of _init1
+               00438 
+               00439 
+               00440 ;       code size estimation:
+               00441 ;          90+   49 =   139 instructions (  376 byte)
+               00442 
+gpasm-0.13.4 beta               extruder0-extruder1.asm6-13-2008  14:34:03          PAGE 10
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+ADEN                              00000003
+BRGH                              00000002
+C                                 00000000
+C1INV                             00000004
+C1OUT                             00000006
+C2INV                             00000005
+C2OUT                             00000007
+CCP1CON                           00000017
+CCP1IE                            00000002
+CCP1IF                            00000002
+CCP1M0                            00000000
+CCP1M1                            00000001
+CCP1M2                            00000002
+CCP1M3                            00000003
+CCP1X                             00000005
+CCP1Y                             00000004
+CCPR1H                            00000016
+CCPR1L                            00000015
+CIS                               00000003
+CM0                               00000000
+CM1                               00000001
+CM2                               00000002
+CMCON                             0000001F
+CMIE                              00000006
+CMIF                              00000006
+CREN                              00000004
+CSRC                              00000007
+DC                                00000001
+EEADR                             0000009B
+EECON1                            0000009C
+EECON2                            0000009D
+EEDATA                            0000009A
+EEIE                              00000007
+EEIF                              00000007
+END_OF_INTERRUPT                  00000039
+F                                 00000001
+FERR                              00000002
+FSR                               00000004
+GIE                               00000007
+INDF                              00000000
+INTCON                            0000000B
+INTE                              00000004
+INTEDG                            00000006
+INTF                              00000001
+IRP                               00000007
+NOT_BO                            00000000
+NOT_BOD                           00000000
+NOT_BOR                           00000000
+NOT_PD                            00000003
+NOT_POR                           00000001
+NOT_RBPU                          00000007
+NOT_T1SYNC                        00000002
+NOT_TO                            00000004
+gpasm-0.13.4 beta               extruder0-extruder1.asm6-13-2008  14:34:03          PAGE 11
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+OERR                              00000001
+OPTION_REG                        00000081
+OSCF                              00000003
+PCL                               00000002
+PCLATH                            0000000A
+PCON                              0000008E
+PEIE                              00000006
+PIE1                              0000008C
+PIR1                              0000000C
+PORTA                             00000005
+PORTB                             00000006
+PR2                               00000092
+PS0                               00000000
+PS1                               00000001
+PS2                               00000002
+PSA                               00000003
+PSAVE                             00000070
+RBIE                              00000003
+RBIF                              00000000
+RCIE                              00000005
+RCIF                              00000005
+RCREG                             0000001A
+RCSTA                             00000018
+RD                                00000000
+RP0                               00000005
+RP1                               00000006
+RX9                               00000006
+RX9D                              00000000
+SPBRG                             00000099
+SPEN                              00000007
+SREN                              00000005
+SSAVE                             00000071
+STATUS                            00000003
+STK00                             0000007F
+STK01                             0000007E
+STK02                             0000007D
+STK03                             0000007C
+STK04                             0000007B
+STK05                             0000007A
+STK06                             00000079
+STK07                             00000078
+STK08                             00000077
+STK09                             00000076
+STK10                             00000075
+STK11                             00000074
+STK12                             00000073
+SYNC                              00000004
+T0CS                              00000005
+T0IE                              00000005
+T0IF                              00000002
+T0SE                              00000004
+T1CKPS0                           00000004
+T1CKPS1                           00000005
+T1CON                             00000010
+gpasm-0.13.4 beta               extruder0-extruder1.asm6-13-2008  14:34:03          PAGE 12
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+T1OSCEN                           00000003
+T2CKPS0                           00000000
+T2CKPS1                           00000001
+T2CON                             00000012
+TMR0                              00000001
+TMR1CS                            00000001
+TMR1H                             0000000F
+TMR1IE                            00000000
+TMR1IF                            00000000
+TMR1L                             0000000E
+TMR1ON                            00000000
+TMR2                              00000011
+TMR2IE                            00000001
+TMR2IF                            00000001
+TMR2ON                            00000002
+TOUTPS0                           00000003
+TOUTPS1                           00000004
+TOUTPS2                           00000005
+TOUTPS3                           00000006
+TRISA                             00000085
+TRISB                             00000086
+TRMT                              00000001
+TX9                               00000006
+TX9D                              00000000
+TXEN                              00000005
+TXIE                              00000004
+TXIF                              00000004
+TXREG                             00000019
+TXSTA                             00000098
+VR0                               00000000
+VR1                               00000001
+VR2                               00000002
+VR3                               00000003
+VRCON                             0000009F
+VREN                              00000007
+VROE                              00000006
+VRR                               00000005
+W                                 00000000
+WR                                00000001
+WREN                              00000002
+WRERR                             00000003
+WSAVE                             00000072
+Z                                 00000002
+_00106_DS_                        0000001D
+_00108_DS_                        00000027
+_00111_DS_                        0000002E
+_00121_DS_                        00000024
+_00123_DS_                        00000015
+_BODEN_OFF                        00003FBF
+_BODEN_ON                         00003FFF
+_BOREN_OFF                        00003FBF
+_BOREN_ON                         00003FFF
+_CCP1CON                          00000000
+_CCP1CON_bits                     00000000
+gpasm-0.13.4 beta               extruder0-extruder1.asm6-13-2008  14:34:03          PAGE 13
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+_CCPR1H                           00000000
+_CCPR1L                           00000000
+_CMCON                            00000000
+_CMCON_bits                       00000000
+_CP_OFF                           00003FFF
+_CP_ON                            00001FFF
+_DATA_CP_OFF                      00003FFF
+_DATA_CP_ON                       00003EFF
+_EEADR                            00000000
+_EECON1                           00000000
+_EECON1_bits                      00000000
+_EECON2                           00000000
+_EEDATA                           00000000
+_ER_OSC_CLKOUT                    00003FFF
+_ER_OSC_NOCLKOUT                  00003FFE
+_EXTCLK_OSC                       00003FEF
+_FSR                              00000000
+_HS_OSC                           00003FEE
+_INDF                             00000000
+_INTCON                           00000000
+_INTCON_bits                      00000000
+_INTOSC_OSC_CLKOUT                00003FFD
+_INTOSC_OSC_NOCLKOUT              00003FFC
+_INTRC_OSC_CLKOUT                 00003FFD
+_INTRC_OSC_NOCLKOUT               00003FFC
+_LEDon                            00000000
+_LP_OSC                           00003FEC
+_LVP_OFF                          00003F7F
+_LVP_ON                           00003FFF
+_MCLRE_OFF                        00003FDF
+_MCLRE_ON                         00003FFF
+_OPTION_REG                       00000000
+_OPTION_REG_bits                  00000000
+_PCL                              00000000
+_PCLATH                           00000000
+_PCON                             00000000
+_PCON_bits                        00000000
+_PIE1                             00000000
+_PIE1_bits                        00000000
+_PIR1                             00000000
+_PIR1_bits                        00000000
+_PORTA                            00000000
+_PORTA_bits                       00000000
+_PORTB                            00000000
+_PORTB_bits                       00000000
+_PR2                              00000000
+_PWMPeriod                        00000000
+_PWRTE_OFF                        00003FFF
+_PWRTE_ON                         00003FF7
+_RCREG                            00000000
+_RCSTA                            00000000
+_RCSTA_bits                       00000000
+_RC_OSC_CLKOUT                    00003FFF
+_RC_OSC_NOCLKOUT                  00003FFE
+gpasm-0.13.4 beta               extruder0-extruder1.asm6-13-2008  14:34:03          PAGE 14
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+_SPBRG                            00000000
+_STATUS                           00000000
+_STATUS_bits                      00000000
+_T1CON                            00000000
+_T1CON_bits                       00000000
+_T2CON                            00000000
+_T2CON_bits                       00000000
+_TMR0                             00000000
+_TMR1H                            00000000
+_TMR1L                            00000000
+_TMR2                             00000000
+_TRISA                            00000000
+_TRISA_bits                       00000000
+_TRISB                            00000000
+_TRISB_bits                       00000000
+_TXREG                            00000000
+_TXSTA                            00000000
+_TXSTA_bits                       00000000
+_VRCON                            00000000
+_VRCON_bits                       00000000
+_WDT_OFF                          00003FFB
+_WDT_ON                           00003FFF
+_XT_OSC                           00003FED
+__16F648A                         00000001
+___sdcc_saved_fsr                 00000000
+__sdcc_gsinit_startup             00000000
+__sdcc_interrupt                  00000004
+_buffer                           00000000
+_c_interrupt_000015               00000015
+_c_interrupt_00001c               0000001C
+_c_interrupt_000023               00000023
+_checkTemperature                 00000000
+_clearwdt                         00000000
+_code_extruder1_000002            00000002
+_code_extruder1_000006            00000006
+_code_extruder1_00000d            0000000D
+_code_extruder1_000011            00000011
+_code_extruder1_000017            00000017
+_code_extruder1_000020            00000020
+_code_extruder1_000023            00000023
+_code_extruder1_000026            00000026
+_code_extruder1_000029            00000029
+_delay_10us                       00000000
+_deviceAddress                    00000000
+_endMessage                       00000000
+_endMessageISR                    00000000
+_flashLED                         00000000
+_init1                            0000002C
+_init2                            00000000
+_interruptTemp                    00000000
+_isr                              00000004
+_main                             00000000
+_motorTick                        00000000
+_packetReady                      00000000
+gpasm-0.13.4 beta               extruder0-extruder1.asm6-13-2008  14:34:03          PAGE 15
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+_processCommand                   00000000
+_releaseLock                      00000000
+_sendDataByte                     00000000
+_sendDataByteISR                  00000000
+_sendMessage                      00000000
+_sendMessageISR                   00000000
+_sendReply                        00000000
+_serialInterruptHandler           00000000
+_serialStatus                     00000000
+_serial_init                      00000000
+_setFlash                         00000000
+_timerTick                        00000000
+_uartNotifyReceive                00000000
+_uartTransmit                     00000000
+r0x1003                           00000000
+
+
+Errors   :       0
+Warnings :       0 reported,       0 suppressed
+Messages :       0 reported,       0 suppressed
+

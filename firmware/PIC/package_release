@@ -1,0 +1,39 @@
+#!/bin/bash
+
+#init up
+VERSION=${1:-`date +%Y%m%d`}
+TO_DIR="reprap-firmware-$VERSION"
+
+#directory structure
+mkdir -p "$TO_DIR"
+mkdir -p "$TO_DIR/firmware"
+
+#make our firmware
+make clean && make
+FILELIST=`ls devices/*/*.hex`
+
+#make the firmware nice
+for F in $FILELIST
+do
+	NAME=`basename $F`
+	cp $F "$TO_DIR/firmware/$NAME"
+done
+
+cp AUTHORS "$TO_DIR/"
+cp ChangeLog "$TO_DIR/"
+cp COPYING "$TO_DIR/"
+cp INSTALL "$TO_DIR/"
+cp LICENCE "$TO_DIR/"
+cp NEWS "$TO_DIR/"
+cp README "$TO_DIR/"
+
+#export our source.
+svn export ../firmware "$TO_DIR/src"
+
+#create our archive
+zip -qr "$TO_DIR.zip" "$TO_DIR"
+
+#cleanup
+rm -rf "$TO_DIR"
+
+echo "RepRap Firmware Release v$VERSION created as ${TO_DIR}.zip"

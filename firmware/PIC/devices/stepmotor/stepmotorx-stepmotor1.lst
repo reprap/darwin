@@ -1,0 +1,820 @@
+gpasm-0.13.4 beta               stepmotorx-stepmotor1.asm6-13-2008  14:34:01          PAGE  1
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+               00001 ;--------------------------------------------------------
+               00002 ; File Created by SDCC : free open source ANSI-C Compiler
+               00003 ; Version 2.7.4 #4943 (Oct 27 2007) (UNIX)
+               00004 ; This file was generated Fri Jun 13 14:34:01 2008
+               00005 ;--------------------------------------------------------
+               00006 ; PIC port for the 14-bit core
+               00007 ;--------------------------------------------------------
+               00008 ;       .module stepmotor1
+               00009         list    p=16f648a
+               00010         radix dec
+               00011         include "p16f648a.inc"
+               00001         LIST
+               00002 ; P16F648A.INC  Standard Header File, Version 1.00    Microchip Technology, Inc.
+               00264         LIST
+               00012 ;--------------------------------------------------------
+               00013 ; config word 
+               00014 ;--------------------------------------------------------
+002007 0000    00015         __config 0x3f10
+               00016 ;--------------------------------------------------------
+               00017 ; external declarations
+               00018 ;--------------------------------------------------------
+               00019         extern  _init2
+               00020         extern  _timerTick
+               00021         extern  _processCommand
+               00022         extern  _syncStrobe
+               00023         extern  _setPower
+               00024         extern  _flashLED
+               00025         extern  _LEDon
+               00026         extern  _setFlash
+               00027         extern  _uartTransmit
+               00028         extern  _sendReply
+               00029         extern  _sendMessage
+               00030         extern  _sendDataByte
+               00031         extern  _endMessage
+               00032         extern  _sendMessageISR
+               00033         extern  _sendDataByteISR
+               00034         extern  _endMessageISR
+               00035         extern  _releaseLock
+               00036         extern  _serialInterruptHandler
+               00037         extern  _packetReady
+               00038         extern  _uartNotifyReceive
+               00039         extern  _serial_init
+               00040         extern  _delay_10us
+               00041         extern  _clearwdt
+               00042         extern  _CCP1CON_bits
+               00043         extern  _CMCON_bits
+               00044         extern  _EECON1_bits
+               00045         extern  _INTCON_bits
+               00046         extern  _OPTION_REG_bits
+               00047         extern  _PCON_bits
+               00048         extern  _PIE1_bits
+               00049         extern  _PIR1_bits
+               00050         extern  _PORTA_bits
+               00051         extern  _PORTB_bits
+gpasm-0.13.4 beta               stepmotorx-stepmotor1.asm6-13-2008  14:34:01          PAGE  2
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+               00052         extern  _RCSTA_bits
+               00053         extern  _STATUS_bits
+               00054         extern  _T1CON_bits
+               00055         extern  _T2CON_bits
+               00056         extern  _TRISA_bits
+               00057         extern  _TRISB_bits
+               00058         extern  _TXSTA_bits
+               00059         extern  _VRCON_bits
+               00060         extern  _syncEnabled
+               00061         extern  _syncCounter
+               00062         extern  _buffer
+               00063         extern  _serialStatus
+               00064         extern  _INDF
+               00065         extern  _TMR0
+               00066         extern  _PCL
+               00067         extern  _STATUS
+               00068         extern  _FSR
+               00069         extern  _PORTA
+               00070         extern  _PORTB
+               00071         extern  _PCLATH
+               00072         extern  _INTCON
+               00073         extern  _PIR1
+               00074         extern  _TMR1L
+               00075         extern  _TMR1H
+               00076         extern  _T1CON
+               00077         extern  _TMR2
+               00078         extern  _T2CON
+               00079         extern  _CCPR1L
+               00080         extern  _CCPR1H
+               00081         extern  _CCP1CON
+               00082         extern  _RCSTA
+               00083         extern  _TXREG
+               00084         extern  _RCREG
+               00085         extern  _CMCON
+               00086         extern  _OPTION_REG
+               00087         extern  _TRISA
+               00088         extern  _TRISB
+               00089         extern  _PIE1
+               00090         extern  _PCON
+               00091         extern  _PR2
+               00092         extern  _TXSTA
+               00093         extern  _SPBRG
+               00094         extern  _EEDATA
+               00095         extern  _EEADR
+               00096         extern  _EECON1
+               00097         extern  _EECON2
+               00098         extern  _VRCON
+               00099         extern  ___sdcc_saved_fsr
+               00100         extern  __sdcc_gsinit_startup
+               00101 ;--------------------------------------------------------
+               00102 ; global declarations
+               00103 ;--------------------------------------------------------
+               00104         global  _init1
+               00105         global  _main
+gpasm-0.13.4 beta               stepmotorx-stepmotor1.asm6-13-2008  14:34:01          PAGE  3
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+               00106         global  _deviceAddress
+               00107 
+               00108         global PSAVE
+               00109         global SSAVE
+               00110         global WSAVE
+               00111         global STK12
+               00112         global STK11
+               00113         global STK10
+               00114         global STK09
+               00115         global STK08
+               00116         global STK07
+               00117         global STK06
+               00118         global STK05
+               00119         global STK04
+               00120         global STK03
+               00121         global STK02
+               00122         global STK01
+               00123         global STK00
+               00124 
+               00125 sharebank udata_ovr 0x0070
+               00126 PSAVE   res 1
+               00127 SSAVE   res 1
+               00128 WSAVE   res 1
+               00129 STK12   res 1
+               00130 STK11   res 1
+               00131 STK10   res 1
+               00132 STK09   res 1
+               00133 STK08   res 1
+               00134 STK07   res 1
+               00135 STK06   res 1
+               00136 STK05   res 1
+               00137 STK04   res 1
+               00138 STK03   res 1
+               00139 STK02   res 1
+               00140 STK01   res 1
+               00141 STK00   res 1
+               00142 
+               00143 ;--------------------------------------------------------
+               00144 ; global definitions
+               00145 ;--------------------------------------------------------
+               00146 ;--------------------------------------------------------
+               00147 ; absolute symbol definitions
+               00148 ;--------------------------------------------------------
+               00149 ;--------------------------------------------------------
+               00150 ; compiler-defined variables
+               00151 ;--------------------------------------------------------
+               00152 UDL_stepmotor1_0        udata
+               00153 r0x1001 res     1
+               00154 r0x1002 res     1
+               00155 ;--------------------------------------------------------
+               00156 ; initialized data
+               00157 ;--------------------------------------------------------
+               00158 
+               00159 ID_stepmotor1_0 idata
+gpasm-0.13.4 beta               stepmotorx-stepmotor1.asm6-13-2008  14:34:01          PAGE  4
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+0000           00160 _deviceAddress
+               00161         db      0x02
+               00162 
+               00163 ;--------------------------------------------------------
+               00164 ; overlayable items in internal ram 
+               00165 ;--------------------------------------------------------
+               00166 ;       udata_ovr
+               00167 ;--------------------------------------------------------
+               00168 ; reset vector 
+               00169 ;--------------------------------------------------------
+               00170 STARTUP code
+0000 0000      00171         nop
+0001 0000      00172         pagesel __sdcc_gsinit_startup
+0002 2800      00173         goto    __sdcc_gsinit_startup
+               00174 ;--------------------------------------------------------
+               00175 ; interrupt and initialization code
+               00176 ;--------------------------------------------------------
+               00177 c_interrupt     code    0x4
+0004           00178 __sdcc_interrupt
+               00179 ;***
+               00180 ;  pBlock Stats: dbName = I
+               00181 ;***
+               00182 ;entry:  _isr   ;Function start
+               00183 ; 0 exit points
+               00184 ;functions called:
+               00185 ;   _serialInterruptHandler
+               00186 ;   _timerTick
+               00187 ;   _serialInterruptHandler
+               00188 ;   _timerTick
+               00189 ;; Starting pCode block
+0004           00190 _isr    ;Function start
+               00191 ; 0 exit points
+               00192 ;       .line   48; "stepmotor1.c"      static void isr() interrupt 0 {
+0004 0080      00193         MOVWF   WSAVE
+0005 0E03      00194         SWAPF   STATUS,W
+0006 0183      00195         CLRF    STATUS
+0007 0080      00196         MOVWF   SSAVE
+0008 080A      00197         MOVF    PCLATH,W
+0009 018A      00198         CLRF    PCLATH
+000A 0080      00199         MOVWF   PSAVE
+000B 0804      00200         MOVF    FSR,W
+000C 0000 0000 00201         BANKSEL ___sdcc_saved_fsr
+000E 0080      00202         MOVWF   ___sdcc_saved_fsr
+               00203 ;       .line   49; "stepmotor1.c"      serialInterruptHandler();
+000F 0000      00204         PAGESEL _serialInterruptHandler
+0010 2000      00205         CALL    _serialInterruptHandler
+0011 0000      00206         PAGESEL $
+               00207 ;       .line   51; "stepmotor1.c"      if (TMR1IF) {
+0012 0000 0000 00208         BANKSEL _PIR1_bits
+0014 1C00      00209         BTFSS   _PIR1_bits,0
+0015 2800      00210         GOTO    _00107_DS_
+               00211 ;       .line   52; "stepmotor1.c"      timerTick();
+0016 0000      00212         PAGESEL _timerTick
+0017 2000      00213         CALL    _timerTick
+gpasm-0.13.4 beta               stepmotorx-stepmotor1.asm6-13-2008  14:34:01          PAGE  5
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+0018 0000      00214         PAGESEL $
+               00215 ;       .line   53; "stepmotor1.c"      TMR1IF = 0;
+0019 0000 0000 00216         BANKSEL _PIR1_bits
+001B 1000      00217         BCF     _PIR1_bits,0
+001C           00218 _00107_DS_
+001C 0000 0000 00219         BANKSEL ___sdcc_saved_fsr
+001E 0800      00220         MOVF    ___sdcc_saved_fsr,W
+001F 0084      00221         MOVWF   FSR
+0020 0800      00222         MOVF    PSAVE,W
+0021 008A      00223         MOVWF   PCLATH
+0022 0183      00224         CLRF    STATUS
+0023 0E00      00225         SWAPF   SSAVE,W
+0024 0083      00226         MOVWF   STATUS
+0025 0E80      00227         SWAPF   WSAVE,F
+0026 0E00      00228         SWAPF   WSAVE,W
+0027           00229 END_OF_INTERRUPT
+0027 0009      00230         RETFIE  
+               00231 
+               00232 ;--------------------------------------------------------
+               00233 ; code
+               00234 ;--------------------------------------------------------
+               00235 code_stepmotor1 code
+               00236 ;***
+               00237 ;  pBlock Stats: dbName = M
+               00238 ;***
+               00239 ;entry:  _main  ;Function start
+               00240 ; 2 exit points
+               00241 ;has an exit
+               00242 ;functions called:
+               00243 ;   _init1
+               00244 ;   _init2
+               00245 ;   _serial_init
+               00246 ;   _uartTransmit
+               00247 ;   _packetReady
+               00248 ;   _processCommand
+               00249 ;   _releaseLock
+               00250 ;   _syncStrobe
+               00251 ;   _clearwdt
+               00252 ;   _init1
+               00253 ;   _init2
+               00254 ;   _serial_init
+               00255 ;   _uartTransmit
+               00256 ;   _packetReady
+               00257 ;   _processCommand
+               00258 ;   _releaseLock
+               00259 ;   _syncStrobe
+               00260 ;   _clearwdt
+               00261 ;2 compiler assigned registers:
+               00262 ;   r0x1001
+               00263 ;   r0x1002
+               00264 ;; Starting pCode block
+0000           00265 _main   ;Function start
+               00266 ; 2 exit points
+               00267 ;       .line   123; "stepmotor1.c"     byte syncEnabled = 0;
+gpasm-0.13.4 beta               stepmotorx-stepmotor1.asm6-13-2008  14:34:01          PAGE  6
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+0000 0000 0000 00268         BANKSEL r0x1001
+0002 0180      00269         CLRF    r0x1001
+               00270 ;       .line   125; "stepmotor1.c"     init1();
+0003 2000      00271         CALL    _init1
+               00272 ;       .line   126; "stepmotor1.c"     init2();
+0004 0000      00273         PAGESEL _init2
+0005 2000      00274         CALL    _init2
+0006 0000      00275         PAGESEL $
+               00276 ;       .line   127; "stepmotor1.c"     serial_init();
+0007 0000      00277         PAGESEL _serial_init
+0008 2000      00278         CALL    _serial_init
+0009 0000      00279         PAGESEL $
+               00280 ;       .line   130; "stepmotor1.c"     GIE=0;
+000A 0000 0000 00281         BANKSEL _INTCON_bits
+000C 1380      00282         BCF     _INTCON_bits,7
+               00283 ;       .line   131; "stepmotor1.c"     uartTransmit(0);
+000D 3000      00284         MOVLW   0x00
+000E 0000      00285         PAGESEL _uartTransmit
+000F 2000      00286         CALL    _uartTransmit
+0010 0000      00287         PAGESEL $
+               00288 ;       .line   132; "stepmotor1.c"     GIE=1;
+0011 0000 0000 00289         BANKSEL _INTCON_bits
+0013 1780      00290         BSF     _INTCON_bits,7
+               00291 ;       .line   134; "stepmotor1.c"     if (SYNCA) // Only enable if SYNCA is by default high
+0014 1C80      00292         BTFSS   _PORTA_bits,1
+0015 2800      00293         GOTO    _00127_DS_
+               00294 ;       .line   135; "stepmotor1.c"     syncEnabled = 1;
+0016 3001      00295         MOVLW   0x01
+0017 0000 0000 00296         BANKSEL r0x1001
+0019 0080      00297         MOVWF   r0x1001
+001A           00298 _00127_DS_
+               00299 ;       .line   138; "stepmotor1.c"     if (packetReady()) {
+001A 0000      00300         PAGESEL _packetReady
+001B 2000      00301         CALL    _packetReady
+001C 0000      00302         PAGESEL $
+001D 0000 0000 00303         BANKSEL r0x1002
+001F 0080      00304         MOVWF   r0x1002
+0020 0800      00305         MOVF    r0x1002,W
+0021 1903      00306         BTFSC   STATUS,2
+0022 2800      00307         GOTO    _00119_DS_
+               00308 ;       .line   139; "stepmotor1.c"     processCommand();
+0023 0000      00309         PAGESEL _processCommand
+0024 2000      00310         CALL    _processCommand
+0025 0000      00311         PAGESEL $
+               00312 ;       .line   140; "stepmotor1.c"     releaseLock();
+0026 0000      00313         PAGESEL _releaseLock
+0027 2000      00314         CALL    _releaseLock
+0028 0000      00315         PAGESEL $
+0029           00316 _00119_DS_
+               00317 ;       .line   142; "stepmotor1.c"     if (syncEnabled && !SYNCA) {
+0029 3000      00318         MOVLW   0x00
+002A 0000 0000 00319         BANKSEL r0x1001
+002C 0400      00320         IORWF   r0x1001,W
+002D 1903      00321         BTFSC   STATUS,2
+gpasm-0.13.4 beta               stepmotorx-stepmotor1.asm6-13-2008  14:34:01          PAGE  7
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+002E 2800      00322         GOTO    _00124_DS_
+002F 0000 0000 00323         BANKSEL _PORTA_bits
+0031 1880      00324         BTFSC   _PORTA_bits,1
+0032 2800      00325         GOTO    _00124_DS_
+0033           00326 _00120_DS_
+               00327 ;       .line   145; "stepmotor1.c"     while(!SYNCA)
+0033 0000 0000 00328         BANKSEL _PORTA_bits
+0035 1C80      00329         BTFSS   _PORTA_bits,1
+0036 2800      00330         GOTO    _00120_DS_
+               00331 ;       .line   147; "stepmotor1.c"     syncStrobe();
+0037 0000      00332         PAGESEL _syncStrobe
+0038 2000      00333         CALL    _syncStrobe
+0039 0000      00334         PAGESEL $
+003A           00335 _00124_DS_
+               00336 ;       .line   149; "stepmotor1.c"     clearwdt();
+003A 0000      00337         PAGESEL _clearwdt
+003B 2000      00338         CALL    _clearwdt
+003C 0000      00339         PAGESEL $
+003D 2800      00340         GOTO    _00127_DS_
+003E 0008      00341         RETURN  
+               00342 ; exit point of _main
+               00343 
+               00344 ;***
+               00345 ;  pBlock Stats: dbName = C
+               00346 ;***
+               00347 ;entry:  _init1 ;Function start
+               00348 ; 2 exit points
+               00349 ;has an exit
+               00350 ;; Starting pCode block
+003F           00351 _init1  ;Function start
+               00352 ; 2 exit points
+               00353 ;       .line   60; "stepmotor1.c"      OPTION_REG = BIN(01011111); // Disable TMR0 on RA4, 1:128 WDT, pullups on
+003F 305F      00354         MOVLW   0x5f
+0040 0000 0000 00355         BANKSEL _OPTION_REG
+0042 0080      00356         MOVWF   _OPTION_REG
+               00357 ;       .line   61; "stepmotor1.c"      CMCON = 0xff;               // Comparator module defaults
+0043 30FF      00358         MOVLW   0xff
+0044 0000 0000 00359         BANKSEL _CMCON
+0046 0080      00360         MOVWF   _CMCON
+               00361 ;       .line   63; "stepmotor1.c"      TRISA = BIN(00101010);      // Port A outputs except 1,3 (sync) and 5 (Max)
+0047 302A      00362         MOVLW   0x2a
+0048 0000 0000 00363         BANKSEL _TRISA
+004A 0080      00364         MOVWF   _TRISA
+               00365 ;       .line   72; "stepmotor1.c"      TRISB = BIN(00000011);      // Port B 0,1 input, 2-7 outputs
+004B 3003      00366         MOVLW   0x03
+004C 0080      00367         MOVWF   _TRISB
+               00368 ;       .line   89; "stepmotor1.c"      PIE1 = BIN(00000000);       // All peripheral interrupts initially disabled
+004D 0180      00369         CLRF    _PIE1
+               00370 ;       .line   90; "stepmotor1.c"      INTCON = BIN(00000000);     // Interrupts disabled
+004E 0000 0000 00371         BANKSEL _INTCON
+0050 0180      00372         CLRF    _INTCON
+               00373 ;       .line   91; "stepmotor1.c"      PIR1 = 0;                   // Clear peripheral interrupt flags
+0051 0180      00374         CLRF    _PIR1
+               00375 ;       .line   92; "stepmotor1.c"      SPBRG = 12;                 // 12 = 19200 (actually 19230) baud @ 4MHz
+gpasm-0.13.4 beta               stepmotorx-stepmotor1.asm6-13-2008  14:34:01          PAGE  8
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+0052 300C      00376         MOVLW   0x0c
+0053 0000 0000 00377         BANKSEL _SPBRG
+0055 0080      00378         MOVWF   _SPBRG
+               00379 ;       .line   94; "stepmotor1.c"      TXSTA = BIN(00000100);      // 8 bit high speed 
+0056 3004      00380         MOVLW   0x04
+0057 0080      00381         MOVWF   _TXSTA
+               00382 ;       .line   95; "stepmotor1.c"      RCSTA = BIN(10000000);      // Enable port for 8 bit receive
+0058 3080      00383         MOVLW   0x80
+0059 0000 0000 00384         BANKSEL _RCSTA
+005B 0080      00385         MOVWF   _RCSTA
+               00386 ;       .line   97; "stepmotor1.c"      PORTB = PULLUPS;      // Turn on pullups for B0,3
+005C 3001      00387         MOVLW   0x01
+005D 0080      00388         MOVWF   _PORTB
+               00389 ;       .line   99; "stepmotor1.c"      RCIE = 1;  // Enable receive interrupts
+005E 0000 0000 00390         BANKSEL _PIE1_bits
+0060 1680      00391         BSF     _PIE1_bits,5
+               00392 ;       .line   100; "stepmotor1.c"     CREN = 1;  // Start reception
+0061 0000 0000 00393         BANKSEL _RCSTA_bits
+0063 1600      00394         BSF     _RCSTA_bits,4
+               00395 ;       .line   102; "stepmotor1.c"     TXEN = 1;  // Enable transmit
+0064 0000 0000 00396         BANKSEL _TXSTA_bits
+0066 1680      00397         BSF     _TXSTA_bits,5
+               00398 ;       .line   103; "stepmotor1.c"     PEIE = 1;  // Peripheral interrupts on
+0067 0000 0000 00399         BANKSEL _INTCON_bits
+0069 1700      00400         BSF     _INTCON_bits,6
+               00401 ;       .line   104; "stepmotor1.c"     GIE = 1;   // Now turn on interrupts
+006A 1780      00402         BSF     _INTCON_bits,7
+               00403 ;       .line   106; "stepmotor1.c"     PORTB = 0;
+006B 0180      00404         CLRF    _PORTB
+               00405 ;       .line   107; "stepmotor1.c"     PORTA = 0;
+006C 0180      00406         CLRF    _PORTA
+               00407 ;       .line   109; "stepmotor1.c"     TMR1IE = 0;
+006D 0000 0000 00408         BANKSEL _PIE1_bits
+006F 1000      00409         BCF     _PIE1_bits,0
+               00410 ;       .line   111; "stepmotor1.c"     TMR2 = 0;
+0070 0000 0000 00411         BANKSEL _TMR2
+0072 0180      00412         CLRF    _TMR2
+               00413 ;       .line   112; "stepmotor1.c"     CCPR1L = 4;  // Default power-up current limiting (25%)
+0073 3004      00414         MOVLW   0x04
+0074 0080      00415         MOVWF   _CCPR1L
+               00416 ;       .line   113; "stepmotor1.c"     PR2 = 16;
+0075 3010      00417         MOVLW   0x10
+0076 0000 0000 00418         BANKSEL _PR2
+0078 0080      00419         MOVWF   _PR2
+               00420 ;       .line   114; "stepmotor1.c"     CCP1CON = BIN(00001100);   // PWM mode
+0079 300C      00421         MOVLW   0x0c
+007A 0000 0000 00422         BANKSEL _CCP1CON
+007C 0080      00423         MOVWF   _CCP1CON
+               00424 ;       .line   115; "stepmotor1.c"     T2CON = BIN(00000100);     // Start timer 1:1 prescale, 1:1 postscale
+007D 3004      00425         MOVLW   0x04
+007E 0080      00426         MOVWF   _T2CON
+               00427 ;       .line   117; "stepmotor1.c"     T1CON = BIN(00000000);  // Timer 1 in clock mode with 1:1 scale
+007F 0180      00428         CLRF    _T1CON
+               00429 ;       .line   118; "stepmotor1.c"     TMR1IE = 1;  // Enable timer interrupt
+gpasm-0.13.4 beta               stepmotorx-stepmotor1.asm6-13-2008  14:34:01          PAGE  9
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+0080 0000 0000 00430         BANKSEL _PIE1_bits
+0082 1400      00431         BSF     _PIE1_bits,0
+0083 0008      00432         RETURN  
+               00433 ; exit point of _init1
+               00434 
+               00435 
+               00436 ;       code size estimation:
+               00437 ;          94+   47 =   141 instructions (  376 byte)
+               00438 
+gpasm-0.13.4 beta               stepmotorx-stepmotor1.asm6-13-2008  14:34:01          PAGE 10
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+ADEN                              00000003
+BRGH                              00000002
+C                                 00000000
+C1INV                             00000004
+C1OUT                             00000006
+C2INV                             00000005
+C2OUT                             00000007
+CCP1CON                           00000017
+CCP1IE                            00000002
+CCP1IF                            00000002
+CCP1M0                            00000000
+CCP1M1                            00000001
+CCP1M2                            00000002
+CCP1M3                            00000003
+CCP1X                             00000005
+CCP1Y                             00000004
+CCPR1H                            00000016
+CCPR1L                            00000015
+CIS                               00000003
+CM0                               00000000
+CM1                               00000001
+CM2                               00000002
+CMCON                             0000001F
+CMIE                              00000006
+CMIF                              00000006
+CREN                              00000004
+CSRC                              00000007
+DC                                00000001
+EEADR                             0000009B
+EECON1                            0000009C
+EECON2                            0000009D
+EEDATA                            0000009A
+EEIE                              00000007
+EEIF                              00000007
+END_OF_INTERRUPT                  00000027
+F                                 00000001
+FERR                              00000002
+FSR                               00000004
+GIE                               00000007
+INDF                              00000000
+INTCON                            0000000B
+INTE                              00000004
+INTEDG                            00000006
+INTF                              00000001
+IRP                               00000007
+NOT_BO                            00000000
+NOT_BOD                           00000000
+NOT_BOR                           00000000
+NOT_PD                            00000003
+NOT_POR                           00000001
+NOT_RBPU                          00000007
+NOT_T1SYNC                        00000002
+NOT_TO                            00000004
+gpasm-0.13.4 beta               stepmotorx-stepmotor1.asm6-13-2008  14:34:01          PAGE 11
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+OERR                              00000001
+OPTION_REG                        00000081
+OSCF                              00000003
+PCL                               00000002
+PCLATH                            0000000A
+PCON                              0000008E
+PEIE                              00000006
+PIE1                              0000008C
+PIR1                              0000000C
+PORTA                             00000005
+PORTB                             00000006
+PR2                               00000092
+PS0                               00000000
+PS1                               00000001
+PS2                               00000002
+PSA                               00000003
+PSAVE                             00000070
+RBIE                              00000003
+RBIF                              00000000
+RCIE                              00000005
+RCIF                              00000005
+RCREG                             0000001A
+RCSTA                             00000018
+RD                                00000000
+RP0                               00000005
+RP1                               00000006
+RX9                               00000006
+RX9D                              00000000
+SPBRG                             00000099
+SPEN                              00000007
+SREN                              00000005
+SSAVE                             00000071
+STATUS                            00000003
+STK00                             0000007F
+STK01                             0000007E
+STK02                             0000007D
+STK03                             0000007C
+STK04                             0000007B
+STK05                             0000007A
+STK06                             00000079
+STK07                             00000078
+STK08                             00000077
+STK09                             00000076
+STK10                             00000075
+STK11                             00000074
+STK12                             00000073
+SYNC                              00000004
+T0CS                              00000005
+T0IE                              00000005
+T0IF                              00000002
+T0SE                              00000004
+T1CKPS0                           00000004
+T1CKPS1                           00000005
+T1CON                             00000010
+gpasm-0.13.4 beta               stepmotorx-stepmotor1.asm6-13-2008  14:34:01          PAGE 12
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+T1OSCEN                           00000003
+T2CKPS0                           00000000
+T2CKPS1                           00000001
+T2CON                             00000012
+TMR0                              00000001
+TMR1CS                            00000001
+TMR1H                             0000000F
+TMR1IE                            00000000
+TMR1IF                            00000000
+TMR1L                             0000000E
+TMR1ON                            00000000
+TMR2                              00000011
+TMR2IE                            00000001
+TMR2IF                            00000001
+TMR2ON                            00000002
+TOUTPS0                           00000003
+TOUTPS1                           00000004
+TOUTPS2                           00000005
+TOUTPS3                           00000006
+TRISA                             00000085
+TRISB                             00000086
+TRMT                              00000001
+TX9                               00000006
+TX9D                              00000000
+TXEN                              00000005
+TXIE                              00000004
+TXIF                              00000004
+TXREG                             00000019
+TXSTA                             00000098
+VR0                               00000000
+VR1                               00000001
+VR2                               00000002
+VR3                               00000003
+VRCON                             0000009F
+VREN                              00000007
+VROE                              00000006
+VRR                               00000005
+W                                 00000000
+WR                                00000001
+WREN                              00000002
+WRERR                             00000003
+WSAVE                             00000072
+Z                                 00000002
+_00107_DS_                        0000001C
+_00119_DS_                        00000029
+_00120_DS_                        00000033
+_00124_DS_                        0000003A
+_00127_DS_                        0000001A
+_BODEN_OFF                        00003FBF
+_BODEN_ON                         00003FFF
+_BOREN_OFF                        00003FBF
+_BOREN_ON                         00003FFF
+_CCP1CON                          00000000
+_CCP1CON_bits                     00000000
+gpasm-0.13.4 beta               stepmotorx-stepmotor1.asm6-13-2008  14:34:01          PAGE 13
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+_CCPR1H                           00000000
+_CCPR1L                           00000000
+_CMCON                            00000000
+_CMCON_bits                       00000000
+_CP_OFF                           00003FFF
+_CP_ON                            00001FFF
+_DATA_CP_OFF                      00003FFF
+_DATA_CP_ON                       00003EFF
+_EEADR                            00000000
+_EECON1                           00000000
+_EECON1_bits                      00000000
+_EECON2                           00000000
+_EEDATA                           00000000
+_ER_OSC_CLKOUT                    00003FFF
+_ER_OSC_NOCLKOUT                  00003FFE
+_EXTCLK_OSC                       00003FEF
+_FSR                              00000000
+_HS_OSC                           00003FEE
+_INDF                             00000000
+_INTCON                           00000000
+_INTCON_bits                      00000000
+_INTOSC_OSC_CLKOUT                00003FFD
+_INTOSC_OSC_NOCLKOUT              00003FFC
+_INTRC_OSC_CLKOUT                 00003FFD
+_INTRC_OSC_NOCLKOUT               00003FFC
+_LEDon                            00000000
+_LP_OSC                           00003FEC
+_LVP_OFF                          00003F7F
+_LVP_ON                           00003FFF
+_MCLRE_OFF                        00003FDF
+_MCLRE_ON                         00003FFF
+_OPTION_REG                       00000000
+_OPTION_REG_bits                  00000000
+_PCL                              00000000
+_PCLATH                           00000000
+_PCON                             00000000
+_PCON_bits                        00000000
+_PIE1                             00000000
+_PIE1_bits                        00000000
+_PIR1                             00000000
+_PIR1_bits                        00000000
+_PORTA                            00000000
+_PORTA_bits                       00000000
+_PORTB                            00000000
+_PORTB_bits                       00000000
+_PR2                              00000000
+_PWRTE_OFF                        00003FFF
+_PWRTE_ON                         00003FF7
+_RCREG                            00000000
+_RCSTA                            00000000
+_RCSTA_bits                       00000000
+_RC_OSC_CLKOUT                    00003FFF
+_RC_OSC_NOCLKOUT                  00003FFE
+_SPBRG                            00000000
+gpasm-0.13.4 beta               stepmotorx-stepmotor1.asm6-13-2008  14:34:01          PAGE 14
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+_STATUS                           00000000
+_STATUS_bits                      00000000
+_T1CON                            00000000
+_T1CON_bits                       00000000
+_T2CON                            00000000
+_T2CON_bits                       00000000
+_TMR0                             00000000
+_TMR1H                            00000000
+_TMR1L                            00000000
+_TMR2                             00000000
+_TRISA                            00000000
+_TRISA_bits                       00000000
+_TRISB                            00000000
+_TRISB_bits                       00000000
+_TXREG                            00000000
+_TXSTA                            00000000
+_TXSTA_bits                       00000000
+_VRCON                            00000000
+_VRCON_bits                       00000000
+_WDT_OFF                          00003FFB
+_WDT_ON                           00003FFF
+_XT_OSC                           00003FED
+__16F648A                         00000001
+___sdcc_saved_fsr                 00000000
+__sdcc_gsinit_startup             00000000
+__sdcc_interrupt                  00000004
+_buffer                           00000000
+_c_interrupt_000011               00000011
+_c_interrupt_000018               00000018
+_clearwdt                         00000000
+_code_stepmotor1_000006           00000006
+_code_stepmotor1_000009           00000009
+_code_stepmotor1_000010           00000010
+_code_stepmotor1_00001c           0000001C
+_code_stepmotor1_000025           00000025
+_code_stepmotor1_000028           00000028
+_code_stepmotor1_000039           00000039
+_code_stepmotor1_00003c           0000003C
+_delay_10us                       00000000
+_deviceAddress                    00000000
+_endMessage                       00000000
+_endMessageISR                    00000000
+_flashLED                         00000000
+_init1                            0000003F
+_init2                            00000000
+_isr                              00000004
+_main                             00000000
+_packetReady                      00000000
+_processCommand                   00000000
+_releaseLock                      00000000
+_sendDataByte                     00000000
+_sendDataByteISR                  00000000
+_sendMessage                      00000000
+_sendMessageISR                   00000000
+gpasm-0.13.4 beta               stepmotorx-stepmotor1.asm6-13-2008  14:34:01          PAGE 15
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+_sendReply                        00000000
+_serialInterruptHandler           00000000
+_serialStatus                     00000000
+_serial_init                      00000000
+_setFlash                         00000000
+_setPower                         00000000
+_syncCounter                      00000000
+_syncEnabled                      00000000
+_syncStrobe                       00000000
+_timerTick                        00000000
+_uartNotifyReceive                00000000
+_uartTransmit                     00000000
+r0x1001                           00000000
+r0x1002                           00000001
+
+
+Errors   :       0
+Warnings :       0 reported,       0 suppressed
+Messages :       0 reported,       0 suppressed
+

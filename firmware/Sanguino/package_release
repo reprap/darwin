@@ -1,0 +1,33 @@
+#!/bin/bash
+
+#init up
+VERSION=${1:-`date +%Y-%m-%d`}
+TO_DIR="reprap-arduino-firmware-$VERSION"
+
+#directory structure
+echo "Making Files..."
+mkdir -p "$TO_DIR"
+mkdir -p "$TO_DIR/snap"
+mkdir -p "$TO_DIR/gcode"
+
+echo "Exporting files..."
+svn export Single_Arduino_SNAP "$TO_DIR/snap/Single_Arduino_SNAP"
+svn export 3Axis_SNAP "$TO_DIR/snap/3Axis_SNAP"
+svn export Extruder_SNAP "$TO_DIR/snap/Extruder_SNAP"
+svn export library "$TO_DIR/library"
+svn export GCode_Interpreter "$TO_DIR/gcode/GCode_Interpreter"
+svn export GCode_Interpreter_Experimental "$TO_DIR/gcode/GCode_Interpreter_Experimental"
+
+cp README "$TO_DIR/"
+cp LICENSE "$TO_DIR/"
+
+#create our archive
+echo "Archiving..."
+zip -qr "$TO_DIR.zip" "$TO_DIR"
+
+#cleanup
+echo "Cleanup..."
+rm -rf "$TO_DIR"
+
+#done!
+echo "Release v$VERSION created as ${TO_DIR}.zip"

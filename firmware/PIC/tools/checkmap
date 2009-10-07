@@ -1,0 +1,40 @@
+#!/usr/bin/perl -w
+
+# The purpose of this script is to verify that sdcc has correctly
+# placed static variables in the same module all within the same bank.
+# Present versions sometimes get this wrong without giving any warnings
+# (particularly if there is too much data for a bank).  This
+# script will return an error code if that situation occurs.
+
+use strict;
+
+my $mapfile = shift @ARGV;
+die "Provide map file as argument" if (! $mapfile);
+
+open(IN, " < $mapfile") || die "$!";
+
+my %banks;
+my $errors = 0;
+
+while(<IN>) {
+  my @fields = split(/\s+/);
+  if ($#fields > 4 && $fields[3] eq "data" && $fields[4] eq "static") {
+    #print "$fields[1],$fields[2],$fields[3],$fields[4],$fields[5]\n";
+    my $addr = hex($fields[2]);
+    my $bank = int($addr / 128);
+    if (defined($banks{$fields[5]})) {
+      if ($banks{$fields[5]} != $bank) {
+        print STDERR "Expected bank $banks{$fields[5]} for $fields[1] in $fields[5]\n";
+        $errors++;
+      }
+    } else {
+      $banks{$fields[5]} = $bank;
+    }
+  }
+  if ($#fields > 4 && $fields[3] eq "data" && $fields[4] eq "extern") {
+    #print "$fields[1] is extern in $fields[5] and needs checking\n";
+  }
+}
+
+close(IN);
+exit ($errors > 0);

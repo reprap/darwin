@@ -1,0 +1,2399 @@
+gpasm-0.13.4 beta               serial1.asm 6-13-2008  14:34:00          PAGE  1
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+               00001 ;--------------------------------------------------------
+               00002 ; File Created by SDCC : free open source ANSI-C Compiler
+               00003 ; Version 2.7.4 #4943 (Oct 27 2007) (UNIX)
+               00004 ; This file was generated Fri Jun 13 14:34:00 2008
+               00005 ;--------------------------------------------------------
+               00006 ; PIC port for the 14-bit core
+               00007 ;--------------------------------------------------------
+               00008 ;       .module serial1
+               00009         list    p=16f648a
+               00010         radix dec
+               00011         include "p16f648a.inc"
+               00001         LIST
+               00002 ; P16F648A.INC  Standard Header File, Version 1.00    Microchip Technology, Inc.
+               00264         LIST
+               00012 ;--------------------------------------------------------
+               00013 ; external declarations
+               00014 ;--------------------------------------------------------
+               00015         extern  _delay_10us
+               00016         extern  _clearwdt
+               00017         extern  _CCP1CON_bits
+               00018         extern  _CMCON_bits
+               00019         extern  _EECON1_bits
+               00020         extern  _INTCON_bits
+               00021         extern  _OPTION_REG_bits
+               00022         extern  _PCON_bits
+               00023         extern  _PIE1_bits
+               00024         extern  _PIR1_bits
+               00025         extern  _PORTA_bits
+               00026         extern  _PORTB_bits
+               00027         extern  _RCSTA_bits
+               00028         extern  _STATUS_bits
+               00029         extern  _T1CON_bits
+               00030         extern  _T2CON_bits
+               00031         extern  _TRISA_bits
+               00032         extern  _TRISB_bits
+               00033         extern  _TXSTA_bits
+               00034         extern  _VRCON_bits
+               00035         extern  _buffer
+               00036         extern  _transmitBuffer
+               00037         extern  _sendPacket
+               00038         extern  _deviceAddress
+               00039         extern  _INDF
+               00040         extern  _TMR0
+               00041         extern  _PCL
+               00042         extern  _STATUS
+               00043         extern  _FSR
+               00044         extern  _PORTA
+               00045         extern  _PORTB
+               00046         extern  _PCLATH
+               00047         extern  _INTCON
+               00048         extern  _PIR1
+               00049         extern  _TMR1L
+               00050         extern  _TMR1H
+               00051         extern  _T1CON
+gpasm-0.13.4 beta               serial1.asm 6-13-2008  14:34:00          PAGE  2
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+               00052         extern  _TMR2
+               00053         extern  _T2CON
+               00054         extern  _CCPR1L
+               00055         extern  _CCPR1H
+               00056         extern  _CCP1CON
+               00057         extern  _RCSTA
+               00058         extern  _TXREG
+               00059         extern  _RCREG
+               00060         extern  _CMCON
+               00061         extern  _OPTION_REG
+               00062         extern  _TRISA
+               00063         extern  _TRISB
+               00064         extern  _PIE1
+               00065         extern  _PCON
+               00066         extern  _PR2
+               00067         extern  _TXSTA
+               00068         extern  _SPBRG
+               00069         extern  _EEDATA
+               00070         extern  _EEADR
+               00071         extern  _EECON1
+               00072         extern  _EECON2
+               00073         extern  _VRCON
+               00074 
+               00075         extern PSAVE
+               00076         extern SSAVE
+               00077         extern WSAVE
+               00078         extern STK12
+               00079         extern STK11
+               00080         extern STK10
+               00081         extern STK09
+               00082         extern STK08
+               00083         extern STK07
+               00084         extern STK06
+               00085         extern STK05
+               00086         extern STK04
+               00087         extern STK03
+               00088         extern STK02
+               00089         extern STK01
+               00090         extern STK00
+               00091 ;--------------------------------------------------------
+               00092 ; global declarations
+               00093 ;--------------------------------------------------------
+               00094         global  _serialInterruptHandler
+               00095         global  _endMessage
+               00096         global  _endMessageISR
+               00097         global  _packetReady
+               00098         global  _sendReply
+               00099         global  _sendMessage
+               00100         global  _sendMessageISR
+               00101         global  _releaseLock
+               00102         global  _sendDataByteISR
+               00103         global  _sendDataByte
+               00104         global  _uartTransmit
+               00105         global  _uartNotifyReceive
+gpasm-0.13.4 beta               serial1.asm 6-13-2008  14:34:00          PAGE  3
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+               00106         global  _serial_init
+               00107         global  _setFlash
+               00108         global  _LEDon
+               00109         global  _flashLED
+               00110         global  _computeCRC
+               00111         global  _uartReceiveError
+               00112         global  _serialStatus
+               00113 
+               00114 ;--------------------------------------------------------
+               00115 ; global definitions
+               00116 ;--------------------------------------------------------
+               00117 UD_serial1_0    udata
+               00118 _serialStatus   res     1
+               00119 
+               00120 ;--------------------------------------------------------
+               00121 ; absolute symbol definitions
+               00122 ;--------------------------------------------------------
+               00123 ;--------------------------------------------------------
+               00124 ; compiler-defined variables
+               00125 ;--------------------------------------------------------
+               00126 UDL_serial1_0   udata
+               00127 r0x1017 res     1
+               00128 r0x1018 res     1
+               00129 r0x1014 res     1
+               00130 r0x1015 res     1
+               00131 r0x1016 res     1
+               00132 r0x1019 res     1
+               00133 r0x101A res     1
+               00134 r0x101B res     1
+               00135 r0x1025 res     1
+               00136 r0x1026 res     1
+               00137 r0x1027 res     1
+               00138 r0x1028 res     1
+               00139 r0x1022 res     1
+               00140 r0x1023 res     1
+               00141 r0x1021 res     1
+               00142 r0x1020 res     1
+               00143 r0x101C res     1
+               00144 r0x101D res     1
+               00145 r0x101E res     1
+               00146 r0x1012 res     1
+               00147 r0x1013 res     1
+               00148 _flash_count    res     1
+               00149 _flash  res     1
+               00150 _flashOFF       res     1
+               00151 _flashON        res     1
+               00152 _transmitBufferHead     res     1
+               00153 _transmitBufferTail     res     1
+               00154 _crc    res     1
+               00155 _in_hdb2        res     1
+               00156 _in_hdb1        res     1
+               00157 _packetLength   res     1
+               00158 _sourceAddress  res     1
+               00159 _bufferIndex    res     1
+gpasm-0.13.4 beta               serial1.asm 6-13-2008  14:34:00          PAGE  4
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+               00160 _receivedSourceAddress  res     1
+               00161 _sendPacketLength       res     1
+               00162 _sendPacketDestination  res     1
+               00163 ;--------------------------------------------------------
+               00164 ; initialized data
+               00165 ;--------------------------------------------------------
+               00166 
+               00167 ID_serial1_0    idata
+0000           00168 _uartState
+               00169         db      0x30
+               00170 
+               00171 ;--------------------------------------------------------
+               00172 ; overlayable items in internal ram 
+               00173 ;--------------------------------------------------------
+               00174 ;       udata_ovr
+               00175 ;--------------------------------------------------------
+               00176 ; code
+               00177 ;--------------------------------------------------------
+               00178 code_serial1    code
+               00179 ;***
+               00180 ;  pBlock Stats: dbName = C
+               00181 ;***
+               00182 ;entry:  _serialInterruptHandler        ;Function start
+               00183 ; 2 exit points
+               00184 ;has an exit
+               00185 ;functions called:
+               00186 ;   _uartNotifyReceive
+               00187 ;   _uartNotifyReceive
+               00188 ;2 compiler assigned registers:
+               00189 ;   r0x1012
+               00190 ;   r0x1013
+               00191 ;; Starting pCode block
+0000           00192 _serialInterruptHandler ;Function start
+               00193 ; 2 exit points
+               00194 ;       .line   905; "serial1.c"        if (TXIF && TXIE) {
+0000 0000 0000 00195         BANKSEL _PIR1_bits
+0002 1E00      00196         BTFSS   _PIR1_bits,4
+0003 2800      00197         GOTO    _00339_DS_
+0004 0000 0000 00198         BANKSEL _PIE1_bits
+0006 1E00      00199         BTFSS   _PIE1_bits,4
+0007 2800      00200         GOTO    _00339_DS_
+               00201 ;       .line   906; "serial1.c"        if (transmitBufferHead == transmitBufferTail) {
+0008 0000 0000 00202         BANKSEL _transmitBufferTail
+000A 0800      00203         MOVF    _transmitBufferTail,W
+000B 0000 0000 00204         BANKSEL _transmitBufferHead
+000D 0600      00205         XORWF   _transmitBufferHead,W
+000E 1D03      00206         BTFSS   STATUS,2
+000F 2800      00207         GOTO    _00336_DS_
+               00208 ;       .line   908; "serial1.c"        if (TRMT) 
+0010 0000 0000 00209         BANKSEL _TXSTA_bits
+0012 1C80      00210         BTFSS   _TXSTA_bits,1
+0013 2800      00211         GOTO    _00339_DS_
+               00212 ;       .line   909; "serial1.c"        TXIE = 0;
+0014 1200      00213         BCF     _PIE1_bits,4
+gpasm-0.13.4 beta               serial1.asm 6-13-2008  14:34:00          PAGE  5
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+0015 2800      00214         GOTO    _00339_DS_
+0016           00215 _00336_DS_
+               00216 ;       .line   911; "serial1.c"        TXREG = transmitBuffer[transmitBufferHead];
+0016 0000 0000 00217         BANKSEL _transmitBufferHead
+0018 0800      00218         MOVF    _transmitBufferHead,W
+0019 3E00      00219         ADDLW   (_transmitBuffer + 0)
+001A 0000 0000 00220         BANKSEL r0x1012
+001C 0080      00221         MOVWF   r0x1012
+001D 3000      00222         MOVLW   high (_transmitBuffer + 0)
+001E 1803      00223         BTFSC   STATUS,0
+001F 3E01      00224         ADDLW   0x01
+0020 0080      00225         MOVWF   r0x1013
+0021 0800      00226         MOVF    r0x1012,W
+0022 0084      00227         MOVWF   FSR
+0023 1383      00228         BCF     STATUS,7
+0024 1800      00229         BTFSC   r0x1013,0
+0025 1783      00230         BSF     STATUS,7
+0026 0800      00231         MOVF    INDF,W
+0027 0000 0000 00232         BANKSEL _TXREG
+0029 0080      00233         MOVWF   _TXREG
+               00234 ;       .line   912; "serial1.c"        transmitBufferHead++;
+002A 0000 0000 00235         BANKSEL _transmitBufferHead
+002C 0A80      00236         INCF    _transmitBufferHead,F
+               00237 ;unsigned compare: left < lit(0x10=16), size=1
+               00238 ;       .line   913; "serial1.c"        if (transmitBufferHead >= MAX_TRANSMIT_BUFFER)
+002D 3010      00239         MOVLW   0x10
+               00240 ;       .line   914; "serial1.c"        transmitBufferHead = 0;
+002E 0200      00241         SUBWF   _transmitBufferHead,W
+               00242 ;       .line   928; "serial1.c"        if (RCIF) {
+002F 1803      00243         BTFSC   STATUS,0
+0030 0180      00244         CLRF    _transmitBufferHead
+0031           00245 _00339_DS_
+0031 0000 0000 00246         BANKSEL _PIR1_bits
+0033 1E80      00247         BTFSS   _PIR1_bits,5
+0034 2800      00248         GOTO    _00342_DS_
+               00249 ;       .line   929; "serial1.c"        uartNotifyReceive();
+0035 2000      00250         CALL    _uartNotifyReceive
+0036           00251 _00342_DS_
+0036 0000 0000 00252         BANKSEL _uartState;
+0038 0008      00253         RETURN  
+               00254 ; exit point of _serialInterruptHandler
+               00255 
+               00256 ;***
+               00257 ;  pBlock Stats: dbName = C
+               00258 ;***
+               00259 ;entry:  _endMessage    ;Function start
+               00260 ; 2 exit points
+               00261 ;has an exit
+               00262 ;functions called:
+               00263 ;   _delay_10us
+               00264 ;   _delay_10us
+               00265 ;   _delay_10us
+               00266 ;   _delay_10us
+               00267 ;   _delay_10us
+gpasm-0.13.4 beta               serial1.asm 6-13-2008  14:34:00          PAGE  6
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+               00268 ;   _endMessageIntern
+               00269 ;   _delay_10us
+               00270 ;   _delay_10us
+               00271 ;   _delay_10us
+               00272 ;   _delay_10us
+               00273 ;   _delay_10us
+               00274 ;   _endMessageIntern
+               00275 ;; Starting pCode block
+0039           00276 _endMessage     ;Function start
+               00277 ; 2 exit points
+               00278 ;       .line   881; "serial1.c"        GIE=0;
+0039 0000 0000 00279         BANKSEL _INTCON_bits
+003B 1380      00280         BCF     _INTCON_bits,7
+003C           00281 _00324_DS_
+               00282 ;       .line   883; "serial1.c"        while (serialStatus & inTransmitMsgBit) {
+003C 0000 0000 00283         BANKSEL _serialStatus
+003E 1C80      00284         BTFSS   _serialStatus,1
+003F 2800      00285         GOTO    _00326_DS_
+               00286 ;       .line   884; "serial1.c"        GIE=1;
+0040 0000 0000 00287         BANKSEL _INTCON_bits
+0042 1780      00288         BSF     _INTCON_bits,7
+               00289 ;       .line   885; "serial1.c"        delay_10us();
+0043 0000      00290         PAGESEL _delay_10us
+0044 2000      00291         CALL    _delay_10us
+0045 0000      00292         PAGESEL $
+               00293 ;       .line   886; "serial1.c"        delay_10us();
+0046 0000      00294         PAGESEL _delay_10us
+0047 2000      00295         CALL    _delay_10us
+0048 0000      00296         PAGESEL $
+               00297 ;       .line   887; "serial1.c"        delay_10us();
+0049 0000      00298         PAGESEL _delay_10us
+004A 2000      00299         CALL    _delay_10us
+004B 0000      00300         PAGESEL $
+               00301 ;       .line   888; "serial1.c"        delay_10us();
+004C 0000      00302         PAGESEL _delay_10us
+004D 2000      00303         CALL    _delay_10us
+004E 0000      00304         PAGESEL $
+               00305 ;       .line   889; "serial1.c"        delay_10us();
+004F 0000      00306         PAGESEL _delay_10us
+0050 2000      00307         CALL    _delay_10us
+0051 0000      00308         PAGESEL $
+               00309 ;       .line   890; "serial1.c"        GIE=0;
+0052 0000 0000 00310         BANKSEL _INTCON_bits
+0054 1380      00311         BCF     _INTCON_bits,7
+0055 2800      00312         GOTO    _00324_DS_
+0056           00313 _00326_DS_
+               00314 ;       .line   892; "serial1.c"        endMessageIntern();
+0056 2000      00315         CALL    _endMessageIntern
+               00316 ;       .line   893; "serial1.c"        GIE=1;
+0057 0000 0000 00317         BANKSEL _INTCON_bits
+0059 1780      00318         BSF     _INTCON_bits,7
+005A 0008      00319         RETURN  
+               00320 ; exit point of _endMessage
+               00321 
+gpasm-0.13.4 beta               serial1.asm 6-13-2008  14:34:00          PAGE  7
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+               00322 ;***
+               00323 ;  pBlock Stats: dbName = C
+               00324 ;***
+               00325 ;entry:  _endMessageISR ;Function start
+               00326 ; 2 exit points
+               00327 ;has an exit
+               00328 ;functions called:
+               00329 ;   _endMessageIntern
+               00330 ;   _endMessageIntern
+               00331 ;; Starting pCode block
+005B           00332 _endMessageISR  ;Function start
+               00333 ; 2 exit points
+               00334 ;       .line   867; "serial1.c"        endMessageIntern();
+005B 2000      00335         CALL    _endMessageIntern
+005C 0008      00336         RETURN  
+               00337 ; exit point of _endMessageISR
+               00338 
+               00339 ;***
+               00340 ;  pBlock Stats: dbName = C
+               00341 ;***
+               00342 ;entry:  _endMessageIntern      ;Function start
+               00343 ; 2 exit points
+               00344 ;has an exit
+               00345 ;functions called:
+               00346 ;   _uartTransmit
+               00347 ;   _computeCRC
+               00348 ;   _uartTransmit
+               00349 ;   _computeCRC
+               00350 ;   _uartTransmit
+               00351 ;   _computeCRC
+               00352 ;   _uartTransmit
+               00353 ;   _computeCRC
+               00354 ;   _uartTransmit
+               00355 ;   _computeCRC
+               00356 ;   _uartTransmit
+               00357 ;   _uartTransmit
+               00358 ;   _uartTransmit
+               00359 ;   _computeCRC
+               00360 ;   _uartTransmit
+               00361 ;   _computeCRC
+               00362 ;   _uartTransmit
+               00363 ;   _computeCRC
+               00364 ;   _uartTransmit
+               00365 ;   _computeCRC
+               00366 ;   _uartTransmit
+               00367 ;   _computeCRC
+               00368 ;   _uartTransmit
+               00369 ;   _uartTransmit
+               00370 ;4 compiler assigned registers:
+               00371 ;   r0x101C
+               00372 ;   r0x101D
+               00373 ;   r0x101E
+               00374 ;   r0x101F
+               00375 ;; Starting pCode block
+gpasm-0.13.4 beta               serial1.asm 6-13-2008  14:34:00          PAGE  8
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+005D           00376 _endMessageIntern       ;Function start
+               00377 ; 2 exit points
+               00378 ;       .line   840; "serial1.c"        if (serialStatus & inSendQueueMsgBit) {  
+005D 0000 0000 00379         BANKSEL _serialStatus
+005F 1D00      00380         BTFSS   _serialStatus,2
+0060 2800      00381         GOTO    _00315_DS_
+               00382 ;       .line   844; "serial1.c"        uartTransmit(SNAP_SYNC);
+0061 3054      00383         MOVLW   0x54
+0062 2000      00384         CALL    _uartTransmit
+               00385 ;       .line   845; "serial1.c"        crc = 0;
+0063 0000 0000 00386         BANKSEL _crc
+0065 0180      00387         CLRF    _crc
+               00388 ;       .line   846; "serial1.c"        uartTransmit(computeCRC(BIN(01010001)));   // Request ACK
+0066 3051      00389         MOVLW   0x51
+0067 2000      00390         CALL    _computeCRC
+0068 0000 0000 00391         BANKSEL r0x101C
+006A 0080      00392         MOVWF   r0x101C
+006B 2000      00393         CALL    _uartTransmit
+               00394 ;       .line   847; "serial1.c"        uartTransmit(computeCRC(BIN(00110000) | sendPacketLength));
+006C 3030      00395         MOVLW   0x30
+006D 0000 0000 00396         BANKSEL _sendPacketLength
+006F 0400      00397         IORWF   _sendPacketLength,W
+0070 0000 0000 00398         BANKSEL r0x101C
+0072 0080      00399         MOVWF   r0x101C
+0073 2000      00400         CALL    _computeCRC
+0074 0000 0000 00401         BANKSEL r0x101C
+0076 0080      00402         MOVWF   r0x101C
+0077 2000      00403         CALL    _uartTransmit
+               00404 ;       .line   848; "serial1.c"        uartTransmit(computeCRC(sendPacketDestination));
+0078 0000 0000 00405         BANKSEL _sendPacketDestination
+007A 0800      00406         MOVF    _sendPacketDestination,W
+007B 2000      00407         CALL    _computeCRC
+007C 0000 0000 00408         BANKSEL r0x101C
+007E 0080      00409         MOVWF   r0x101C
+007F 2000      00410         CALL    _uartTransmit
+               00411 ;       .line   849; "serial1.c"        uartTransmit(computeCRC(deviceAddress));
+0080 0000 0000 00412         BANKSEL _deviceAddress
+0082 0800      00413         MOVF    _deviceAddress,W
+0083 2000      00414         CALL    _computeCRC
+0084 0000 0000 00415         BANKSEL r0x101C
+0086 0080      00416         MOVWF   r0x101C
+0087 2000      00417         CALL    _uartTransmit
+               00418 ;       .line   850; "serial1.c"        for(i = 0; i < sendPacketLength; i++)
+0088 0000 0000 00419         BANKSEL r0x101C
+008A 0180      00420         CLRF    r0x101C
+008B           00421 _00311_DS_
+008B 0000 0000 00422         BANKSEL _sendPacketLength
+008D 0800      00423         MOVF    _sendPacketLength,W
+008E 0000 0000 00424         BANKSEL r0x101C
+0090 0200      00425         SUBWF   r0x101C,W
+0091 1803      00426         BTFSC   STATUS,0
+0092 2800      00427         GOTO    _00314_DS_
+               00428 ;genSkipc:3694: created from rifx:0xbffdc340
+               00429 ;       .line   851; "serial1.c"        uartTransmit(computeCRC(sendPacket[i]));
+gpasm-0.13.4 beta               serial1.asm 6-13-2008  14:34:00          PAGE  9
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+0093 0800      00430         MOVF    r0x101C,W
+0094 3E00      00431         ADDLW   (_sendPacket + 0)
+0095 0080      00432         MOVWF   r0x101D
+0096 3000      00433         MOVLW   high (_sendPacket + 0)
+0097 1803      00434         BTFSC   STATUS,0
+0098 3E01      00435         ADDLW   0x01
+0099 0080      00436         MOVWF   r0x101E
+009A 0800      00437         MOVF    r0x101D,W
+009B 0084      00438         MOVWF   FSR
+009C 1383      00439         BCF     STATUS,7
+009D 1800      00440         BTFSC   r0x101E,0
+009E 1783      00441         BSF     STATUS,7
+009F 0800      00442         MOVF    INDF,W
+               00443 ;;1     MOVWF   r0x101F
+00A0 2000      00444         CALL    _computeCRC
+00A1 0000 0000 00445         BANKSEL r0x101D
+00A3 0080      00446         MOVWF   r0x101D
+00A4 2000      00447         CALL    _uartTransmit
+               00448 ;       .line   850; "serial1.c"        for(i = 0; i < sendPacketLength; i++)
+00A5 0000 0000 00449         BANKSEL r0x101C
+00A7 0A80      00450         INCF    r0x101C,F
+00A8 2800      00451         GOTO    _00311_DS_
+00A9           00452 _00314_DS_
+               00453 ;       .line   852; "serial1.c"        uartTransmit(crc); /// @todo crc here
+00A9 0000 0000 00454         BANKSEL _crc
+00AB 0800      00455         MOVF    _crc,W
+00AC 2000      00456         CALL    _uartTransmit
+               00457 ;       .line   854; "serial1.c"        serialStatus &= ~inSendQueueMsgBit;  //clear 
+00AD 0000 0000 00458         BANKSEL _serialStatus
+00AF 1100      00459         BCF     _serialStatus,2
+00B0           00460 _00315_DS_
+00B0 0008      00461         RETURN  
+               00462 ; exit point of _endMessageIntern
+               00463 
+               00464 ;***
+               00465 ;  pBlock Stats: dbName = C
+               00466 ;***
+               00467 ;entry:  _packetReady   ;Function start
+               00468 ; 2 exit points
+               00469 ;has an exit
+               00470 ;1 compiler assigned register :
+               00471 ;   r0x1020
+               00472 ;; Starting pCode block
+00B1           00473 _packetReady    ;Function start
+               00474 ; 2 exit points
+               00475 ;       .line   821; "serial1.c"        GIE=0;
+00B1 0000 0000 00476         BANKSEL _INTCON_bits
+00B3 1380      00477         BCF     _INTCON_bits,7
+               00478 ;       .line   822; "serial1.c"        ready = (serialStatus & processingLockBit);
+00B4 3080      00479         MOVLW   0x80
+00B5 0000 0000 00480         BANKSEL _serialStatus
+00B7 0500      00481         ANDWF   _serialStatus,W
+00B8 0000 0000 00482         BANKSEL r0x1020
+00BA 0080      00483         MOVWF   r0x1020
+gpasm-0.13.4 beta               serial1.asm 6-13-2008  14:34:00          PAGE 10
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+               00484 ;       .line   823; "serial1.c"        if (transmitBufferHead != transmitBufferTail)
+00BB 0000 0000 00485         BANKSEL _transmitBufferTail
+00BD 0800      00486         MOVF    _transmitBufferTail,W
+               00487 ;       .line   824; "serial1.c"        ready = 0;
+00BE 0000 0000 00488         BANKSEL _transmitBufferHead
+00C0 0600      00489         XORWF   _transmitBufferHead,W
+               00490 ;       .line   825; "serial1.c"        GIE=1;
+00C1 1903      00491         BTFSC   STATUS,2
+00C2 2800      00492         GOTO    _00001_DS_
+00C3 0000 0000 00493         BANKSEL r0x1020
+00C5 0180      00494         CLRF    r0x1020
+00C6           00495 _00001_DS_
+00C6 0000 0000 00496         BANKSEL _INTCON_bits
+00C8 1780      00497         BSF     _INTCON_bits,7
+               00498 ;       .line   826; "serial1.c"        return ready;
+00C9 0000 0000 00499         BANKSEL r0x1020
+00CB 0800      00500         MOVF    r0x1020,W
+00CC 0008      00501         RETURN  
+               00502 ; exit point of _packetReady
+               00503 
+               00504 ;***
+               00505 ;  pBlock Stats: dbName = C
+               00506 ;***
+               00507 ;entry:  _sendReply     ;Function start
+               00508 ; 2 exit points
+               00509 ;has an exit
+               00510 ;functions called:
+               00511 ;   _sendMessage
+               00512 ;   _sendMessage
+               00513 ;; Starting pCode block
+00CD           00514 _sendReply      ;Function start
+               00515 ; 2 exit points
+               00516 ;       .line   809; "serial1.c"        sendMessage(receivedSourceAddress);
+00CD 0000 0000 00517         BANKSEL _receivedSourceAddress
+00CF 0800      00518         MOVF    _receivedSourceAddress,W
+00D0 2000      00519         CALL    _sendMessage
+00D1 0008      00520         RETURN  
+               00521 ; exit point of _sendReply
+               00522 
+               00523 ;***
+               00524 ;  pBlock Stats: dbName = C
+               00525 ;***
+               00526 ;entry:  _sendMessage   ;Function start
+               00527 ; 2 exit points
+               00528 ;has an exit
+               00529 ;functions called:
+               00530 ;   _delay_10us
+               00531 ;   _delay_10us
+               00532 ;   _delay_10us
+               00533 ;   _delay_10us
+               00534 ;   _delay_10us
+               00535 ;   _sendMessageIntern
+               00536 ;   _delay_10us
+               00537 ;   _delay_10us
+gpasm-0.13.4 beta               serial1.asm 6-13-2008  14:34:00          PAGE 11
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+               00538 ;   _delay_10us
+               00539 ;   _delay_10us
+               00540 ;   _delay_10us
+               00541 ;   _sendMessageIntern
+               00542 ;1 compiler assigned register :
+               00543 ;   r0x1021
+               00544 ;; Starting pCode block
+00D2           00545 _sendMessage    ;Function start
+               00546 ; 2 exit points
+               00547 ;       .line   786; "serial1.c"        void sendMessage(byte dest)
+00D2 0000 0000 00548         BANKSEL r0x1021
+00D4 0080      00549         MOVWF   r0x1021
+               00550 ;       .line   788; "serial1.c"        GIE=0;
+00D5 0000 0000 00551         BANKSEL _INTCON_bits
+00D7 1380      00552         BCF     _INTCON_bits,7
+00D8           00553 _00288_DS_
+               00554 ;       .line   789; "serial1.c"        while (serialStatus & inSendQueueMsgBit) { 
+00D8 0000 0000 00555         BANKSEL _serialStatus
+00DA 1D00      00556         BTFSS   _serialStatus,2
+00DB 2800      00557         GOTO    _00290_DS_
+               00558 ;       .line   791; "serial1.c"        GIE=1;
+00DC 0000 0000 00559         BANKSEL _INTCON_bits
+00DE 1780      00560         BSF     _INTCON_bits,7
+               00561 ;       .line   792; "serial1.c"        delay_10us();
+00DF 0000      00562         PAGESEL _delay_10us
+00E0 2000      00563         CALL    _delay_10us
+00E1 0000      00564         PAGESEL $
+               00565 ;       .line   793; "serial1.c"        delay_10us();
+00E2 0000      00566         PAGESEL _delay_10us
+00E3 2000      00567         CALL    _delay_10us
+00E4 0000      00568         PAGESEL $
+               00569 ;       .line   794; "serial1.c"        delay_10us();
+00E5 0000      00570         PAGESEL _delay_10us
+00E6 2000      00571         CALL    _delay_10us
+00E7 0000      00572         PAGESEL $
+               00573 ;       .line   795; "serial1.c"        delay_10us();
+00E8 0000      00574         PAGESEL _delay_10us
+00E9 2000      00575         CALL    _delay_10us
+00EA 0000      00576         PAGESEL $
+               00577 ;       .line   796; "serial1.c"        delay_10us();
+00EB 0000      00578         PAGESEL _delay_10us
+00EC 2000      00579         CALL    _delay_10us
+00ED 0000      00580         PAGESEL $
+               00581 ;       .line   797; "serial1.c"        GIE=0;
+00EE 0000 0000 00582         BANKSEL _INTCON_bits
+00F0 1380      00583         BCF     _INTCON_bits,7
+00F1 2800      00584         GOTO    _00288_DS_
+00F2           00585 _00290_DS_
+               00586 ;       .line   800; "serial1.c"        sendMessageIntern(dest);
+00F2 0000 0000 00587         BANKSEL r0x1021
+00F4 0800      00588         MOVF    r0x1021,W
+00F5 2000      00589         CALL    _sendMessageIntern
+               00590 ;       .line   801; "serial1.c"        GIE=1;
+00F6 0000 0000 00591         BANKSEL _INTCON_bits
+gpasm-0.13.4 beta               serial1.asm 6-13-2008  14:34:00          PAGE 12
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+00F8 1780      00592         BSF     _INTCON_bits,7
+00F9 0008      00593         RETURN  
+               00594 ; exit point of _sendMessage
+               00595 
+               00596 ;***
+               00597 ;  pBlock Stats: dbName = C
+               00598 ;***
+               00599 ;entry:  _sendMessageISR        ;Function start
+               00600 ; 2 exit points
+               00601 ;has an exit
+               00602 ;functions called:
+               00603 ;   _sendMessageIntern
+               00604 ;   _sendMessageIntern
+               00605 ;1 compiler assigned register :
+               00606 ;   r0x1023
+               00607 ;; Starting pCode block
+00FA           00608 _sendMessageISR ;Function start
+               00609 ; 2 exit points
+               00610 ;       .line   759; "serial1.c"        byte sendMessageISR(byte dest)
+00FA 0000 0000 00611         BANKSEL r0x1023
+00FC 0080      00612         MOVWF   r0x1023
+               00613 ;       .line   766; "serial1.c"        if ((serialStatus & inSendQueueMsgBit) || (serialStatus & inTransmitMsgBit) ||
+00FD 0000 0000 00614         BANKSEL _serialStatus
+00FF 1900      00615         BTFSC   _serialStatus,2
+0100 2800      00616         GOTO    _00274_DS_
+0101 1880      00617         BTFSC   _serialStatus,1
+0102 2800      00618         GOTO    _00274_DS_
+               00619 ;       .line   767; "serial1.c"        (transmitBufferHead != transmitBufferTail)) {
+0103 0000 0000 00620         BANKSEL _transmitBufferTail
+0105 0800      00621         MOVF    _transmitBufferTail,W
+               00622 ;       .line   768; "serial1.c"        return 0; 
+0106 0000 0000 00623         BANKSEL _transmitBufferHead
+0108 0600      00624         XORWF   _transmitBufferHead,W
+0109 1903      00625         BTFSC   STATUS,2
+010A 2800      00626         GOTO    _00275_DS_
+010B           00627 _00274_DS_
+010B 3000      00628         MOVLW   0x00
+010C 2800      00629         GOTO    _00279_DS_
+010D           00630 _00275_DS_
+               00631 ;       .line   770; "serial1.c"        sendMessageIntern(dest);          
+010D 0000 0000 00632         BANKSEL r0x1023
+010F 0800      00633         MOVF    r0x1023,W
+0110 2000      00634         CALL    _sendMessageIntern
+               00635 ;       .line   772; "serial1.c"        return 1;
+0111 3001      00636         MOVLW   0x01
+0112           00637 _00279_DS_
+0112 0008      00638         RETURN  
+               00639 ; exit point of _sendMessageISR
+               00640 
+               00641 ;***
+               00642 ;  pBlock Stats: dbName = C
+               00643 ;***
+               00644 ;entry:  _sendMessageIntern     ;Function start
+               00645 ; 2 exit points
+gpasm-0.13.4 beta               serial1.asm 6-13-2008  14:34:00          PAGE 13
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+               00646 ;has an exit
+               00647 ;1 compiler assigned register :
+               00648 ;   r0x1022
+               00649 ;; Starting pCode block
+0113           00650 _sendMessageIntern      ;Function start
+               00651 ; 2 exit points
+               00652 ;       .line   745; "serial1.c"        static void sendMessageIntern(byte dest)
+0113 0000 0000 00653         BANKSEL r0x1022
+0115 0080      00654         MOVWF   r0x1022
+               00655 ;       .line   747; "serial1.c"        serialStatus |= inSendQueueMsgBit; //set bit
+0116 0000 0000 00656         BANKSEL _serialStatus
+0118 1500      00657         BSF     _serialStatus,2
+               00658 ;       .line   748; "serial1.c"        sendPacketDestination = dest;
+0119 0000 0000 00659         BANKSEL r0x1022
+011B 0800      00660         MOVF    r0x1022,W
+011C 0000 0000 00661         BANKSEL _sendPacketDestination
+011E 0080      00662         MOVWF   _sendPacketDestination
+               00663 ;       .line   749; "serial1.c"        sendPacketLength = 0;
+011F 0000 0000 00664         BANKSEL _sendPacketLength
+0121 0180      00665         CLRF    _sendPacketLength
+0122 0008      00666         RETURN  
+               00667 ; exit point of _sendMessageIntern
+               00668 
+               00669 ;***
+               00670 ;  pBlock Stats: dbName = C
+               00671 ;***
+               00672 ;entry:  _releaseLock   ;Function start
+               00673 ; 2 exit points
+               00674 ;has an exit
+               00675 ;; Starting pCode block
+0123           00676 _releaseLock    ;Function start
+               00677 ; 2 exit points
+               00678 ;       .line   735; "serial1.c"        GIE=0;
+0123 0000 0000 00679         BANKSEL _INTCON_bits
+0125 1380      00680         BCF     _INTCON_bits,7
+               00681 ;       .line   736; "serial1.c"        serialStatus &= ~processingLockBit; //clear
+0126 0000 0000 00682         BANKSEL _serialStatus
+0128 1380      00683         BCF     _serialStatus,7
+               00684 ;       .line   737; "serial1.c"        GIE=1;
+0129 0000 0000 00685         BANKSEL _INTCON_bits
+012B 1780      00686         BSF     _INTCON_bits,7
+012C 0008      00687         RETURN  
+               00688 ; exit point of _releaseLock
+               00689 
+               00690 ;***
+               00691 ;  pBlock Stats: dbName = C
+               00692 ;***
+               00693 ;entry:  _sendDataByteISR       ;Function start
+               00694 ; 2 exit points
+               00695 ;has an exit
+               00696 ;functions called:
+               00697 ;   _sendDataByteIntern
+               00698 ;   _sendDataByteIntern
+               00699 ;1 compiler assigned register :
+gpasm-0.13.4 beta               serial1.asm 6-13-2008  14:34:00          PAGE 14
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+               00700 ;   r0x1024
+               00701 ;; Starting pCode block
+012D           00702 _sendDataByteISR        ;Function start
+               00703 ; 2 exit points
+               00704 ;;1     MOVWF   r0x1024
+               00705 ;       .line   726; "serial1.c"        sendDataByteIntern(c);
+012D 2000      00706         CALL    _sendDataByteIntern
+012E 0008      00707         RETURN  
+               00708 ; exit point of _sendDataByteISR
+               00709 
+               00710 ;***
+               00711 ;  pBlock Stats: dbName = C
+               00712 ;***
+               00713 ;entry:  _sendDataByte  ;Function start
+               00714 ; 2 exit points
+               00715 ;has an exit
+               00716 ;functions called:
+               00717 ;   _sendDataByteIntern
+               00718 ;   _sendDataByteIntern
+               00719 ;1 compiler assigned register :
+               00720 ;   r0x1028
+               00721 ;; Starting pCode block
+012F           00722 _sendDataByte   ;Function start
+               00723 ; 2 exit points
+               00724 ;       .line   713; "serial1.c"        void sendDataByte(byte c)
+012F 0000 0000 00725         BANKSEL r0x1028
+0131 0080      00726         MOVWF   r0x1028
+               00727 ;       .line   715; "serial1.c"        GIE=0;
+0132 0000 0000 00728         BANKSEL _INTCON_bits
+0134 1380      00729         BCF     _INTCON_bits,7
+               00730 ;       .line   716; "serial1.c"        sendDataByteIntern(c);
+0135 0000 0000 00731         BANKSEL r0x1028
+0137 0800      00732         MOVF    r0x1028,W
+0138 2000      00733         CALL    _sendDataByteIntern
+               00734 ;       .line   717; "serial1.c"        GIE=1;
+0139 0000 0000 00735         BANKSEL _INTCON_bits
+013B 1780      00736         BSF     _INTCON_bits,7
+013C 0008      00737         RETURN  
+               00738 ; exit point of _sendDataByte
+               00739 
+               00740 ;***
+               00741 ;  pBlock Stats: dbName = C
+               00742 ;***
+               00743 ;entry:  _sendDataByteIntern    ;Function start
+               00744 ; 2 exit points
+               00745 ;has an exit
+               00746 ;3 compiler assigned registers:
+               00747 ;   r0x1025
+               00748 ;   r0x1026
+               00749 ;   r0x1027
+               00750 ;; Starting pCode block
+013D           00751 _sendDataByteIntern     ;Function start
+               00752 ; 2 exit points
+               00753 ;       .line   694; "serial1.c"        static void sendDataByteIntern(byte c)
+gpasm-0.13.4 beta               serial1.asm 6-13-2008  14:34:00          PAGE 15
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+013D 0000 0000 00754         BANKSEL r0x1025
+013F 0080      00755         MOVWF   r0x1025
+               00756 ;       .line   696; "serial1.c"        if (serialStatus & inSendQueueMsgBit)  {
+0140 0000 0000 00757         BANKSEL _serialStatus
+0142 1D00      00758         BTFSS   _serialStatus,2
+0143 2800      00759         GOTO    _00253_DS_
+               00760 ;unsigned compare: left < lit(0x10=16), size=1
+               00761 ;       .line   700; "serial1.c"        if (sendPacketLength < MAX_PAYLOAD)
+0144 3010      00762         MOVLW   0x10
+0145 0000 0000 00763         BANKSEL _sendPacketLength
+0147 0200      00764         SUBWF   _sendPacketLength,W
+0148 1803      00765         BTFSC   STATUS,0
+0149 2800      00766         GOTO    _00253_DS_
+               00767 ;genSkipc:3694: created from rifx:0xbffdc340
+               00768 ;       .line   701; "serial1.c"        sendPacket[sendPacketLength++] = c;
+014A 0800      00769         MOVF    _sendPacketLength,W
+014B 0000 0000 00770         BANKSEL r0x1026
+014D 0080      00771         MOVWF   r0x1026
+014E 0000 0000 00772         BANKSEL _sendPacketLength
+0150 0A80      00773         INCF    _sendPacketLength,F
+0151 0000 0000 00774         BANKSEL r0x1026
+0153 0800      00775         MOVF    r0x1026,W
+0154 3E00      00776         ADDLW   (_sendPacket + 0)
+0155 0080      00777         MOVWF   r0x1026
+0156 3000      00778         MOVLW   high (_sendPacket + 0)
+0157 1803      00779         BTFSC   STATUS,0
+0158 3E01      00780         ADDLW   0x01
+0159 0080      00781         MOVWF   r0x1027
+015A 0800      00782         MOVF    r0x1026,W
+015B 0084      00783         MOVWF   FSR
+015C 1383      00784         BCF     STATUS,7
+015D 1800      00785         BTFSC   r0x1027,0
+015E 1783      00786         BSF     STATUS,7
+015F 0800      00787         MOVF    r0x1025,W
+0160 0080      00788         MOVWF   INDF
+0161           00789 _00253_DS_
+0161 0000 0000 00790         BANKSEL _uartState;
+0163 0008      00791         RETURN  
+               00792 ; exit point of _sendDataByteIntern
+               00793 
+               00794 ;***
+               00795 ;  pBlock Stats: dbName = C
+               00796 ;***
+               00797 ;entry:  _uartTransmit  ;Function start
+               00798 ; 2 exit points
+               00799 ;has an exit
+               00800 ;4 compiler assigned registers:
+               00801 ;   r0x1018
+               00802 ;   r0x1019
+               00803 ;   r0x101A
+               00804 ;   r0x101B
+               00805 ;; Starting pCode block
+0164           00806 _uartTransmit   ;Function start
+               00807 ; 2 exit points
+gpasm-0.13.4 beta               serial1.asm 6-13-2008  14:34:00          PAGE 16
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+               00808 ;       .line   663; "serial1.c"        void uartTransmit(byte c)
+0164 0000 0000 00809         BANKSEL r0x1018
+0166 0080      00810         MOVWF   r0x1018
+               00811 ;       .line   668; "serial1.c"        newTail = transmitBufferTail + 1;
+0167 0000 0000 00812         BANKSEL _transmitBufferTail
+0169 0A00      00813         INCF    _transmitBufferTail,W
+016A 0000 0000 00814         BANKSEL r0x1019
+016C 0080      00815         MOVWF   r0x1019
+               00816 ;unsigned compare: left < lit(0x10=16), size=1
+               00817 ;       .line   669; "serial1.c"        if (newTail >= MAX_TRANSMIT_BUFFER)
+016D 3010      00818         MOVLW   0x10
+               00819 ;       .line   670; "serial1.c"        newTail = 0;
+016E 0200      00820         SUBWF   r0x1019,W
+               00821 ;       .line   674; "serial1.c"        if (newTail != transmitBufferHead) {
+016F 1803      00822         BTFSC   STATUS,0
+0170 0180      00823         CLRF    r0x1019
+0171 0000 0000 00824         BANKSEL _transmitBufferHead
+0173 0800      00825         MOVF    _transmitBufferHead,W
+               00826 ;       .line   675; "serial1.c"        transmitBuffer[transmitBufferTail] = c;
+0174 0000 0000 00827         BANKSEL r0x1019
+0176 0600      00828         XORWF   r0x1019,W
+0177 1903      00829         BTFSC   STATUS,2
+0178 2800      00830         GOTO    _00238_DS_
+0179 0000 0000 00831         BANKSEL _transmitBufferTail
+017B 0800      00832         MOVF    _transmitBufferTail,W
+017C 3E00      00833         ADDLW   (_transmitBuffer + 0)
+017D 0000 0000 00834         BANKSEL r0x101A
+017F 0080      00835         MOVWF   r0x101A
+0180 3000      00836         MOVLW   high (_transmitBuffer + 0)
+0181 1803      00837         BTFSC   STATUS,0
+0182 3E01      00838         ADDLW   0x01
+0183 0080      00839         MOVWF   r0x101B
+0184 0800      00840         MOVF    r0x101A,W
+0185 0084      00841         MOVWF   FSR
+0186 1383      00842         BCF     STATUS,7
+0187 1800      00843         BTFSC   r0x101B,0
+0188 1783      00844         BSF     STATUS,7
+0189 0800      00845         MOVF    r0x1018,W
+018A 0080      00846         MOVWF   INDF
+               00847 ;       .line   676; "serial1.c"        transmitBufferTail = newTail;
+018B 0800      00848         MOVF    r0x1019,W
+018C 0000 0000 00849         BANKSEL _transmitBufferTail
+018E 0080      00850         MOVWF   _transmitBufferTail
+               00851 ;       .line   678; "serial1.c"        if (TXIE == 0) {
+018F 0000 0000 00852         BANKSEL _PIE1_bits
+0191 1A00      00853         BTFSC   _PIE1_bits,4
+0192 2800      00854         GOTO    _00238_DS_
+               00855 ;       .line   679; "serial1.c"        TXIE=1; //enabling TXIE sets also TXIF
+0193 1600      00856         BSF     _PIE1_bits,4
+0194           00857 _00238_DS_
+0194 0000 0000 00858         BANKSEL _uartState;
+0196 0008      00859         RETURN  
+               00860 ; exit point of _uartTransmit
+               00861 
+gpasm-0.13.4 beta               serial1.asm 6-13-2008  14:34:00          PAGE 17
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+               00862 ;***
+               00863 ;  pBlock Stats: dbName = C
+               00864 ;***
+               00865 ;entry:  _uartNotifyReceive     ;Function start
+               00866 ; 2 exit points
+               00867 ;has an exit
+               00868 ;functions called:
+               00869 ;   _uartReceiveError
+               00870 ;   _uartReceiveError
+               00871 ;   _computeCRC
+               00872 ;   _uartReceiveError
+               00873 ;   _computeCRC
+               00874 ;   _uartTransmit
+               00875 ;   _uartTransmit
+               00876 ;   _uartTransmit
+               00877 ;   _uartTransmit
+               00878 ;   _computeCRC
+               00879 ;   _uartTransmit
+               00880 ;   _computeCRC
+               00881 ;   _uartTransmit
+               00882 ;   _computeCRC
+               00883 ;   _uartTransmit
+               00884 ;   _computeCRC
+               00885 ;   _uartTransmit
+               00886 ;   _computeCRC
+               00887 ;   _uartTransmit
+               00888 ;   _uartTransmit
+               00889 ;   _computeCRC
+               00890 ;   _computeCRC
+               00891 ;   _uartTransmit
+               00892 ;   _computeCRC
+               00893 ;   _uartTransmit
+               00894 ;   _computeCRC
+               00895 ;   _uartTransmit
+               00896 ;   _computeCRC
+               00897 ;   _uartTransmit
+               00898 ;   _computeCRC
+               00899 ;   _uartTransmit
+               00900 ;   _uartTransmit
+               00901 ;   _uartTransmit
+               00902 ;   _uartTransmit
+               00903 ;   _uartTransmit
+               00904 ;   _uartTransmit
+               00905 ;   _uartReceiveError
+               00906 ;   _uartReceiveError
+               00907 ;   _uartReceiveError
+               00908 ;   _computeCRC
+               00909 ;   _uartReceiveError
+               00910 ;   _computeCRC
+               00911 ;   _uartTransmit
+               00912 ;   _uartTransmit
+               00913 ;   _uartTransmit
+               00914 ;   _uartTransmit
+               00915 ;   _computeCRC
+gpasm-0.13.4 beta               serial1.asm 6-13-2008  14:34:00          PAGE 18
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+               00916 ;   _uartTransmit
+               00917 ;   _computeCRC
+               00918 ;   _uartTransmit
+               00919 ;   _computeCRC
+               00920 ;   _uartTransmit
+               00921 ;   _computeCRC
+               00922 ;   _uartTransmit
+               00923 ;   _computeCRC
+               00924 ;   _uartTransmit
+               00925 ;   _uartTransmit
+               00926 ;   _computeCRC
+               00927 ;   _computeCRC
+               00928 ;   _uartTransmit
+               00929 ;   _computeCRC
+               00930 ;   _uartTransmit
+               00931 ;   _computeCRC
+               00932 ;   _uartTransmit
+               00933 ;   _computeCRC
+               00934 ;   _uartTransmit
+               00935 ;   _computeCRC
+               00936 ;   _uartTransmit
+               00937 ;   _uartTransmit
+               00938 ;   _uartTransmit
+               00939 ;   _uartTransmit
+               00940 ;   _uartTransmit
+               00941 ;   _uartTransmit
+               00942 ;   _uartReceiveError
+               00943 ;3 compiler assigned registers:
+               00944 ;   r0x1014
+               00945 ;   r0x1015
+               00946 ;   r0x1016
+               00947 ;; Starting pCode block
+0197           00948 _uartNotifyReceive      ;Function start
+               00949 ; 2 exit points
+               00950 ;       .line   434; "serial1.c"        c = RCREG;
+0197 0000 0000 00951         BANKSEL _RCREG
+0199 0800      00952         MOVF    _RCREG,W
+               00953 ;       .line   439; "serial1.c"        if (OERR) {
+019A 0000 0000 00954         BANKSEL r0x1014
+019C 0080      00955         MOVWF   r0x1014
+               00956 ;       .line   440; "serial1.c"        CREN = 0;
+019D 0000 0000 00957         BANKSEL _RCSTA_bits
+019F 1880      00958         BTFSC   _RCSTA_bits,1
+               00959 ;       .line   445; "serial1.c"        CREN = 1;
+01A0 1200      00960         BCF     _RCSTA_bits,4
+01A1 1600      00961         BSF     _RCSTA_bits,4
+               00962 ;       .line   447; "serial1.c"        if (serialStatus & serialErrorBit) {
+01A2 0000 0000 00963         BANKSEL _serialStatus
+01A4 1C00      00964         BTFSS   _serialStatus,0
+01A5 2800      00965         GOTO    _00159_DS_
+               00966 ;       .line   448; "serial1.c"        uartReceiveError();
+01A6 2000      00967         CALL    _uartReceiveError
+               00968 ;       .line   449; "serial1.c"        return;
+01A7 2800      00969         GOTO    _00204_DS_
+gpasm-0.13.4 beta               serial1.asm 6-13-2008  14:34:00          PAGE 19
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+01A8           00970 _00159_DS_
+               00971 ;       .line   453; "serial1.c"        switch(uartState) {
+01A8 0000 0000 00972         BANKSEL _uartState
+01AA 0800      00973         MOVF    _uartState,W
+01AB 0000 0000 00974         BANKSEL r0x1015
+01AD 0080      00975         MOVWF   r0x1015
+               00976 ;unsigned compare: left < lit(0x30=48), size=1
+01AE 3030      00977         MOVLW   0x30
+01AF 0200      00978         SUBWF   r0x1015,W
+01B0 1C03      00979         BTFSS   STATUS,0
+01B1 2800      00980         GOTO    _00202_DS_
+               00981 ;genSkipc:3694: created from rifx:0xbffdc340
+               00982 ;swapping arguments (AOP_TYPEs 1/2)
+               00983 ;unsigned compare: left >= lit(0x3B=59), size=1
+01B2 303B      00984         MOVLW   0x3b
+01B3 0200      00985         SUBWF   r0x1015,W
+01B4 1803      00986         BTFSC   STATUS,0
+01B5 2800      00987         GOTO    _00202_DS_
+               00988 ;genSkipc:3694: created from rifx:0xbffdc340
+01B6 30D0      00989         MOVLW   0xd0
+01B7 0780      00990         ADDWF   r0x1015,F
+01B8 3000      00991         MOVLW   HIGH(_00224_DS_)
+01B9 008A      00992         MOVWF   PCLATH
+01BA 3000      00993         MOVLW   _00224_DS_
+01BB 0700      00994         ADDWF   r0x1015,W
+01BC 1803      00995         BTFSC   STATUS,0
+01BD 0A8A      00996         INCF    PCLATH,F
+01BE 1283 1303 00997         BANKSEL PCL
+01C0 0082      00998         MOVWF   PCL
+01C1           00999 _00224_DS_
+01C1 2800      01000         GOTO    _00160_DS_
+01C2 2800      01001         GOTO    _00163_DS_
+01C3 2800      01002         GOTO    _00170_DS_
+01C4 2800      01003         GOTO    _00176_DS_
+01C5 2800      01004         GOTO    _00180_DS_
+01C6 2800      01005         GOTO    _00184_DS_
+01C7 2800      01006         GOTO    _00187_DS_
+01C8 2800      01007         GOTO    _00193_DS_
+01C9 2800      01008         GOTO    _00196_DS_
+01CA 2800      01009         GOTO    _00197_DS_
+01CB 2800      01010         GOTO    _00198_DS_
+01CC           01011 _00160_DS_
+               01012 ;       .line   459; "serial1.c"        if (c == SNAP_SYNC) {
+01CC 0000 0000 01013         BANKSEL r0x1014
+01CE 0800      01014         MOVF    r0x1014,W
+01CF 3A54      01015         XORLW   0x54
+01D0 1D03      01016         BTFSS   STATUS,2
+01D1 2800      01017         GOTO    _00204_DS_
+               01018 ;       .line   460; "serial1.c"        uartState = SNAP_haveSync;
+01D2 3031      01019         MOVLW   0x31
+01D3 0000 0000 01020         BANKSEL _uartState
+01D5 0080      01021         MOVWF   _uartState
+               01022 ;       .line   461; "serial1.c"        serialStatus &= ~msgAbortedBit; //clear
+01D6 0000 0000 01023         BANKSEL _serialStatus
+gpasm-0.13.4 beta               serial1.asm 6-13-2008  14:34:00          PAGE 20
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+01D8 1180      01024         BCF     _serialStatus,3
+               01025 ;       .line   463; "serial1.c"        break;
+01D9 2800      01026         GOTO    _00204_DS_
+01DA           01027 _00163_DS_
+               01028 ;       .line   472; "serial1.c"        in_hdb2 = c;
+01DA 0000 0000 01029         BANKSEL r0x1014
+01DC 0800      01030         MOVF    r0x1014,W
+01DD 0000 0000 01031         BANKSEL _in_hdb2
+01DF 0080      01032         MOVWF   _in_hdb2
+               01033 ;       .line   473; "serial1.c"        if ((c & BIN(11111100)) != BIN(01010000)) {
+01E0 30FC      01034         MOVLW   0xfc
+01E1 0000 0000 01035         BANKSEL r0x1014
+01E3 0500      01036         ANDWF   r0x1014,W
+01E4 0080      01037         MOVWF   r0x1015
+               01038 ;       .line   475; "serial1.c"        serialStatus |= serialErrorBit;  //set serialError
+01E5 3A50      01039         XORLW   0x50
+01E6 1903      01040         BTFSC   STATUS,2
+01E7 2800      01041         GOTO    _00168_DS_
+01E8 0000 0000 01042         BANKSEL _serialStatus
+01EA 1400      01043         BSF     _serialStatus,0
+               01044 ;       .line   476; "serial1.c"        serialStatus |= wrongByteErrorBit; 
+01EB 1680      01045         BSF     _serialStatus,5
+               01046 ;       .line   477; "serial1.c"        uartReceiveError();
+01EC 2000      01047         CALL    _uartReceiveError
+01ED 2800      01048         GOTO    _00204_DS_
+01EE           01049 _00168_DS_
+               01050 ;       .line   480; "serial1.c"        if ((c & BIN(00000011)) == BIN(00000001))
+01EE 3003      01051         MOVLW   0x03
+01EF 0000 0000 01052         BANKSEL r0x1014
+01F1 0500      01053         ANDWF   r0x1014,W
+01F2 0080      01054         MOVWF   r0x1015
+01F3 3A01      01055         XORLW   0x01
+01F4 1D03      01056         BTFSS   STATUS,2
+01F5 2800      01057         GOTO    _00165_DS_
+               01058 ;       .line   481; "serial1.c"        serialStatus |= ackRequestedBit;  //set ackRequested-Bit
+01F6 0000 0000 01059         BANKSEL _serialStatus
+01F8 1700      01060         BSF     _serialStatus,6
+01F9 2800      01061         GOTO    _00166_DS_
+01FA           01062 _00165_DS_
+               01063 ;       .line   483; "serial1.c"        serialStatus &= ~ackRequestedBit; //clear
+01FA 0000 0000 01064         BANKSEL _serialStatus
+01FC 1300      01065         BCF     _serialStatus,6
+01FD           01066 _00166_DS_
+               01067 ;       .line   484; "serial1.c"        crc = 0;
+01FD 0000 0000 01068         BANKSEL _crc
+01FF 0180      01069         CLRF    _crc
+               01070 ;       .line   485; "serial1.c"        computeCRC(c);
+0200 0000 0000 01071         BANKSEL r0x1014
+0202 0800      01072         MOVF    r0x1014,W
+0203 2000      01073         CALL    _computeCRC
+               01074 ;       .line   486; "serial1.c"        uartState = SNAP_haveHDB2;
+0204 3032      01075         MOVLW   0x32
+0205 0000 0000 01076         BANKSEL _uartState
+0207 0080      01077         MOVWF   _uartState
+gpasm-0.13.4 beta               serial1.asm 6-13-2008  14:34:00          PAGE 21
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+               01078 ;       .line   488; "serial1.c"        break;
+0208 2800      01079         GOTO    _00204_DS_
+0209           01080 _00170_DS_
+               01081 ;       .line   494; "serial1.c"        in_hdb1 = c;
+0209 0000 0000 01082         BANKSEL r0x1014
+020B 0800      01083         MOVF    r0x1014,W
+020C 0000 0000 01084         BANKSEL _in_hdb1
+020E 0080      01085         MOVWF   _in_hdb1
+               01086 ;       .line   495; "serial1.c"        if ((c & BIN(11110000)) != BIN(00110000)) {
+020F 30F0      01087         MOVLW   0xf0
+0210 0000 0000 01088         BANKSEL r0x1014
+0212 0500      01089         ANDWF   r0x1014,W
+0213 0080      01090         MOVWF   r0x1015
+               01091 ;       .line   496; "serial1.c"        serialStatus |= serialErrorBit;  //set serialError
+0214 3A30      01092         XORLW   0x30
+0215 1903      01093         BTFSC   STATUS,2
+0216 2800      01094         GOTO    _00174_DS_
+0217 0000 0000 01095         BANKSEL _serialStatus
+0219 1400      01096         BSF     _serialStatus,0
+               01097 ;       .line   497; "serial1.c"        serialStatus |= wrongByteErrorBit; 
+021A 1680      01098         BSF     _serialStatus,5
+               01099 ;       .line   498; "serial1.c"        uartReceiveError();
+021B 2000      01100         CALL    _uartReceiveError
+021C 2800      01101         GOTO    _00204_DS_
+021D           01102 _00174_DS_
+               01103 ;       .line   500; "serial1.c"        packetLength = c & 0x0f;
+021D 300F      01104         MOVLW   0x0f
+021E 0000 0000 01105         BANKSEL r0x1014
+0220 0500      01106         ANDWF   r0x1014,W
+0221 0000 0000 01107         BANKSEL _packetLength
+0223 0080      01108         MOVWF   _packetLength
+               01109 ;swapping arguments (AOP_TYPEs 1/3)
+               01110 ;unsigned compare: left >= lit(0x11=17), size=1
+               01111 ;       .line   501; "serial1.c"        if (packetLength > MAX_PAYLOAD)
+0224 3011      01112         MOVLW   0x11
+0225 0200      01113         SUBWF   _packetLength,W
+0226 1C03      01114         BTFSS   STATUS,0
+0227 2800      01115         GOTO    _00172_DS_
+               01116 ;genSkipc:3694: created from rifx:0xbffdc340
+               01117 ;       .line   502; "serial1.c"        packetLength = MAX_PAYLOAD;
+0228 3010      01118         MOVLW   0x10
+0229 0080      01119         MOVWF   _packetLength
+022A           01120 _00172_DS_
+               01121 ;       .line   503; "serial1.c"        computeCRC(c);
+022A 0000 0000 01122         BANKSEL r0x1014
+022C 0800      01123         MOVF    r0x1014,W
+022D 2000      01124         CALL    _computeCRC
+               01125 ;       .line   504; "serial1.c"        uartState = SNAP_haveHDB1;
+022E 3033      01126         MOVLW   0x33
+022F 0000 0000 01127         BANKSEL _uartState
+0231 0080      01128         MOVWF   _uartState
+               01129 ;       .line   506; "serial1.c"        break;
+0232 2800      01130         GOTO    _00204_DS_
+0233           01131 _00176_DS_
+gpasm-0.13.4 beta               serial1.asm 6-13-2008  14:34:00          PAGE 22
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+               01132 ;       .line   511; "serial1.c"        if (c != deviceAddress) {
+0233 0000 0000 01133         BANKSEL _deviceAddress
+0235 0800      01134         MOVF    _deviceAddress,W
+               01135 ;       .line   512; "serial1.c"        uartTransmit(SNAP_SYNC);
+0236 0000 0000 01136         BANKSEL r0x1014
+0238 0600      01137         XORWF   r0x1014,W
+0239 1903      01138         BTFSC   STATUS,2
+023A 2800      01139         GOTO    _00178_DS_
+023B 3054      01140         MOVLW   0x54
+023C 0000      01141         PAGESEL _uartTransmit
+023D 2000      01142         CALL    _uartTransmit
+023E 0000      01143         PAGESEL $
+               01144 ;       .line   513; "serial1.c"        uartTransmit(in_hdb2);
+023F 0000 0000 01145         BANKSEL _in_hdb2
+0241 0800      01146         MOVF    _in_hdb2,W
+0242 0000      01147         PAGESEL _uartTransmit
+0243 2000      01148         CALL    _uartTransmit
+0244 0000      01149         PAGESEL $
+               01150 ;       .line   514; "serial1.c"        uartTransmit(in_hdb1);
+0245 0000 0000 01151         BANKSEL _in_hdb1
+0247 0800      01152         MOVF    _in_hdb1,W
+0248 0000      01153         PAGESEL _uartTransmit
+0249 2000      01154         CALL    _uartTransmit
+024A 0000      01155         PAGESEL $
+               01156 ;       .line   515; "serial1.c"        uartTransmit(c);
+024B 0000 0000 01157         BANKSEL r0x1014
+024D 0800      01158         MOVF    r0x1014,W
+024E 0000      01159         PAGESEL _uartTransmit
+024F 2000      01160         CALL    _uartTransmit
+0250 0000      01161         PAGESEL $
+               01162 ;       .line   516; "serial1.c"        uartState = SNAP_haveDABPass;
+0251 3039      01163         MOVLW   0x39
+0252 0000 0000 01164         BANKSEL _uartState
+0254 0080      01165         MOVWF   _uartState
+               01166 ;       .line   517; "serial1.c"        serialStatus &= ~ackRequestedBit; //clear
+0255 0000 0000 01167         BANKSEL _serialStatus
+0257 1300      01168         BCF     _serialStatus,6
+               01169 ;       .line   518; "serial1.c"        serialStatus |= inTransmitMsgBit; 
+0258 1480      01170         BSF     _serialStatus,1
+0259 2800      01171         GOTO    _00204_DS_
+025A           01172 _00178_DS_
+               01173 ;       .line   520; "serial1.c"        computeCRC(c);
+025A 0000 0000 01174         BANKSEL r0x1014
+025C 0800      01175         MOVF    r0x1014,W
+025D 2000      01176         CALL    _computeCRC
+               01177 ;       .line   521; "serial1.c"        uartState = SNAP_haveDAB;
+025E 3034      01178         MOVLW   0x34
+025F 0000 0000 01179         BANKSEL _uartState
+0261 0080      01180         MOVWF   _uartState
+               01181 ;       .line   523; "serial1.c"        break;
+0262 2800      01182         GOTO    _00204_DS_
+0263           01183 _00180_DS_
+               01184 ;       .line   535; "serial1.c"        if (serialStatus & processingLockBit) {
+0263 0000 0000 01185         BANKSEL _serialStatus
+gpasm-0.13.4 beta               serial1.asm 6-13-2008  14:34:00          PAGE 23
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+0265 1F80      01186         BTFSS   _serialStatus,7
+0266 2800      01187         GOTO    _00182_DS_
+               01188 ;       .line   537; "serial1.c"        uartTransmit(SNAP_SYNC);
+0267 3054      01189         MOVLW   0x54
+0268 0000      01190         PAGESEL _uartTransmit
+0269 2000      01191         CALL    _uartTransmit
+026A 0000      01192         PAGESEL $
+               01193 ;       .line   538; "serial1.c"        crc = 0;
+026B 0000 0000 01194         BANKSEL _crc
+026D 0180      01195         CLRF    _crc
+               01196 ;       .line   539; "serial1.c"        uartTransmit(computeCRC(BIN(01010011))); //HDB2
+026E 3053      01197         MOVLW   0x53
+026F 2000      01198         CALL    _computeCRC
+0270 0000 0000 01199         BANKSEL r0x1015
+0272 0080      01200         MOVWF   r0x1015
+0273 0000      01201         PAGESEL _uartTransmit
+0274 2000      01202         CALL    _uartTransmit
+0275 0000      01203         PAGESEL $
+               01204 ;       .line   541; "serial1.c"        uartTransmit(computeCRC(BIN(00110000)));  //HDB1
+0276 3030      01205         MOVLW   0x30
+0277 2000      01206         CALL    _computeCRC
+0278 0000 0000 01207         BANKSEL r0x1015
+027A 0080      01208         MOVWF   r0x1015
+027B 0000      01209         PAGESEL _uartTransmit
+027C 2000      01210         CALL    _uartTransmit
+027D 0000      01211         PAGESEL $
+               01212 ;       .line   542; "serial1.c"        uartTransmit(computeCRC(sourceAddress));  // Return to sender
+027E 0000 0000 01213         BANKSEL _sourceAddress
+0280 0800      01214         MOVF    _sourceAddress,W
+0281 2000      01215         CALL    _computeCRC
+0282 0000 0000 01216         BANKSEL r0x1015
+0284 0080      01217         MOVWF   r0x1015
+0285 0000      01218         PAGESEL _uartTransmit
+0286 2000      01219         CALL    _uartTransmit
+0287 0000      01220         PAGESEL $
+               01221 ;       .line   543; "serial1.c"        uartTransmit(computeCRC(deviceAddress));  // From us
+0288 0000 0000 01222         BANKSEL _deviceAddress
+028A 0800      01223         MOVF    _deviceAddress,W
+028B 2000      01224         CALL    _computeCRC
+028C 0000 0000 01225         BANKSEL r0x1015
+028E 0080      01226         MOVWF   r0x1015
+028F 0000      01227         PAGESEL _uartTransmit
+0290 2000      01228         CALL    _uartTransmit
+0291 0000      01229         PAGESEL $
+               01230 ;       .line   551; "serial1.c"        uartTransmit(crc);  // CRC
+0292 0000 0000 01231         BANKSEL _crc
+0294 0800      01232         MOVF    _crc,W
+0295 0000      01233         PAGESEL _uartTransmit
+0296 2000      01234         CALL    _uartTransmit
+0297 0000      01235         PAGESEL $
+               01236 ;       .line   552; "serial1.c"        serialStatus &= ~ackRequestedBit; //clear
+0298 0000 0000 01237         BANKSEL _serialStatus
+029A 1300      01238         BCF     _serialStatus,6
+               01239 ;       .line   553; "serial1.c"        serialStatus |= msgAbortedBit; //set
+gpasm-0.13.4 beta               serial1.asm 6-13-2008  14:34:00          PAGE 24
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+029B 1580      01240         BSF     _serialStatus,3
+               01241 ;       .line   554; "serial1.c"        uartState = SNAP_idle;
+029C 3030      01242         MOVLW   0x30
+029D 0000 0000 01243         BANKSEL _uartState
+029F 0080      01244         MOVWF   _uartState
+02A0 2800      01245         GOTO    _00204_DS_
+02A1           01246 _00182_DS_
+               01247 ;       .line   556; "serial1.c"        sourceAddress = c;
+02A1 0000 0000 01248         BANKSEL r0x1014
+02A3 0800      01249         MOVF    r0x1014,W
+02A4 0000 0000 01250         BANKSEL _sourceAddress
+02A6 0080      01251         MOVWF   _sourceAddress
+               01252 ;       .line   557; "serial1.c"        bufferIndex = 0;
+02A7 0000 0000 01253         BANKSEL _bufferIndex
+02A9 0180      01254         CLRF    _bufferIndex
+               01255 ;       .line   558; "serial1.c"        computeCRC(c);
+02AA 0000 0000 01256         BANKSEL r0x1014
+02AC 0800      01257         MOVF    r0x1014,W
+02AD 2000      01258         CALL    _computeCRC
+               01259 ;       .line   559; "serial1.c"        uartState = SNAP_readingData;
+02AE 3035      01260         MOVLW   0x35
+02AF 0000 0000 01261         BANKSEL _uartState
+02B1 0080      01262         MOVWF   _uartState
+               01263 ;       .line   561; "serial1.c"        break;
+02B2 2800      01264         GOTO    _00204_DS_
+02B3           01265 _00184_DS_
+               01266 ;       .line   565; "serial1.c"        buffer[bufferIndex] = c;
+02B3 0000 0000 01267         BANKSEL _bufferIndex
+02B5 0800      01268         MOVF    _bufferIndex,W
+02B6 3E00      01269         ADDLW   (_buffer + 0)
+02B7 0000 0000 01270         BANKSEL r0x1015
+02B9 0080      01271         MOVWF   r0x1015
+02BA 3000      01272         MOVLW   high (_buffer + 0)
+02BB 1803      01273         BTFSC   STATUS,0
+02BC 3E01      01274         ADDLW   0x01
+02BD 0080      01275         MOVWF   r0x1016
+02BE 0800      01276         MOVF    r0x1015,W
+02BF 0084      01277         MOVWF   FSR
+02C0 1383      01278         BCF     STATUS,7
+02C1 1800      01279         BTFSC   r0x1016,0
+02C2 1783      01280         BSF     STATUS,7
+02C3 0800      01281         MOVF    r0x1014,W
+02C4 0080      01282         MOVWF   INDF
+               01283 ;       .line   566; "serial1.c"        bufferIndex++;
+02C5 0000 0000 01284         BANKSEL _bufferIndex
+02C7 0A80      01285         INCF    _bufferIndex,F
+               01286 ;       .line   567; "serial1.c"        computeCRC(c);
+02C8 0000 0000 01287         BANKSEL r0x1014
+02CA 0800      01288         MOVF    r0x1014,W
+02CB 2000      01289         CALL    _computeCRC
+               01290 ;       .line   569; "serial1.c"        if (bufferIndex == packetLength)
+02CC 0000 0000 01291         BANKSEL _packetLength
+02CE 0800      01292         MOVF    _packetLength,W
+02CF 0000 0000 01293         BANKSEL _bufferIndex
+gpasm-0.13.4 beta               serial1.asm 6-13-2008  14:34:00          PAGE 25
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+02D1 0600      01294         XORWF   _bufferIndex,W
+02D2 1D03      01295         BTFSS   STATUS,2
+02D3 2800      01296         GOTO    _00204_DS_
+               01297 ;       .line   570; "serial1.c"        uartState = SNAP_dataComplete;
+02D4 3036      01298         MOVLW   0x36
+02D5 0000 0000 01299         BANKSEL _uartState
+02D7 0080      01300         MOVWF   _uartState
+               01301 ;       .line   571; "serial1.c"        break;
+02D8 2800      01302         GOTO    _00204_DS_
+02D9           01303 _00187_DS_
+               01304 ;       .line   580; "serial1.c"        if (c == crc) {
+02D9 0000 0000 01305         BANKSEL _crc
+02DB 0800      01306         MOVF    _crc,W
+02DC 0000 0000 01307         BANKSEL r0x1014
+02DE 0600      01308         XORWF   r0x1014,W
+02DF 1D03      01309         BTFSS   STATUS,2
+02E0 2800      01310         GOTO    _00189_DS_
+               01311 ;       .line   588; "serial1.c"        hdb2 |= BIN(10);
+02E1 3052      01312         MOVLW   0x52
+02E2 0080      01313         MOVWF   r0x1015
+               01314 ;       .line   589; "serial1.c"        serialStatus |= processingLockBit;  //set processingLockBit
+02E3 0000 0000 01315         BANKSEL _serialStatus
+02E5 1780      01316         BSF     _serialStatus,7
+               01317 ;       .line   590; "serial1.c"        receivedSourceAddress = sourceAddress;
+02E6 0000 0000 01318         BANKSEL _sourceAddress
+02E8 0800      01319         MOVF    _sourceAddress,W
+02E9 0000 0000 01320         BANKSEL _receivedSourceAddress
+02EB 0080      01321         MOVWF   _receivedSourceAddress
+02EC 2800      01322         GOTO    _00190_DS_
+02ED           01323 _00189_DS_
+               01324 ;       .line   593; "serial1.c"        hdb2 |= BIN(11);
+02ED 3053      01325         MOVLW   0x53
+02EE 0000 0000 01326         BANKSEL r0x1015
+02F0 0080      01327         MOVWF   r0x1015
+02F1           01328 _00190_DS_
+               01329 ;       .line   595; "serial1.c"        if (serialStatus & ackRequestedBit) {
+02F1 0000 0000 01330         BANKSEL _serialStatus
+02F3 1F00      01331         BTFSS   _serialStatus,6
+02F4 2800      01332         GOTO    _00192_DS_
+               01333 ;       .line   597; "serial1.c"        uartTransmit(SNAP_SYNC);
+02F5 3054      01334         MOVLW   0x54
+02F6 0000      01335         PAGESEL _uartTransmit
+02F7 2000      01336         CALL    _uartTransmit
+02F8 0000      01337         PAGESEL $
+               01338 ;       .line   598; "serial1.c"        crc = 0;
+02F9 0000 0000 01339         BANKSEL _crc
+02FB 0180      01340         CLRF    _crc
+               01341 ;       .line   599; "serial1.c"        uartTransmit(computeCRC(hdb2));
+02FC 0000 0000 01342         BANKSEL r0x1015
+02FE 0800      01343         MOVF    r0x1015,W
+02FF 2000      01344         CALL    _computeCRC
+0300 0000 0000 01345         BANKSEL r0x1015
+0302 0080      01346         MOVWF   r0x1015
+0303 0000      01347         PAGESEL _uartTransmit
+gpasm-0.13.4 beta               serial1.asm 6-13-2008  14:34:00          PAGE 26
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+0304 2000      01348         CALL    _uartTransmit
+0305 0000      01349         PAGESEL $
+               01350 ;       .line   601; "serial1.c"        uartTransmit(computeCRC(BIN(00110000)));
+0306 3030      01351         MOVLW   0x30
+0307 2000      01352         CALL    _computeCRC
+0308 0000 0000 01353         BANKSEL r0x1015
+030A 0080      01354         MOVWF   r0x1015
+030B 0000      01355         PAGESEL _uartTransmit
+030C 2000      01356         CALL    _uartTransmit
+030D 0000      01357         PAGESEL $
+               01358 ;       .line   602; "serial1.c"        uartTransmit(computeCRC(sourceAddress));  // Return to sender
+030E 0000 0000 01359         BANKSEL _sourceAddress
+0310 0800      01360         MOVF    _sourceAddress,W
+0311 2000      01361         CALL    _computeCRC
+0312 0000 0000 01362         BANKSEL r0x1015
+0314 0080      01363         MOVWF   r0x1015
+0315 0000      01364         PAGESEL _uartTransmit
+0316 2000      01365         CALL    _uartTransmit
+0317 0000      01366         PAGESEL $
+               01367 ;       .line   603; "serial1.c"        uartTransmit(computeCRC(deviceAddress));  // From us
+0318 0000 0000 01368         BANKSEL _deviceAddress
+031A 0800      01369         MOVF    _deviceAddress,W
+031B 2000      01370         CALL    _computeCRC
+031C 0000 0000 01371         BANKSEL r0x1015
+031E 0080      01372         MOVWF   r0x1015
+031F 0000      01373         PAGESEL _uartTransmit
+0320 2000      01374         CALL    _uartTransmit
+0321 0000      01375         PAGESEL $
+               01376 ;       .line   604; "serial1.c"        uartTransmit(crc);  // CRC
+0322 0000 0000 01377         BANKSEL _crc
+0324 0800      01378         MOVF    _crc,W
+0325 0000      01379         PAGESEL _uartTransmit
+0326 2000      01380         CALL    _uartTransmit
+0327 0000      01381         PAGESEL $
+               01382 ;       .line   605; "serial1.c"        serialStatus &= ~ackRequestedBit; //clear
+0328 0000 0000 01383         BANKSEL _serialStatus
+032A 1300      01384         BCF     _serialStatus,6
+032B           01385 _00192_DS_
+               01386 ;       .line   608; "serial1.c"        uartState = SNAP_idle;
+032B 3030      01387         MOVLW   0x30
+032C 0000 0000 01388         BANKSEL _uartState
+032E 0080      01389         MOVWF   _uartState
+               01390 ;       .line   609; "serial1.c"        break;
+032F 2800      01391         GOTO    _00204_DS_
+0330           01392 _00193_DS_
+               01393 ;       .line   613; "serial1.c"        uartTransmit(c);  // We will be reading HDB1; pass it on
+0330 0000 0000 01394         BANKSEL r0x1014
+0332 0800      01395         MOVF    r0x1014,W
+0333 0000      01396         PAGESEL _uartTransmit
+0334 2000      01397         CALL    _uartTransmit
+0335 0000      01398         PAGESEL $
+               01399 ;       .line   614; "serial1.c"        packetLength = c & 0x0f;
+0336 300F      01400         MOVLW   0x0f
+0337 0000 0000 01401         BANKSEL r0x1014
+gpasm-0.13.4 beta               serial1.asm 6-13-2008  14:34:00          PAGE 27
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+0339 0500      01402         ANDWF   r0x1014,W
+033A 0000 0000 01403         BANKSEL _packetLength
+033C 0080      01404         MOVWF   _packetLength
+               01405 ;swapping arguments (AOP_TYPEs 1/3)
+               01406 ;unsigned compare: left >= lit(0x11=17), size=1
+               01407 ;       .line   615; "serial1.c"        if (packetLength > MAX_PAYLOAD)
+033D 3011      01408         MOVLW   0x11
+033E 0200      01409         SUBWF   _packetLength,W
+033F 1C03      01410         BTFSS   STATUS,0
+0340 2800      01411         GOTO    _00195_DS_
+               01412 ;genSkipc:3694: created from rifx:0xbffdc340
+               01413 ;       .line   616; "serial1.c"        packetLength = MAX_PAYLOAD;
+0341 3010      01414         MOVLW   0x10
+0342 0080      01415         MOVWF   _packetLength
+0343           01416 _00195_DS_
+               01417 ;       .line   617; "serial1.c"        uartState = SNAP_haveHDB1Pass;
+0343 3038      01418         MOVLW   0x38
+0344 0000 0000 01419         BANKSEL _uartState
+0346 0080      01420         MOVWF   _uartState
+               01421 ;       .line   618; "serial1.c"        break;
+0347 2800      01422         GOTO    _00204_DS_
+0348           01423 _00196_DS_
+               01424 ;       .line   622; "serial1.c"        uartTransmit(c);  // We will be reading dest addr; pass it on
+0348 0000 0000 01425         BANKSEL r0x1014
+034A 0800      01426         MOVF    r0x1014,W
+034B 0000      01427         PAGESEL _uartTransmit
+034C 2000      01428         CALL    _uartTransmit
+034D 0000      01429         PAGESEL $
+               01430 ;       .line   623; "serial1.c"        uartState = SNAP_haveDABPass;
+034E 3039      01431         MOVLW   0x39
+034F 0000 0000 01432         BANKSEL _uartState
+0351 0080      01433         MOVWF   _uartState
+               01434 ;       .line   624; "serial1.c"        break;
+0352 2800      01435         GOTO    _00204_DS_
+0353           01436 _00197_DS_
+               01437 ;       .line   628; "serial1.c"        uartTransmit(c);  // We will be reading source addr; pass it on
+0353 0000 0000 01438         BANKSEL r0x1014
+0355 0800      01439         MOVF    r0x1014,W
+0356 0000      01440         PAGESEL _uartTransmit
+0357 2000      01441         CALL    _uartTransmit
+0358 0000      01442         PAGESEL $
+               01443 ;       .line   632; "serial1.c"        packetLength++;
+0359 0000 0000 01444         BANKSEL _packetLength
+035B 0A80      01445         INCF    _packetLength,F
+               01446 ;       .line   634; "serial1.c"        uartState = SNAP_readingDataPass;
+035C 303A      01447         MOVLW   0x3a
+035D 0000 0000 01448         BANKSEL _uartState
+035F 0080      01449         MOVWF   _uartState
+               01450 ;       .line   635; "serial1.c"        break;
+0360 2800      01451         GOTO    _00204_DS_
+0361           01452 _00198_DS_
+               01453 ;       .line   639; "serial1.c"        uartTransmit(c);  // This is a data byte; pass it on
+0361 0000 0000 01454         BANKSEL r0x1014
+0363 0800      01455         MOVF    r0x1014,W
+gpasm-0.13.4 beta               serial1.asm 6-13-2008  14:34:00          PAGE 28
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+0364 0000      01456         PAGESEL _uartTransmit
+0365 2000      01457         CALL    _uartTransmit
+0366 0000      01458         PAGESEL $
+               01459 ;swapping arguments (AOP_TYPEs 1/3)
+               01460 ;unsigned compare: left >= lit(0x2=2), size=1
+               01461 ;       .line   640; "serial1.c"        if (packetLength > 1)
+0367 3002      01462         MOVLW   0x02
+0368 0000 0000 01463         BANKSEL _packetLength
+036A 0200      01464         SUBWF   _packetLength,W
+036B 1C03      01465         BTFSS   STATUS,0
+036C 2800      01466         GOTO    _00200_DS_
+               01467 ;genSkipc:3694: created from rifx:0xbffdc340
+               01468 ;       .line   641; "serial1.c"        packetLength--;
+036D 0380      01469         DECF    _packetLength,F
+036E 2800      01470         GOTO    _00204_DS_
+036F           01471 _00200_DS_
+               01472 ;       .line   643; "serial1.c"        uartState = SNAP_idle;
+036F 3030      01473         MOVLW   0x30
+0370 0000 0000 01474         BANKSEL _uartState
+0372 0080      01475         MOVWF   _uartState
+               01476 ;       .line   644; "serial1.c"        serialStatus &= ~inTransmitMsgBit; //clear
+0373 0000 0000 01477         BANKSEL _serialStatus
+0375 1080      01478         BCF     _serialStatus,1
+               01479 ;       .line   646; "serial1.c"        break;
+0376 2800      01480         GOTO    _00204_DS_
+0377           01481 _00202_DS_
+               01482 ;       .line   649; "serial1.c"        serialStatus |= serialErrorBit;  //set serialError
+0377 0000 0000 01483         BANKSEL _serialStatus
+0379 1400      01484         BSF     _serialStatus,0
+               01485 ;       .line   650; "serial1.c"        serialStatus |= wrongStateErrorBit;  
+037A 1600      01486         BSF     _serialStatus,4
+               01487 ;       .line   651; "serial1.c"        uartReceiveError();
+037B 2000      01488         CALL    _uartReceiveError
+037C           01489 _00204_DS_
+               01490 ;       .line   652; "serial1.c"        }
+037C 0008      01491         RETURN  
+               01492 ; exit point of _uartNotifyReceive
+               01493 
+               01494 ;***
+               01495 ;  pBlock Stats: dbName = C
+               01496 ;***
+               01497 ;entry:  _uartReceiveError      ;Function start
+               01498 ; 2 exit points
+               01499 ;has an exit
+               01500 ;functions called:
+               01501 ;   _uartTransmit
+               01502 ;   _uartTransmit
+               01503 ;1 compiler assigned register :
+               01504 ;   r0x1017
+               01505 ;; Starting pCode block
+037D           01506 _uartReceiveError       ;Function start
+               01507 ; 2 exit points
+               01508 ;       .line   404; "serial1.c"        if ((serialStatus & msgAbortedBit) == 0) {
+037D 0000 0000 01509         BANKSEL _serialStatus
+gpasm-0.13.4 beta               serial1.asm 6-13-2008  14:34:00          PAGE 29
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+037F 1980      01510         BTFSC   _serialStatus,3
+0380 2800      01511         GOTO    _00148_DS_
+               01512 ;       .line   406; "serial1.c"        for (i=0; i<8; i++) { //if we are sending too much for the transmit-buffer, it is discarded
+0381 3008      01513         MOVLW   0x08
+0382 0000 0000 01514         BANKSEL r0x1017
+0384 0080      01515         MOVWF   r0x1017
+0385           01516 _00151_DS_
+               01517 ;       .line   407; "serial1.c"        uartTransmit(0);
+0385 3000      01518         MOVLW   0x00
+0386 0000      01519         PAGESEL _uartTransmit
+0387 2000      01520         CALL    _uartTransmit
+0388 0000      01521         PAGESEL $
+0389 0000 0000 01522         BANKSEL r0x1017
+038B 0B80      01523         DECFSZ  r0x1017,F
+038C 2800      01524         GOTO    _00151_DS_
+038D           01525 _00148_DS_
+               01526 ;       .line   420; "serial1.c"        serialStatus = (serialStatus & msgAbortedBit); //clear all bits except msgAbortedBit;
+038D 3008      01527         MOVLW   0x08
+038E 0000 0000 01528         BANKSEL _serialStatus
+0390 0580      01529         ANDWF   _serialStatus,F
+               01530 ;       .line   422; "serial1.c"        uartState = SNAP_idle;
+0391 3030      01531         MOVLW   0x30
+0392 0000 0000 01532         BANKSEL _uartState
+0394 0080      01533         MOVWF   _uartState
+0395 0008      01534         RETURN  
+               01535 ; exit point of _uartReceiveError
+               01536 
+               01537 ;***
+               01538 ;  pBlock Stats: dbName = C
+               01539 ;***
+               01540 ;entry:  _computeCRC    ;Function start
+               01541 ; 2 exit points
+               01542 ;has an exit
+               01543 ;2 compiler assigned registers:
+               01544 ;   r0x1017
+               01545 ;   r0x1018
+               01546 ;; Starting pCode block
+0396           01547 _computeCRC     ;Function start
+               01548 ; 2 exit points
+               01549 ;       .line   338; "serial1.c"        byte computeCRC(byte dataval)
+0396 0000 0000 01550         BANKSEL r0x1017
+0398 0080      01551         MOVWF   r0x1017
+               01552 ;       .line   369; "serial1.c"        byte i = dataval ^ crc;
+0399 0000 0000 01553         BANKSEL _crc
+039B 0600      01554         XORWF   _crc,W
+039C 0000 0000 01555         BANKSEL r0x1018
+039E 0080      01556         MOVWF   r0x1018
+               01557 ;       .line   371; "serial1.c"        crc = 0;
+039F 0000 0000 01558         BANKSEL _crc
+03A1 0180      01559         CLRF    _crc
+               01560 ;       .line   373; "serial1.c"        if(i & 1)
+03A2 0000 0000 01561         BANKSEL r0x1018
+03A4 1C00      01562         BTFSS   r0x1018,0
+03A5 2800      01563         GOTO    _00128_DS_
+gpasm-0.13.4 beta               serial1.asm 6-13-2008  14:34:00          PAGE 30
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+               01564 ;       .line   374; "serial1.c"        crc ^= 0x5e;
+03A6 305E      01565         MOVLW   0x5e
+03A7 0000 0000 01566         BANKSEL _crc
+03A9 0680      01567         XORWF   _crc,F
+03AA           01568 _00128_DS_
+               01569 ;       .line   375; "serial1.c"        if(i & 2)
+03AA 0000 0000 01570         BANKSEL r0x1018
+03AC 1C80      01571         BTFSS   r0x1018,1
+03AD 2800      01572         GOTO    _00130_DS_
+               01573 ;       .line   376; "serial1.c"        crc ^= 0xbc;
+03AE 30BC      01574         MOVLW   0xbc
+03AF 0000 0000 01575         BANKSEL _crc
+03B1 0680      01576         XORWF   _crc,F
+03B2           01577 _00130_DS_
+               01578 ;       .line   377; "serial1.c"        if(i & 4)
+03B2 0000 0000 01579         BANKSEL r0x1018
+03B4 1D00      01580         BTFSS   r0x1018,2
+03B5 2800      01581         GOTO    _00132_DS_
+               01582 ;       .line   378; "serial1.c"        crc ^= 0x61;
+03B6 3061      01583         MOVLW   0x61
+03B7 0000 0000 01584         BANKSEL _crc
+03B9 0680      01585         XORWF   _crc,F
+03BA           01586 _00132_DS_
+               01587 ;       .line   379; "serial1.c"        if(i & 8)
+03BA 0000 0000 01588         BANKSEL r0x1018
+03BC 1D80      01589         BTFSS   r0x1018,3
+03BD 2800      01590         GOTO    _00134_DS_
+               01591 ;       .line   380; "serial1.c"        crc ^= 0xc2;
+03BE 30C2      01592         MOVLW   0xc2
+03BF 0000 0000 01593         BANKSEL _crc
+03C1 0680      01594         XORWF   _crc,F
+03C2           01595 _00134_DS_
+               01596 ;       .line   381; "serial1.c"        if(i & 0x10)
+03C2 0000 0000 01597         BANKSEL r0x1018
+03C4 1E00      01598         BTFSS   r0x1018,4
+03C5 2800      01599         GOTO    _00136_DS_
+               01600 ;       .line   382; "serial1.c"        crc ^= 0x9d;
+03C6 309D      01601         MOVLW   0x9d
+03C7 0000 0000 01602         BANKSEL _crc
+03C9 0680      01603         XORWF   _crc,F
+03CA           01604 _00136_DS_
+               01605 ;       .line   383; "serial1.c"        if(i & 0x20)
+03CA 0000 0000 01606         BANKSEL r0x1018
+03CC 1E80      01607         BTFSS   r0x1018,5
+03CD 2800      01608         GOTO    _00138_DS_
+               01609 ;       .line   384; "serial1.c"        crc ^= 0x23;
+03CE 3023      01610         MOVLW   0x23
+03CF 0000 0000 01611         BANKSEL _crc
+03D1 0680      01612         XORWF   _crc,F
+03D2           01613 _00138_DS_
+               01614 ;       .line   385; "serial1.c"        if(i & 0x40)
+03D2 0000 0000 01615         BANKSEL r0x1018
+03D4 1F00      01616         BTFSS   r0x1018,6
+03D5 2800      01617         GOTO    _00140_DS_
+gpasm-0.13.4 beta               serial1.asm 6-13-2008  14:34:00          PAGE 31
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+               01618 ;       .line   386; "serial1.c"        crc ^= 0x46;
+03D6 3046      01619         MOVLW   0x46
+03D7 0000 0000 01620         BANKSEL _crc
+03D9 0680      01621         XORWF   _crc,F
+03DA           01622 _00140_DS_
+               01623 ;       .line   387; "serial1.c"        if(i & 0x80)
+03DA 0000 0000 01624         BANKSEL r0x1018
+03DC 1F80      01625         BTFSS   r0x1018,7
+03DD 2800      01626         GOTO    _00142_DS_
+               01627 ;       .line   388; "serial1.c"        crc ^= 0x8c;
+03DE 308C      01628         MOVLW   0x8c
+03DF 0000 0000 01629         BANKSEL _crc
+03E1 0680      01630         XORWF   _crc,F
+03E2           01631 _00142_DS_
+               01632 ;       .line   389; "serial1.c"        return dataval;
+03E2 0000 0000 01633         BANKSEL r0x1017
+03E4 0800      01634         MOVF    r0x1017,W
+03E5 0008      01635         RETURN  
+               01636 ; exit point of _computeCRC
+               01637 
+               01638 ;***
+               01639 ;  pBlock Stats: dbName = C
+               01640 ;***
+               01641 ;entry:  _serial_init   ;Function start
+               01642 ; 2 exit points
+               01643 ;has an exit
+               01644 ;; Starting pCode block
+03E6           01645 _serial_init    ;Function start
+               01646 ; 2 exit points
+               01647 ;       .line   324; "serial1.c"        uartState = SNAP_idle;
+03E6 3030      01648         MOVLW   0x30
+03E7 0000 0000 01649         BANKSEL _uartState
+03E9 0080      01650         MOVWF   _uartState
+               01651 ;       .line   325; "serial1.c"        transmitBufferHead = 0;
+03EA 0000 0000 01652         BANKSEL _transmitBufferHead
+03EC 0180      01653         CLRF    _transmitBufferHead
+               01654 ;       .line   326; "serial1.c"        transmitBufferTail = 0;
+03ED 0000 0000 01655         BANKSEL _transmitBufferTail
+03EF 0180      01656         CLRF    _transmitBufferTail
+               01657 ;       .line   327; "serial1.c"        serialStatus = 0;
+03F0 0000 0000 01658         BANKSEL _serialStatus
+03F2 0180      01659         CLRF    _serialStatus
+               01660 ;       .line   328; "serial1.c"        crc = 0;
+03F3 0000 0000 01661         BANKSEL _crc
+03F5 0180      01662         CLRF    _crc
+               01663 ;       .line   329; "serial1.c"        flash = 0;
+03F6 0000 0000 01664         BANKSEL _flash
+03F8 0180      01665         CLRF    _flash
+               01666 ;       .line   330; "serial1.c"        flashON = FLASHRATE;
+03F9 3032      01667         MOVLW   0x32
+               01668 ;       .line   331; "serial1.c"        flashOFF = FLASHRATE;
+03FA 0000 0000 01669         BANKSEL _flashON
+03FC 0080      01670         MOVWF   _flashON
+03FD 0000 0000 01671         BANKSEL _flashOFF
+gpasm-0.13.4 beta               serial1.asm 6-13-2008  14:34:00          PAGE 32
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+03FF 0080      01672         MOVWF   _flashOFF
+0400 0008      01673         RETURN  
+               01674 ; exit point of _serial_init
+               01675 
+               01676 ;***
+               01677 ;  pBlock Stats: dbName = C
+               01678 ;***
+               01679 ;entry:  _setFlash      ;Function start
+               01680 ; 2 exit points
+               01681 ;has an exit
+               01682 ;1 compiler assigned register :
+               01683 ;   STK00
+               01684 ;; Starting pCode block
+0401           01685 _setFlash       ;Function start
+               01686 ; 2 exit points
+               01687 ;       .line   313; "serial1.c"        void setFlash(byte on, byte off)
+0401 0000 0000 01688         BANKSEL _flashON
+0403 0080      01689         MOVWF   _flashON
+0404 0800      01690         MOVF    STK00,W
+0405 0000 0000 01691         BANKSEL _flashOFF
+0407 0080      01692         MOVWF   _flashOFF
+               01693 ;       .line   316; "serial1.c"        flashOFF = off;
+0408 0008      01694         RETURN  
+               01695 ; exit point of _setFlash
+               01696 
+               01697 ;***
+               01698 ;  pBlock Stats: dbName = C
+               01699 ;***
+               01700 ;entry:  _LEDon ;Function start
+               01701 ; 2 exit points
+               01702 ;has an exit
+               01703 ;; Starting pCode block
+0409           01704 _LEDon  ;Function start
+               01705 ; 2 exit points
+               01706 ;       .line   310; "serial1.c"        LED = 0;
+0409 0000 0000 01707         BANKSEL _PORTA_bits
+040B 1200      01708         BCF     _PORTA_bits,4
+040C 0008      01709         RETURN  
+               01710 ; exit point of _LEDon
+               01711 
+               01712 ;***
+               01713 ;  pBlock Stats: dbName = C
+               01714 ;***
+               01715 ;entry:  _flashLED      ;Function start
+               01716 ; 2 exit points
+               01717 ;has an exit
+               01718 ;; Starting pCode block
+040D           01719 _flashLED       ;Function start
+               01720 ; 2 exit points
+               01721 ;       .line   292; "serial1.c"        flash_count--;
+040D 0000 0000 01722         BANKSEL _flash_count
+040F 0380      01723         DECF    _flash_count,F
+               01724 ;       .line   293; "serial1.c"        if(flash_count <= 0)
+0410 0800      01725         MOVF    _flash_count,W
+gpasm-0.13.4 beta               serial1.asm 6-13-2008  14:34:00          PAGE 33
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+0411 1D03      01726         BTFSS   STATUS,2
+0412 2800      01727         GOTO    _00110_DS_
+               01728 ;       .line   295; "serial1.c"        flash = 1 - flash;
+0413 0000 0000 01729         BANKSEL _flash
+0415 0800      01730         MOVF    _flash,W
+0416 3C01      01731         SUBLW   0x01
+0417 0080      01732         MOVWF   _flash
+               01733 ;       .line   296; "serial1.c"        if(flash)
+0418 0800      01734         MOVF    _flash,W
+0419 1903      01735         BTFSC   STATUS,2
+041A 2800      01736         GOTO    _00106_DS_
+               01737 ;       .line   298; "serial1.c"        LED = 0;
+041B 0000 0000 01738         BANKSEL _PORTA_bits
+041D 1200      01739         BCF     _PORTA_bits,4
+               01740 ;       .line   299; "serial1.c"        flash_count = flashOFF;
+041E 0000 0000 01741         BANKSEL _flashOFF
+0420 0800      01742         MOVF    _flashOFF,W
+0421 0000 0000 01743         BANKSEL _flash_count
+0423 0080      01744         MOVWF   _flash_count
+0424 2800      01745         GOTO    _00110_DS_
+0425           01746 _00106_DS_
+               01747 ;       .line   302; "serial1.c"        LED = 1;
+0425 0000 0000 01748         BANKSEL _PORTA_bits
+0427 1600      01749         BSF     _PORTA_bits,4
+               01750 ;       .line   303; "serial1.c"        flash_count = flashON;
+0428 0000 0000 01751         BANKSEL _flashON
+042A 0800      01752         MOVF    _flashON,W
+042B 0000 0000 01753         BANKSEL _flash_count
+042D 0080      01754         MOVWF   _flash_count
+042E           01755 _00110_DS_
+042E 0008      01756         RETURN  
+               01757 ; exit point of _flashLED
+               01758 
+               01759 
+               01760 ;       code size estimation:
+               01761 ;         569+  279 =   848 instructions ( 2254 byte)
+               01762 
+gpasm-0.13.4 beta               serial1.asm 6-13-2008  14:34:00          PAGE 34
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+ADEN                              00000003
+BRGH                              00000002
+C                                 00000000
+C1INV                             00000004
+C1OUT                             00000006
+C2INV                             00000005
+C2OUT                             00000007
+CCP1CON                           00000017
+CCP1IE                            00000002
+CCP1IF                            00000002
+CCP1M0                            00000000
+CCP1M1                            00000001
+CCP1M2                            00000002
+CCP1M3                            00000003
+CCP1X                             00000005
+CCP1Y                             00000004
+CCPR1H                            00000016
+CCPR1L                            00000015
+CIS                               00000003
+CM0                               00000000
+CM1                               00000001
+CM2                               00000002
+CMCON                             0000001F
+CMIE                              00000006
+CMIF                              00000006
+CREN                              00000004
+CSRC                              00000007
+DC                                00000001
+EEADR                             0000009B
+EECON1                            0000009C
+EECON2                            0000009D
+EEDATA                            0000009A
+EEIE                              00000007
+EEIF                              00000007
+F                                 00000001
+FERR                              00000002
+FSR                               00000004
+GIE                               00000007
+INDF                              00000000
+INTCON                            0000000B
+INTE                              00000004
+INTEDG                            00000006
+INTF                              00000001
+IRP                               00000007
+NOT_BO                            00000000
+NOT_BOD                           00000000
+NOT_BOR                           00000000
+NOT_PD                            00000003
+NOT_POR                           00000001
+NOT_RBPU                          00000007
+NOT_T1SYNC                        00000002
+NOT_TO                            00000004
+OERR                              00000001
+gpasm-0.13.4 beta               serial1.asm 6-13-2008  14:34:00          PAGE 35
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+OPTION_REG                        00000081
+OSCF                              00000003
+PCL                               00000002
+PCLATH                            0000000A
+PCON                              0000008E
+PEIE                              00000006
+PIE1                              0000008C
+PIR1                              0000000C
+PORTA                             00000005
+PORTB                             00000006
+PR2                               00000092
+PS0                               00000000
+PS1                               00000001
+PS2                               00000002
+PSA                               00000003
+PSAVE                             00000000
+RBIE                              00000003
+RBIF                              00000000
+RCIE                              00000005
+RCIF                              00000005
+RCREG                             0000001A
+RCSTA                             00000018
+RD                                00000000
+RP0                               00000005
+RP1                               00000006
+RX9                               00000006
+RX9D                              00000000
+SPBRG                             00000099
+SPEN                              00000007
+SREN                              00000005
+SSAVE                             00000000
+STATUS                            00000003
+STK00                             00000000
+STK01                             00000000
+STK02                             00000000
+STK03                             00000000
+STK04                             00000000
+STK05                             00000000
+STK06                             00000000
+STK07                             00000000
+STK08                             00000000
+STK09                             00000000
+STK10                             00000000
+STK11                             00000000
+STK12                             00000000
+SYNC                              00000004
+T0CS                              00000005
+T0IE                              00000005
+T0IF                              00000002
+T0SE                              00000004
+T1CKPS0                           00000004
+T1CKPS1                           00000005
+T1CON                             00000010
+T1OSCEN                           00000003
+gpasm-0.13.4 beta               serial1.asm 6-13-2008  14:34:00          PAGE 36
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+T2CKPS0                           00000000
+T2CKPS1                           00000001
+T2CON                             00000012
+TMR0                              00000001
+TMR1CS                            00000001
+TMR1H                             0000000F
+TMR1IE                            00000000
+TMR1IF                            00000000
+TMR1L                             0000000E
+TMR1ON                            00000000
+TMR2                              00000011
+TMR2IE                            00000001
+TMR2IF                            00000001
+TMR2ON                            00000002
+TOUTPS0                           00000003
+TOUTPS1                           00000004
+TOUTPS2                           00000005
+TOUTPS3                           00000006
+TRISA                             00000085
+TRISB                             00000086
+TRMT                              00000001
+TX9                               00000006
+TX9D                              00000000
+TXEN                              00000005
+TXIE                              00000004
+TXIF                              00000004
+TXREG                             00000019
+TXSTA                             00000098
+VR0                               00000000
+VR1                               00000001
+VR2                               00000002
+VR3                               00000003
+VRCON                             0000009F
+VREN                              00000007
+VROE                              00000006
+VRR                               00000005
+W                                 00000000
+WR                                00000001
+WREN                              00000002
+WRERR                             00000003
+WSAVE                             00000000
+Z                                 00000002
+_00001_DS_                        000000C6
+_00106_DS_                        00000425
+_00110_DS_                        0000042E
+_00128_DS_                        000003AA
+_00130_DS_                        000003B2
+_00132_DS_                        000003BA
+_00134_DS_                        000003C2
+_00136_DS_                        000003CA
+_00138_DS_                        000003D2
+_00140_DS_                        000003DA
+_00142_DS_                        000003E2
+_00148_DS_                        0000038D
+gpasm-0.13.4 beta               serial1.asm 6-13-2008  14:34:00          PAGE 37
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+_00151_DS_                        00000385
+_00159_DS_                        000001A8
+_00160_DS_                        000001CC
+_00163_DS_                        000001DA
+_00165_DS_                        000001FA
+_00166_DS_                        000001FD
+_00168_DS_                        000001EE
+_00170_DS_                        00000209
+_00172_DS_                        0000022A
+_00174_DS_                        0000021D
+_00176_DS_                        00000233
+_00178_DS_                        0000025A
+_00180_DS_                        00000263
+_00182_DS_                        000002A1
+_00184_DS_                        000002B3
+_00187_DS_                        000002D9
+_00189_DS_                        000002ED
+_00190_DS_                        000002F1
+_00192_DS_                        0000032B
+_00193_DS_                        00000330
+_00195_DS_                        00000343
+_00196_DS_                        00000348
+_00197_DS_                        00000353
+_00198_DS_                        00000361
+_00200_DS_                        0000036F
+_00202_DS_                        00000377
+_00204_DS_                        0000037C
+_00224_DS_                        000001C1
+_00238_DS_                        00000194
+_00253_DS_                        00000161
+_00274_DS_                        0000010B
+_00275_DS_                        0000010D
+_00279_DS_                        00000112
+_00288_DS_                        000000D8
+_00290_DS_                        000000F2
+_00311_DS_                        0000008B
+_00314_DS_                        000000A9
+_00315_DS_                        000000B0
+_00324_DS_                        0000003C
+_00326_DS_                        00000056
+_00336_DS_                        00000016
+_00339_DS_                        00000031
+_00342_DS_                        00000036
+_BODEN_OFF                        00003FBF
+_BODEN_ON                         00003FFF
+_BOREN_OFF                        00003FBF
+_BOREN_ON                         00003FFF
+_CCP1CON                          00000000
+_CCP1CON_bits                     00000000
+_CCPR1H                           00000000
+_CCPR1L                           00000000
+_CMCON                            00000000
+_CMCON_bits                       00000000
+_CP_OFF                           00003FFF
+gpasm-0.13.4 beta               serial1.asm 6-13-2008  14:34:00          PAGE 38
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+_CP_ON                            00001FFF
+_DATA_CP_OFF                      00003FFF
+_DATA_CP_ON                       00003EFF
+_EEADR                            00000000
+_EECON1                           00000000
+_EECON1_bits                      00000000
+_EECON2                           00000000
+_EEDATA                           00000000
+_ER_OSC_CLKOUT                    00003FFF
+_ER_OSC_NOCLKOUT                  00003FFE
+_EXTCLK_OSC                       00003FEF
+_FSR                              00000000
+_HS_OSC                           00003FEE
+_INDF                             00000000
+_INTCON                           00000000
+_INTCON_bits                      00000000
+_INTOSC_OSC_CLKOUT                00003FFD
+_INTOSC_OSC_NOCLKOUT              00003FFC
+_INTRC_OSC_CLKOUT                 00003FFD
+_INTRC_OSC_NOCLKOUT               00003FFC
+_LEDon                            00000409
+_LP_OSC                           00003FEC
+_LVP_OFF                          00003F7F
+_LVP_ON                           00003FFF
+_MCLRE_OFF                        00003FDF
+_MCLRE_ON                         00003FFF
+_OPTION_REG                       00000000
+_OPTION_REG_bits                  00000000
+_PCL                              00000000
+_PCLATH                           00000000
+_PCON                             00000000
+_PCON_bits                        00000000
+_PIE1                             00000000
+_PIE1_bits                        00000000
+_PIR1                             00000000
+_PIR1_bits                        00000000
+_PORTA                            00000000
+_PORTA_bits                       00000000
+_PORTB                            00000000
+_PORTB_bits                       00000000
+_PR2                              00000000
+_PWRTE_OFF                        00003FFF
+_PWRTE_ON                         00003FF7
+_RCREG                            00000000
+_RCSTA                            00000000
+_RCSTA_bits                       00000000
+_RC_OSC_CLKOUT                    00003FFF
+_RC_OSC_NOCLKOUT                  00003FFE
+_SPBRG                            00000000
+_STATUS                           00000000
+_STATUS_bits                      00000000
+_T1CON                            00000000
+_T1CON_bits                       00000000
+_T2CON                            00000000
+gpasm-0.13.4 beta               serial1.asm 6-13-2008  14:34:00          PAGE 39
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+_T2CON_bits                       00000000
+_TMR0                             00000000
+_TMR1H                            00000000
+_TMR1L                            00000000
+_TMR2                             00000000
+_TRISA                            00000000
+_TRISA_bits                       00000000
+_TRISB                            00000000
+_TRISB_bits                       00000000
+_TXREG                            00000000
+_TXSTA                            00000000
+_TXSTA_bits                       00000000
+_VRCON                            00000000
+_VRCON_bits                       00000000
+_WDT_OFF                          00003FFB
+_WDT_ON                           00003FFF
+_XT_OSC                           00003FED
+__16F648A                         00000001
+_buffer                           00000000
+_bufferIndex                      00000020
+_clearwdt                         00000000
+_code_serial1_000045              00000045
+_code_serial1_000048              00000048
+_code_serial1_00004b              0000004B
+_code_serial1_00004e              0000004E
+_code_serial1_000051              00000051
+_code_serial1_0000e1              000000E1
+_code_serial1_0000e4              000000E4
+_code_serial1_0000e7              000000E7
+_code_serial1_0000ea              000000EA
+_code_serial1_0000ed              000000ED
+_code_serial1_00023e              0000023E
+_code_serial1_000244              00000244
+_code_serial1_00024a              0000024A
+_code_serial1_000250              00000250
+_code_serial1_00026a              0000026A
+_code_serial1_000275              00000275
+_code_serial1_00027d              0000027D
+_code_serial1_000287              00000287
+_code_serial1_000291              00000291
+_code_serial1_000297              00000297
+_code_serial1_0002f8              000002F8
+_code_serial1_000305              00000305
+_code_serial1_00030d              0000030D
+_code_serial1_000317              00000317
+_code_serial1_000321              00000321
+_code_serial1_000327              00000327
+_code_serial1_000335              00000335
+_code_serial1_00034d              0000034D
+_code_serial1_000358              00000358
+_code_serial1_000366              00000366
+_code_serial1_000388              00000388
+_computeCRC                       00000396
+_crc                              0000001B
+gpasm-0.13.4 beta               serial1.asm 6-13-2008  14:34:00          PAGE 40
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+_delay_10us                       00000000
+_deviceAddress                    00000000
+_endMessage                       00000039
+_endMessageISR                    0000005B
+_endMessageIntern                 0000005D
+_flash                            00000016
+_flashLED                         0000040D
+_flashOFF                         00000017
+_flashON                          00000018
+_flash_count                      00000015
+_in_hdb1                          0000001D
+_in_hdb2                          0000001C
+_packetLength                     0000001E
+_packetReady                      000000B1
+_receivedSourceAddress            00000021
+_releaseLock                      00000123
+_sendDataByte                     0000012F
+_sendDataByteISR                  0000012D
+_sendDataByteIntern               0000013D
+_sendMessage                      000000D2
+_sendMessageISR                   000000FA
+_sendMessageIntern                00000113
+_sendPacket                       00000000
+_sendPacketDestination            00000023
+_sendPacketLength                 00000022
+_sendReply                        000000CD
+_serialInterruptHandler           00000000
+_serialStatus                     00000000
+_serial_init                      000003E6
+_setFlash                         00000401
+_sourceAddress                    0000001F
+_transmitBuffer                   00000000
+_transmitBufferHead               00000019
+_transmitBufferTail               0000001A
+_uartNotifyReceive                00000197
+_uartReceiveError                 0000037D
+_uartState                        00000000
+_uartTransmit                     00000164
+r0x1012                           00000013
+r0x1013                           00000014
+r0x1014                           00000002
+r0x1015                           00000003
+r0x1016                           00000004
+r0x1017                           00000000
+r0x1018                           00000001
+r0x1019                           00000005
+r0x101A                           00000006
+r0x101B                           00000007
+r0x101C                           00000010
+r0x101D                           00000011
+r0x101E                           00000012
+r0x1020                           0000000F
+r0x1021                           0000000E
+r0x1022                           0000000C
+gpasm-0.13.4 beta               serial1.asm 6-13-2008  14:34:00          PAGE 41
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+r0x1023                           0000000D
+r0x1025                           00000008
+r0x1026                           00000009
+r0x1027                           0000000A
+r0x1028                           0000000B
+
+
+Errors   :       0
+Warnings :       0 reported,       0 suppressed
+Messages :       0 reported,       0 suppressed
+

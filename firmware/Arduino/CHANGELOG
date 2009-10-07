@@ -1,0 +1,4 @@
+moved M100 command to M108 for compatibility purposes with Mach3
+changed M1** P words to S words for compatibility purposes with Mach3
+added error cutoff value to prevent extruder motor damage
+default to mm units instead of inches

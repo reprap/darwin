@@ -1,0 +1,75 @@
+PCBNEW-LibDoc----V1  29/8/2007-23:01:33
+#
+$MODULE AMP_12PIN
+Li AMP_12PIN
+Cd AMP_12PIN
+Kw CONN DEV
+$EndMODULE
+#
+$MODULE AMP_12PIN
+Li AMP_12PIN
+Cd AMP_12PIN
+Kw CONN DEV
+$EndMODULE
+#
+$MODULE 4PIN_KEYED
+Li 4PIN_KEYED
+Cd 4 Pin Connector
+Kw Connector
+$EndMODULE
+#
+$MODULE POWER
+Li POWER
+Cd Bornier d'alimentation 2 pins
+Kw DEV
+$EndMODULE
+#
+$MODULE 3PIN_KEYED
+Li 3PIN_KEYED
+Cd Connecteur 3 pins
+Kw CONN DEV
+$EndMODULE
+#
+$MODULE 78L05
+Li 78L05
+Cd Transistor TO92 brochage type BC237
+Kw TR TO92
+$EndMODULE
+#
+$MODULE MOLEX_4PIN
+Li MOLEX_4PIN
+Cd Connecteur 4 pibs
+Kw CONN DEV
+$EndMODULE
+#
+$MODULE MOUNTHOLE
+Li MOUNTHOLE
+Cd module 1 pin (ou trou mecanique de percage)
+Kw DEV
+$EndMODULE
+#
+$MODULE MOUNT_HOLE
+Li MOUNT_HOLE
+Cd module 1 pin (ou trou mecanique de percage)
+Kw DEV
+$EndMODULE
+#
+$MODULE CP16MM
+Li CP16MM
+Cd Condensateur polarise vertical
+Kw CP
+$EndMODULE
+#
+$MODULE 1pin
+Li 1pin
+Cd module 1 pin (ou trou mecanique de percage)
+Kw DEV
+$EndMODULE
+#
+$MODULE 2PIN_KEYED
+Li 2PIN_KEYED
+Cd 2 Pin Connector
+Kw CONN DEV
+$EndMODULE
+#
+$EndLIBDOC

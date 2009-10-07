@@ -1,0 +1,2778 @@
+gplink-0.13.4 alpha
+Copyright (c) 1998-2005 gputils project
+Listing File Generated: 6-13-2008  14:34:03
+ 
+ 
+Address  Value    Disassembly              Source
+-------  -----    -----------              ------
+                                           ;--------------------------------------------------------
+                                           ; File Created by SDCC : free open source ANSI-C Compiler
+                                           ; Version 2.7.4 #4943 (Oct 27 2007) (UNIX)
+                                           ; This file was generated Fri Jun 13 14:34:02 2008
+                                           ;--------------------------------------------------------
+                                           ; PIC port for the 14-bit core
+                                           ;--------------------------------------------------------
+                                           ;	.module stepmotor1
+                                           	list	p=16f648a
+                                           	radix dec
+                                           	include "p16f648a.inc"
+                                                   LIST
+                                           ; P16F648A.INC  Standard Header File, Version 1.00    Microchip Technology, Inc.
+                                                   NOLIST
+                                           ;--------------------------------------------------------
+                                           ; config word 
+                                           ;--------------------------------------------------------
+                                           	__config 0x3f10
+                                           ;--------------------------------------------------------
+                                           ; external declarations
+                                           ;--------------------------------------------------------
+                                           	extern	_init2
+                                           	extern	_timerTick
+                                           	extern	_processCommand
+                                           	extern	_syncStrobe
+                                           	extern	_setPower
+                                           	extern	_flashLED
+                                           	extern	_LEDon
+                                           	extern	_setFlash
+                                           	extern	_uartTransmit
+                                           	extern	_sendReply
+                                           	extern	_sendMessage
+                                           	extern	_sendDataByte
+                                           	extern	_endMessage
+                                           	extern	_sendMessageISR
+                                           	extern	_sendDataByteISR
+                                           	extern	_endMessageISR
+                                           	extern	_releaseLock
+                                           	extern	_serialInterruptHandler
+                                           	extern	_packetReady
+                                           	extern	_uartNotifyReceive
+                                           	extern	_serial_init
+                                           	extern	_delay_10us
+                                           	extern	_clearwdt
+                                           	extern	_CCP1CON_bits
+                                           	extern	_CMCON_bits
+                                           	extern	_EECON1_bits
+                                           	extern	_INTCON_bits
+                                           	extern	_OPTION_REG_bits
+                                           	extern	_PCON_bits
+                                           	extern	_PIE1_bits
+                                           	extern	_PIR1_bits
+                                           	extern	_PORTA_bits
+                                           	extern	_PORTB_bits
+                                           	extern	_RCSTA_bits
+                                           	extern	_STATUS_bits
+                                           	extern	_T1CON_bits
+                                           	extern	_T2CON_bits
+                                           	extern	_TRISA_bits
+                                           	extern	_TRISB_bits
+                                           	extern	_TXSTA_bits
+                                           	extern	_VRCON_bits
+                                           	extern	_syncEnabled
+                                           	extern	_syncCounter
+                                           	extern	_buffer
+                                           	extern	_serialStatus
+                                           	extern	_INDF
+                                           	extern	_TMR0
+                                           	extern	_PCL
+                                           	extern	_STATUS
+                                           	extern	_FSR
+                                           	extern	_PORTA
+                                           	extern	_PORTB
+                                           	extern	_PCLATH
+                                           	extern	_INTCON
+                                           	extern	_PIR1
+                                           	extern	_TMR1L
+                                           	extern	_TMR1H
+                                           	extern	_T1CON
+                                           	extern	_TMR2
+                                           	extern	_T2CON
+                                           	extern	_CCPR1L
+                                           	extern	_CCPR1H
+                                           	extern	_CCP1CON
+                                           	extern	_RCSTA
+                                           	extern	_TXREG
+                                           	extern	_RCREG
+                                           	extern	_CMCON
+                                           	extern	_OPTION_REG
+                                           	extern	_TRISA
+                                           	extern	_TRISB
+                                           	extern	_PIE1
+                                           	extern	_PCON
+                                           	extern	_PR2
+                                           	extern	_TXSTA
+                                           	extern	_SPBRG
+                                           	extern	_EEDATA
+                                           	extern	_EEADR
+                                           	extern	_EECON1
+                                           	extern	_EECON2
+                                           	extern	_VRCON
+                                           	extern	___sdcc_saved_fsr
+                                           	extern	__sdcc_gsinit_startup
+                                           ;--------------------------------------------------------
+                                           ; global declarations
+                                           ;--------------------------------------------------------
+                                           	global	_init1
+                                           	global	_main
+                                           	global	_deviceAddress
+                                           
+                                           	global PSAVE
+                                           	global SSAVE
+                                           	global WSAVE
+                                           	global STK12
+                                           	global STK11
+                                           	global STK10
+                                           	global STK09
+                                           	global STK08
+                                           	global STK07
+                                           	global STK06
+                                           	global STK05
+                                           	global STK04
+                                           	global STK03
+                                           	global STK02
+                                           	global STK01
+                                           	global STK00
+                                           
+                                           sharebank udata_ovr 0x0070
+                                           PSAVE	res 1
+                                           SSAVE	res 1
+                                           WSAVE	res 1
+                                           STK12	res 1
+                                           STK11	res 1
+                                           STK10	res 1
+                                           STK09	res 1
+                                           STK08	res 1
+                                           STK07	res 1
+                                           STK06	res 1
+                                           STK05	res 1
+                                           STK04	res 1
+                                           STK03	res 1
+                                           STK02	res 1
+                                           STK01	res 1
+                                           STK00	res 1
+                                           
+                                           ;--------------------------------------------------------
+                                           ; global definitions
+                                           ;--------------------------------------------------------
+                                           ;--------------------------------------------------------
+                                           ; absolute symbol definitions
+                                           ;--------------------------------------------------------
+                                           ;--------------------------------------------------------
+                                           ; compiler-defined variables
+                                           ;--------------------------------------------------------
+                                           UDL_stepmotor1_0	udata
+                                           r0x1001	res	1
+                                           r0x1002	res	1
+                                           ;--------------------------------------------------------
+                                           ; initialized data
+                                           ;--------------------------------------------------------
+                                           
+                                           ID_stepmotor1_0	idata
+                                           _deviceAddress
+                                           	db	0x04
+                                           
+                                           ;--------------------------------------------------------
+                                           ; overlayable items in internal ram 
+                                           ;--------------------------------------------------------
+                                           ;	udata_ovr
+                                           ;--------------------------------------------------------
+                                           ; reset vector 
+                                           ;--------------------------------------------------------
+                                           STARTUP	code
+000000   0000     nop                      	nop
+000001   118a     bcf	0xa, 0x3             	pagesel __sdcc_gsinit_startup
+000002   2d7d     goto	0x57d               	goto	__sdcc_gsinit_startup
+                                           ;--------------------------------------------------------
+                                           ; interrupt and initialization code
+                                           ;--------------------------------------------------------
+                                           c_interrupt	code	0x4
+                                           __sdcc_interrupt
+                                           ;***
+                                           ;  pBlock Stats: dbName = I
+                                           ;***
+                                           ;entry:  _isr	;Function start
+                                           ; 0 exit points
+                                           ;functions called:
+                                           ;   _serialInterruptHandler
+                                           ;   _timerTick
+                                           ;   _serialInterruptHandler
+                                           ;   _timerTick
+                                           ;; Starting pCode block
+                                           _isr	;Function start
+                                           ; 0 exit points
+                                           ;	.line	48; "stepmotor1.c"	static void isr() interrupt 0 {
+000004   00f2     movwf	0x72               	MOVWF	WSAVE
+000005   0e03     swapf	0x3, w             	SWAPF	STATUS,W
+000006   0183     clrf	0x3                 	CLRF	STATUS
+000007   00f1     movwf	0x71               	MOVWF	SSAVE
+000008   080a     movf	0xa, w              	MOVF	PCLATH,W
+000009   018a     clrf	0xa                 	CLRF	PCLATH
+00000a   00f0     movwf	0x70               	MOVWF	PSAVE
+00000b   0804     movf	0x4, w              	MOVF	FSR,W
+00000c   1683     bsf	0x3, 0x5             	BANKSEL	___sdcc_saved_fsr
+00000d   1303     bcf	0x3, 0x6             
+00000e   00d6     movwf	0x56               	MOVWF	___sdcc_saved_fsr
+                                           ;	.line	49; "stepmotor1.c"	serialInterruptHandler();
+00000f   158a     bsf	0xa, 0x3             	PAGESEL	_serialInterruptHandler
+000010   2000     call	0                   	CALL	_serialInterruptHandler
+000011   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	51; "stepmotor1.c"	if (TMR1IF) {
+000012   1283     bcf	0x3, 0x5             	BANKSEL	_PIR1_bits
+000013   1303     bcf	0x3, 0x6             
+000014   1c0c     btfss	0xc, 0             	BTFSS	_PIR1_bits,0
+000015   281c     goto	0x1c                	GOTO	_00107_DS_
+                                           ;	.line	52; "stepmotor1.c"	timerTick();
+000016   118a     bcf	0xa, 0x3             	PAGESEL	_timerTick
+000017   225b     call	0x25b               	CALL	_timerTick
+000018   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	53; "stepmotor1.c"	TMR1IF = 0;
+000019   1283     bcf	0x3, 0x5             	BANKSEL	_PIR1_bits
+00001a   1303     bcf	0x3, 0x6             
+00001b   100c     bcf	0xc, 0               	BCF	_PIR1_bits,0
+                                           _00107_DS_
+00001c   1683     bsf	0x3, 0x5             	BANKSEL	___sdcc_saved_fsr
+00001d   1303     bcf	0x3, 0x6             
+00001e   0856     movf	0x56, w             	MOVF	___sdcc_saved_fsr,W
+00001f   0084     movwf	0x4                	MOVWF	FSR
+000020   0870     movf	0x70, w             	MOVF	PSAVE,W
+000021   008a     movwf	0xa                	MOVWF	PCLATH
+000022   0183     clrf	0x3                 	CLRF	STATUS
+000023   0e71     swapf	0x71, w            	SWAPF	SSAVE,W
+000024   0083     movwf	0x3                	MOVWF	STATUS
+000025   0ef2     swapf	0x72, f            	SWAPF	WSAVE,F
+000026   0e72     swapf	0x72, w            	SWAPF	WSAVE,W
+                                           END_OF_INTERRUPT
+000027   0009     retfie                   	RETFIE	
+                                           
+                                           ;--------------------------------------------------------
+                                           ; code
+                                           ;--------------------------------------------------------
+                                           code_stepmotor1	code
+                                           ;***
+                                           ;  pBlock Stats: dbName = M
+                                           ;***
+                                           ;entry:  _main	;Function start
+                                           ; 2 exit points
+                                           ;has an exit
+                                           ;functions called:
+                                           ;   _init1
+                                           ;   _init2
+                                           ;   _serial_init
+                                           ;   _uartTransmit
+                                           ;   _packetReady
+                                           ;   _processCommand
+                                           ;   _releaseLock
+                                           ;   _syncStrobe
+                                           ;   _clearwdt
+                                           ;   _init1
+                                           ;   _init2
+                                           ;   _serial_init
+                                           ;   _uartTransmit
+                                           ;   _packetReady
+                                           ;   _processCommand
+                                           ;   _releaseLock
+                                           ;   _syncStrobe
+                                           ;   _clearwdt
+                                           ;2 compiler assigned registers:
+                                           ;   r0x1001
+                                           ;   r0x1002
+                                           ;; Starting pCode block
+                                           _main	;Function start
+                                           ; 2 exit points
+                                           ;	.line	123; "stepmotor1.c"	byte syncEnabled = 0;
+000611   1683     bsf	0x3, 0x5             	BANKSEL	r0x1001
+000612   1303     bcf	0x3, 0x6             
+000613   01cc     clrf	0x4c                	CLRF	r0x1001
+                                           ;	.line	125; "stepmotor1.c"	init1();
+000614   2650     call	0x650               	CALL	_init1
+                                           ;	.line	126; "stepmotor1.c"	init2();
+000615   118a     bcf	0xa, 0x3             	PAGESEL	_init2
+000616   2560     call	0x560               	CALL	_init2
+000617   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	127; "stepmotor1.c"	serial_init();
+000618   158a     bsf	0xa, 0x3             	PAGESEL	_serial_init
+000619   23e6     call	0x3e6               	CALL	_serial_init
+00061a   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	130; "stepmotor1.c"	GIE=0;
+00061b   1283     bcf	0x3, 0x5             	BANKSEL	_INTCON_bits
+00061c   1303     bcf	0x3, 0x6             
+00061d   138b     bcf	0xb, 0x7             	BCF	_INTCON_bits,7
+                                           ;	.line	131; "stepmotor1.c"	uartTransmit(0);
+00061e   3000     movlw	0                  	MOVLW	0x00
+00061f   158a     bsf	0xa, 0x3             	PAGESEL	_uartTransmit
+000620   2164     call	0x164               	CALL	_uartTransmit
+000621   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	132; "stepmotor1.c"	GIE=1;
+000622   1283     bcf	0x3, 0x5             	BANKSEL	_INTCON_bits
+000623   1303     bcf	0x3, 0x6             
+000624   178b     bsf	0xb, 0x7             	BSF	_INTCON_bits,7
+                                           ;	.line	134; "stepmotor1.c"	if (SYNCA) // Only enable if SYNCA is by default high
+000625   1c85     btfss	0x5, 0x1           	BTFSS	_PORTA_bits,1
+000626   2e2b     goto	0x62b               	GOTO	_00127_DS_
+                                           ;	.line	135; "stepmotor1.c"	syncEnabled = 1;
+000627   3001     movlw	0x1                	MOVLW	0x01
+000628   1683     bsf	0x3, 0x5             	BANKSEL	r0x1001
+000629   1303     bcf	0x3, 0x6             
+00062a   00cc     movwf	0x4c               	MOVWF	r0x1001
+                                           _00127_DS_
+                                           ;	.line	138; "stepmotor1.c"	if (packetReady()) {
+00062b   158a     bsf	0xa, 0x3             	PAGESEL	_packetReady
+00062c   20b1     call	0xb1                	CALL	_packetReady
+00062d   118a     bcf	0xa, 0x3             	PAGESEL	$
+00062e   1683     bsf	0x3, 0x5             	BANKSEL	r0x1002
+00062f   1303     bcf	0x3, 0x6             
+000630   00cd     movwf	0x4d               	MOVWF	r0x1002
+000631   084d     movf	0x4d, w             	MOVF	r0x1002,W
+000632   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+000633   2e3a     goto	0x63a               	GOTO	_00119_DS_
+                                           ;	.line	139; "stepmotor1.c"	processCommand();
+000634   118a     bcf	0xa, 0x3             	PAGESEL	_processCommand
+000635   2028     call	0x28                	CALL	_processCommand
+000636   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	140; "stepmotor1.c"	releaseLock();
+000637   158a     bsf	0xa, 0x3             	PAGESEL	_releaseLock
+000638   2123     call	0x123               	CALL	_releaseLock
+000639   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           _00119_DS_
+                                           ;	.line	142; "stepmotor1.c"	if (syncEnabled && !SYNCA) {
+00063a   3000     movlw	0                  	MOVLW	0x00
+00063b   1683     bsf	0x3, 0x5             	BANKSEL	r0x1001
+00063c   1303     bcf	0x3, 0x6             
+00063d   044c     iorwf	0x4c, w            	IORWF	r0x1001,W
+00063e   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+00063f   2e4b     goto	0x64b               	GOTO	_00124_DS_
+000640   1283     bcf	0x3, 0x5             	BANKSEL	_PORTA_bits
+000641   1303     bcf	0x3, 0x6             
+000642   1885     btfsc	0x5, 0x1           	BTFSC	_PORTA_bits,1
+000643   2e4b     goto	0x64b               	GOTO	_00124_DS_
+                                           _00120_DS_
+                                           ;	.line	145; "stepmotor1.c"	while(!SYNCA)
+000644   1283     bcf	0x3, 0x5             	BANKSEL	_PORTA_bits
+000645   1303     bcf	0x3, 0x6             
+000646   1c85     btfss	0x5, 0x1           	BTFSS	_PORTA_bits,1
+000647   2e44     goto	0x644               	GOTO	_00120_DS_
+                                           ;	.line	147; "stepmotor1.c"	syncStrobe();
+000648   118a     bcf	0xa, 0x3             	PAGESEL	_syncStrobe
+000649   2237     call	0x237               	CALL	_syncStrobe
+00064a   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           _00124_DS_
+                                           ;	.line	149; "stepmotor1.c"	clearwdt();
+00064b   118a     bcf	0xa, 0x3             	PAGESEL	_clearwdt
+00064c   26fb     call	0x6fb               	CALL	_clearwdt
+00064d   118a     bcf	0xa, 0x3             	PAGESEL	$
+00064e   2e2b     goto	0x62b               	GOTO	_00127_DS_
+00064f   0008     return                   	RETURN	
+                                           ; exit point of _main
+                                           
+                                           ;***
+                                           ;  pBlock Stats: dbName = C
+                                           ;***
+                                           ;entry:  _init1	;Function start
+                                           ; 2 exit points
+                                           ;has an exit
+                                           ;; Starting pCode block
+                                           _init1	;Function start
+                                           ; 2 exit points
+                                           ;	.line	60; "stepmotor1.c"	OPTION_REG = BIN(01011111); // Disable TMR0 on RA4, 1:128 WDT, pullups on
+000650   305f     movlw	0x5f               	MOVLW	0x5f
+000651   1683     bsf	0x3, 0x5             	BANKSEL	_OPTION_REG
+000652   1303     bcf	0x3, 0x6             
+000653   0081     movwf	0x1                	MOVWF	_OPTION_REG
+                                           ;	.line	61; "stepmotor1.c"	CMCON = 0xff;               // Comparator module defaults
+000654   30ff     movlw	0xff               	MOVLW	0xff
+000655   1283     bcf	0x3, 0x5             	BANKSEL	_CMCON
+000656   1303     bcf	0x3, 0x6             
+000657   009f     movwf	0x1f               	MOVWF	_CMCON
+                                           ;	.line	63; "stepmotor1.c"	TRISA = BIN(00101010);      // Port A outputs except 1,3 (sync) and 5 (Max)
+000658   302a     movlw	0x2a               	MOVLW	0x2a
+000659   1683     bsf	0x3, 0x5             	BANKSEL	_TRISA
+00065a   1303     bcf	0x3, 0x6             
+00065b   0085     movwf	0x5                	MOVWF	_TRISA
+                                           ;	.line	72; "stepmotor1.c"	TRISB = BIN(00000011);      // Port B 0,1 input, 2-7 outputs
+00065c   3003     movlw	0x3                	MOVLW	0x03
+00065d   0086     movwf	0x6                	MOVWF	_TRISB
+                                           ;	.line	89; "stepmotor1.c"	PIE1 = BIN(00000000);       // All peripheral interrupts initially disabled
+00065e   018c     clrf	0xc                 	CLRF	_PIE1
+                                           ;	.line	90; "stepmotor1.c"	INTCON = BIN(00000000);     // Interrupts disabled
+00065f   1283     bcf	0x3, 0x5             	BANKSEL	_INTCON
+000660   1303     bcf	0x3, 0x6             
+000661   018b     clrf	0xb                 	CLRF	_INTCON
+                                           ;	.line	91; "stepmotor1.c"	PIR1 = 0;                   // Clear peripheral interrupt flags
+000662   018c     clrf	0xc                 	CLRF	_PIR1
+                                           ;	.line	92; "stepmotor1.c"	SPBRG = 12;                 // 12 = 19200 (actually 19230) baud @ 4MHz
+000663   300c     movlw	0xc                	MOVLW	0x0c
+000664   1683     bsf	0x3, 0x5             	BANKSEL	_SPBRG
+000665   1303     bcf	0x3, 0x6             
+000666   0099     movwf	0x19               	MOVWF	_SPBRG
+                                           ;	.line	94; "stepmotor1.c"	TXSTA = BIN(00000100);      // 8 bit high speed 
+000667   3004     movlw	0x4                	MOVLW	0x04
+000668   0098     movwf	0x18               	MOVWF	_TXSTA
+                                           ;	.line	95; "stepmotor1.c"	RCSTA = BIN(10000000);      // Enable port for 8 bit receive
+000669   3080     movlw	0x80               	MOVLW	0x80
+00066a   1283     bcf	0x3, 0x5             	BANKSEL	_RCSTA
+00066b   1303     bcf	0x3, 0x6             
+00066c   0098     movwf	0x18               	MOVWF	_RCSTA
+                                           ;	.line	97; "stepmotor1.c"	PORTB = PULLUPS;      // Turn on pullups for B0,3
+00066d   3001     movlw	0x1                	MOVLW	0x01
+00066e   0086     movwf	0x6                	MOVWF	_PORTB
+                                           ;	.line	99; "stepmotor1.c"	RCIE = 1;  // Enable receive interrupts
+00066f   1683     bsf	0x3, 0x5             	BANKSEL	_PIE1_bits
+000670   1303     bcf	0x3, 0x6             
+000671   168c     bsf	0xc, 0x5             	BSF	_PIE1_bits,5
+                                           ;	.line	100; "stepmotor1.c"	CREN = 1;  // Start reception
+000672   1283     bcf	0x3, 0x5             	BANKSEL	_RCSTA_bits
+000673   1303     bcf	0x3, 0x6             
+000674   1618     bsf	0x18, 0x4            	BSF	_RCSTA_bits,4
+                                           ;	.line	102; "stepmotor1.c"	TXEN = 1;  // Enable transmit
+000675   1683     bsf	0x3, 0x5             	BANKSEL	_TXSTA_bits
+000676   1303     bcf	0x3, 0x6             
+000677   1698     bsf	0x18, 0x5            	BSF	_TXSTA_bits,5
+                                           ;	.line	103; "stepmotor1.c"	PEIE = 1;  // Peripheral interrupts on
+000678   1283     bcf	0x3, 0x5             	BANKSEL	_INTCON_bits
+000679   1303     bcf	0x3, 0x6             
+00067a   170b     bsf	0xb, 0x6             	BSF	_INTCON_bits,6
+                                           ;	.line	104; "stepmotor1.c"	GIE = 1;   // Now turn on interrupts
+00067b   178b     bsf	0xb, 0x7             	BSF	_INTCON_bits,7
+                                           ;	.line	106; "stepmotor1.c"	PORTB = 0;
+00067c   0186     clrf	0x6                 	CLRF	_PORTB
+                                           ;	.line	107; "stepmotor1.c"	PORTA = 0;
+00067d   0185     clrf	0x5                 	CLRF	_PORTA
+                                           ;	.line	109; "stepmotor1.c"	TMR1IE = 0;
+00067e   1683     bsf	0x3, 0x5             	BANKSEL	_PIE1_bits
+00067f   1303     bcf	0x3, 0x6             
+000680   100c     bcf	0xc, 0               	BCF	_PIE1_bits,0
+                                           ;	.line	111; "stepmotor1.c"	TMR2 = 0;
+000681   1283     bcf	0x3, 0x5             	BANKSEL	_TMR2
+000682   1303     bcf	0x3, 0x6             
+000683   0191     clrf	0x11                	CLRF	_TMR2
+                                           ;	.line	112; "stepmotor1.c"	CCPR1L = 4;  // Default power-up current limiting (25%)
+000684   3004     movlw	0x4                	MOVLW	0x04
+000685   0095     movwf	0x15               	MOVWF	_CCPR1L
+                                           ;	.line	113; "stepmotor1.c"	PR2 = 16;
+000686   3010     movlw	0x10               	MOVLW	0x10
+000687   1683     bsf	0x3, 0x5             	BANKSEL	_PR2
+000688   1303     bcf	0x3, 0x6             
+000689   0092     movwf	0x12               	MOVWF	_PR2
+                                           ;	.line	114; "stepmotor1.c"	CCP1CON = BIN(00001100);   // PWM mode
+00068a   300c     movlw	0xc                	MOVLW	0x0c
+00068b   1283     bcf	0x3, 0x5             	BANKSEL	_CCP1CON
+00068c   1303     bcf	0x3, 0x6             
+00068d   0097     movwf	0x17               	MOVWF	_CCP1CON
+                                           ;	.line	115; "stepmotor1.c"	T2CON = BIN(00000100);     // Start timer 1:1 prescale, 1:1 postscale
+00068e   3004     movlw	0x4                	MOVLW	0x04
+00068f   0092     movwf	0x12               	MOVWF	_T2CON
+                                           ;	.line	117; "stepmotor1.c"	T1CON = BIN(00000000);  // Timer 1 in clock mode with 1:1 scale
+000690   0190     clrf	0x10                	CLRF	_T1CON
+                                           ;	.line	118; "stepmotor1.c"	TMR1IE = 1;  // Enable timer interrupt
+000691   1683     bsf	0x3, 0x5             	BANKSEL	_PIE1_bits
+000692   1303     bcf	0x3, 0x6             
+000693   140c     bsf	0xc, 0               	BSF	_PIE1_bits,0
+000694   0008     return                   	RETURN	
+                                           ; exit point of _init1
+                                           
+                                           
+                                           ;	code size estimation:
+                                           ;	   94+   47 =   141 instructions (  376 byte)
+                                           
+                                           	end
+                                           ;--------------------------------------------------------
+                                           ; File Created by SDCC : free open source ANSI-C Compiler
+                                           ; Version 2.7.4 #4943 (Oct 27 2007) (UNIX)
+                                           ; This file was generated Fri Jun 13 14:34:02 2008
+                                           ;--------------------------------------------------------
+                                           ; PIC port for the 14-bit core
+                                           ;--------------------------------------------------------
+                                           ;	.module stepmotor2
+                                           	list	p=16f648a
+                                           	radix dec
+                                           	include "p16f648a.inc"
+                                                   LIST
+                                           ; P16F648A.INC  Standard Header File, Version 1.00    Microchip Technology, Inc.
+                                                   NOLIST
+                                           ;--------------------------------------------------------
+                                           ; external declarations
+                                           ;--------------------------------------------------------
+                                           	extern	_flashLED
+                                           	extern	_LEDon
+                                           	extern	_setFlash
+                                           	extern	_uartTransmit
+                                           	extern	_sendReply
+                                           	extern	_sendMessage
+                                           	extern	_sendDataByte
+                                           	extern	_endMessage
+                                           	extern	_sendMessageISR
+                                           	extern	_sendDataByteISR
+                                           	extern	_endMessageISR
+                                           	extern	_releaseLock
+                                           	extern	_serialInterruptHandler
+                                           	extern	_packetReady
+                                           	extern	_uartNotifyReceive
+                                           	extern	_serial_init
+                                           	extern	_delay_10us
+                                           	extern	_clearwdt
+                                           	extern	_CCP1CON_bits
+                                           	extern	_CMCON_bits
+                                           	extern	_EECON1_bits
+                                           	extern	_INTCON_bits
+                                           	extern	_OPTION_REG_bits
+                                           	extern	_PCON_bits
+                                           	extern	_PIE1_bits
+                                           	extern	_PIR1_bits
+                                           	extern	_PORTA_bits
+                                           	extern	_PORTB_bits
+                                           	extern	_RCSTA_bits
+                                           	extern	_STATUS_bits
+                                           	extern	_T1CON_bits
+                                           	extern	_T2CON_bits
+                                           	extern	_TRISA_bits
+                                           	extern	_TRISB_bits
+                                           	extern	_TXSTA_bits
+                                           	extern	_VRCON_bits
+                                           	extern	_syncEnabled
+                                           	extern	_syncCounter
+                                           	extern	_buffer
+                                           	extern	_serialStatus
+                                           	extern	_INDF
+                                           	extern	_TMR0
+                                           	extern	_PCL
+                                           	extern	_STATUS
+                                           	extern	_FSR
+                                           	extern	_PORTA
+                                           	extern	_PORTB
+                                           	extern	_PCLATH
+                                           	extern	_INTCON
+                                           	extern	_PIR1
+                                           	extern	_TMR1L
+                                           	extern	_TMR1H
+                                           	extern	_T1CON
+                                           	extern	_TMR2
+                                           	extern	_T2CON
+                                           	extern	_CCPR1L
+                                           	extern	_CCPR1H
+                                           	extern	_CCP1CON
+                                           	extern	_RCSTA
+                                           	extern	_TXREG
+                                           	extern	_RCREG
+                                           	extern	_CMCON
+                                           	extern	_OPTION_REG
+                                           	extern	_TRISA
+                                           	extern	_TRISB
+                                           	extern	_PIE1
+                                           	extern	_PCON
+                                           	extern	_PR2
+                                           	extern	_TXSTA
+                                           	extern	_SPBRG
+                                           	extern	_EEDATA
+                                           	extern	_EEADR
+                                           	extern	_EECON1
+                                           	extern	_EECON2
+                                           	extern	_VRCON
+                                           
+                                           	extern PSAVE
+                                           	extern SSAVE
+                                           	extern WSAVE
+                                           	extern STK12
+                                           	extern STK11
+                                           	extern STK10
+                                           	extern STK09
+                                           	extern STK08
+                                           	extern STK07
+                                           	extern STK06
+                                           	extern STK05
+                                           	extern STK04
+                                           	extern STK03
+                                           	extern STK02
+                                           	extern STK01
+                                           	extern STK00
+                                           ;--------------------------------------------------------
+                                           ; global declarations
+                                           ;--------------------------------------------------------
+                                           	global	_processCommand
+                                           	global	_setPower
+                                           	global	_syncStrobe
+                                           	global	_timerTick
+                                           	global	_init2
+                                           	global	_motor_stop
+                                           	global	_motor_click
+                                           	global	_forward1
+                                           	global	_reverse1
+                                           	global	_setTimer
+                                           	global	_strobe_sync
+                                           
+                                           ;--------------------------------------------------------
+                                           ; global definitions
+                                           ;--------------------------------------------------------
+                                           ;--------------------------------------------------------
+                                           ; absolute symbol definitions
+                                           ;--------------------------------------------------------
+                                           ;--------------------------------------------------------
+                                           ; compiler-defined variables
+                                           ;--------------------------------------------------------
+                                           UDL_stepmotor2_0	udata
+                                           r0x1017	res	1
+                                           r0x1015	res	1
+                                           r0x1016	res	1
+                                           r0x1022	res	1
+                                           r0x101D	res	1
+                                           r0x101E	res	1
+                                           r0x101F	res	1
+                                           r0x1020	res	1
+                                           r0x1021	res	1
+                                           r0x1019	res	1
+                                           r0x101A	res	1
+                                           r0x101B	res	1
+                                           r0x101C	res	1
+                                           r0x1011	res	1
+                                           r0x1014	res	1
+                                           _currentPosition	res	2
+                                           _seekPosition	res	2
+                                           _maxPosition	res	2
+                                           _dda_error	res	2
+                                           _dda_deltay	res	2
+                                           _dda_deltax	res	2
+                                           ;--------------------------------------------------------
+                                           ; initialized data
+                                           ;--------------------------------------------------------
+                                           
+                                           ID_stepmotor2_0	idata
+                                           _coilPosition
+                                           	db	0x00
+                                           
+                                           
+                                           ID_stepmotor2_1	idata
+                                           _function
+                                           	db	0x00
+                                           
+                                           
+                                           ID_stepmotor2_2	idata
+                                           _speed
+                                           	db	0x00
+                                           
+                                           
+                                           ID_stepmotor2_3	idata
+                                           _seekNotify
+                                           	db	0xff
+                                           
+                                           
+                                           ID_stepmotor2_4	idata
+                                           _sync_mode
+                                           	db	0x00
+                                           
+                                           ;--------------------------------------------------------
+                                           ; overlayable items in internal ram 
+                                           ;--------------------------------------------------------
+                                           ;	udata_ovr
+                                           ;--------------------------------------------------------
+                                           ; code
+                                           ;--------------------------------------------------------
+                                           code_stepmotor2	code
+                                           ;***
+                                           ;  pBlock Stats: dbName = C
+                                           ;***
+                                           ;entry:  _processCommand	;Function start
+                                           ; 2 exit points
+                                           ;has an exit
+                                           ;functions called:
+                                           ;   _sendReply
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _endMessage
+                                           ;   _sendReply
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _endMessage
+                                           ;   _sendReply
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _endMessage
+                                           ;   _setTimer
+                                           ;   _setTimer
+                                           ;   _sendReply
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _endMessage
+                                           ;   _setTimer
+                                           ;   _motor_stop
+                                           ;   _setTimer
+                                           ;   _sendReply
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _endMessage
+                                           ;   _setTimer
+                                           ;   _forward1
+                                           ;   _reverse1
+                                           ;   _setPower
+                                           ;   _sendReply
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _endMessage
+                                           ;   _setTimer
+                                           ;   _sendReply
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _endMessage
+                                           ;   _sendReply
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _endMessage
+                                           ;   _sendReply
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _endMessage
+                                           ;   _setTimer
+                                           ;   _setTimer
+                                           ;   _sendReply
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _endMessage
+                                           ;   _setTimer
+                                           ;   _motor_stop
+                                           ;   _setTimer
+                                           ;   _sendReply
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _endMessage
+                                           ;   _setTimer
+                                           ;   _forward1
+                                           ;   _reverse1
+                                           ;   _setPower
+                                           ;   _sendReply
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _sendDataByte
+                                           ;   _endMessage
+                                           ;   _setTimer
+                                           ;4 compiler assigned registers:
+                                           ;   r0x1011
+                                           ;   r0x1012
+                                           ;   r0x1013
+                                           ;   r0x1014
+                                           ;; Starting pCode block
+                                           _processCommand	;Function start
+                                           ; 2 exit points
+                                           ;	.line	577; "stepmotor2.c"	switch(buffer[0]) {
+000028   1283     bcf	0x3, 0x5             	BANKSEL	_buffer
+000029   1303     bcf	0x3, 0x6             
+00002a   085f     movf	0x5f, w             	MOVF	(_buffer + 0),W
+00002b   1283     bcf	0x3, 0x5             	BANKSEL	r0x1011
+00002c   1303     bcf	0x3, 0x6             
+00002d   00d1     movwf	0x51               	MOVWF	r0x1011
+00002e   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+00002f   2879     goto	0x79                	GOTO	_00283_DS_
+000030   0851     movf	0x51, w             	MOVF	r0x1011,W
+000031   3a01     xorlw	0x1                	XORLW	0x01
+000032   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+000033   28dc     goto	0xdc                	GOTO	_00295_DS_
+000034   0851     movf	0x51, w             	MOVF	r0x1011,W
+000035   3a02     xorlw	0x2                	XORLW	0x02
+000036   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+000037   28e8     goto	0xe8                	GOTO	_00296_DS_
+000038   0851     movf	0x51, w             	MOVF	r0x1011,W
+000039   3a03     xorlw	0x3                	XORLW	0x03
+00003a   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+00003b   28f4     goto	0xf4                	GOTO	_00297_DS_
+00003c   0851     movf	0x51, w             	MOVF	r0x1011,W
+00003d   3a04     xorlw	0x4                	XORLW	0x04
+00003e   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+00003f   2907     goto	0x107               	GOTO	_00298_DS_
+000040   0851     movf	0x51, w             	MOVF	r0x1011,W
+000041   3a05     xorlw	0x5                	XORLW	0x05
+000042   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+000043   2924     goto	0x124               	GOTO	_00299_DS_
+000044   0851     movf	0x51, w             	MOVF	r0x1011,W
+000045   3a06     xorlw	0x6                	XORLW	0x06
+000046   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+000047   294d     goto	0x14d               	GOTO	_00303_DS_
+000048   0851     movf	0x51, w             	MOVF	r0x1011,W
+000049   3a07     xorlw	0x7                	XORLW	0x07
+00004a   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+00004b   2952     goto	0x152               	GOTO	_00304_DS_
+00004c   0851     movf	0x51, w             	MOVF	r0x1011,W
+00004d   3a08     xorlw	0x8                	XORLW	0x08
+00004e   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+00004f   2959     goto	0x159               	GOTO	_00305_DS_
+000050   0851     movf	0x51, w             	MOVF	r0x1011,W
+000051   3a09     xorlw	0x9                	XORLW	0x09
+000052   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+000053   2960     goto	0x160               	GOTO	_00306_DS_
+000054   0851     movf	0x51, w             	MOVF	r0x1011,W
+000055   3a0a     xorlw	0xa                	XORLW	0x0a
+000056   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+000057   296c     goto	0x16c               	GOTO	_00307_DS_
+000058   0851     movf	0x51, w             	MOVF	r0x1011,W
+000059   3a0b     xorlw	0xb                	XORLW	0x0b
+00005a   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+00005b   2989     goto	0x189               	GOTO	_00308_DS_
+00005c   0851     movf	0x51, w             	MOVF	r0x1011,W
+00005d   3a0c     xorlw	0xc                	XORLW	0x0c
+00005e   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+00005f   29eb     goto	0x1eb               	GOTO	_00311_DS_
+000060   0851     movf	0x51, w             	MOVF	r0x1011,W
+000061   3a0d     xorlw	0xd                	XORLW	0x0d
+000062   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+000063   29ed     goto	0x1ed               	GOTO	_00312_DS_
+000064   0851     movf	0x51, w             	MOVF	r0x1011,W
+000065   3a0e     xorlw	0xe                	XORLW	0x0e
+000066   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+000067   29ef     goto	0x1ef               	GOTO	_00313_DS_
+000068   0851     movf	0x51, w             	MOVF	r0x1011,W
+000069   3a0f     xorlw	0xf                	XORLW	0x0f
+00006a   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+00006b   29f7     goto	0x1f7               	GOTO	_00314_DS_
+00006c   0851     movf	0x51, w             	MOVF	r0x1011,W
+00006d   3a10     xorlw	0x10               	XORLW	0x10
+00006e   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+00006f   2a0e     goto	0x20e               	GOTO	_00315_DS_
+000070   0851     movf	0x51, w             	MOVF	r0x1011,W
+000071   3afe     xorlw	0xfe               	XORLW	0xfe
+000072   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+000073   288c     goto	0x8c                	GOTO	_00284_DS_
+000074   0851     movf	0x51, w             	MOVF	r0x1011,W
+000075   3aff     xorlw	0xff               	XORLW	0xff
+000076   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+000077   28cd     goto	0xcd                	GOTO	_00294_DS_
+000078   2a19     goto	0x219               	GOTO	_00316_DS_
+                                           _00283_DS_
+                                           ;	.line	579; "stepmotor2.c"	sendReply();
+000079   158a     bsf	0xa, 0x3             	PAGESEL	_sendReply
+00007a   20cd     call	0xcd                	CALL	_sendReply
+00007b   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	580; "stepmotor2.c"	sendDataByte(CMD_VERSION);  // Response type 0
+00007c   3000     movlw	0                  	MOVLW	0x00
+00007d   158a     bsf	0xa, 0x3             	PAGESEL	_sendDataByte
+00007e   212f     call	0x12f               	CALL	_sendDataByte
+00007f   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	581; "stepmotor2.c"	sendDataByte(MAJOR_VERSION_NUMBER);
+000080   3001     movlw	0x1                	MOVLW	0x01
+000081   158a     bsf	0xa, 0x3             	PAGESEL	_sendDataByte
+000082   212f     call	0x12f               	CALL	_sendDataByte
+000083   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	582; "stepmotor2.c"	sendDataByte(MINOR_VERSION_NUMBER);
+000084   3000     movlw	0                  	MOVLW	0x00
+000085   158a     bsf	0xa, 0x3             	PAGESEL	_sendDataByte
+000086   212f     call	0x12f               	CALL	_sendDataByte
+000087   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	583; "stepmotor2.c"	endMessage();
+000088   158a     bsf	0xa, 0x3             	PAGESEL	_endMessage
+000089   2039     call	0x39                	CALL	_endMessage
+00008a   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	584; "stepmotor2.c"	break;
+00008b   2a19     goto	0x219               	GOTO	_00316_DS_
+                                           _00284_DS_
+                                           ;	.line	587; "stepmotor2.c"	sendReply();
+00008c   158a     bsf	0xa, 0x3             	PAGESEL	_sendReply
+00008d   20cd     call	0xcd                	CALL	_sendReply
+00008e   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	588; "stepmotor2.c"	sendDataByte(CMD_CHECKHOSTVERSION);    
+00008f   30fe     movlw	0xfe               	MOVLW	0xfe
+000090   158a     bsf	0xa, 0x3             	PAGESEL	_sendDataByte
+000091   212f     call	0x12f               	CALL	_sendDataByte
+000092   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	589; "stepmotor2.c"	if(buffer[1] > OLDHOST_MAJOR_VERSION_NUMBER)
+000093   1283     bcf	0x3, 0x5             	BANKSEL	_buffer
+000094   1303     bcf	0x3, 0x6             
+000095   0860     movf	0x60, w             	MOVF	(_buffer + 1),W
+000096   1283     bcf	0x3, 0x5             	BANKSEL	r0x1011
+000097   1303     bcf	0x3, 0x6             
+000098   00d1     movwf	0x51               	MOVWF	r0x1011
+000099   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+00009a   28a0     goto	0xa0                	GOTO	_00292_DS_
+                                           ;	.line	590; "stepmotor2.c"	sendDataByte(0xff);    
+00009b   30ff     movlw	0xff               	MOVLW	0xff
+00009c   158a     bsf	0xa, 0x3             	PAGESEL	_sendDataByte
+00009d   212f     call	0x12f               	CALL	_sendDataByte
+00009e   118a     bcf	0xa, 0x3             	PAGESEL	$
+00009f   28c1     goto	0xc1                	GOTO	_00293_DS_
+                                           _00292_DS_
+                                           ;	.line	591; "stepmotor2.c"	else if (buffer[1] == OLDHOST_MAJOR_VERSION_NUMBER)
+0000a0   1283     bcf	0x3, 0x5             	BANKSEL	_buffer
+0000a1   1303     bcf	0x3, 0x6             
+0000a2   0860     movf	0x60, w             	MOVF	(_buffer + 1),W
+0000a3   1283     bcf	0x3, 0x5             	BANKSEL	r0x1011
+0000a4   1303     bcf	0x3, 0x6             
+0000a5   00d1     movwf	0x51               	MOVWF	r0x1011
+0000a6   0851     movf	0x51, w             	MOVF	r0x1011,W
+0000a7   1d03     btfss	0x3, 0x2           	BTFSS	STATUS,2
+0000a8   28bd     goto	0xbd                	GOTO	_00289_DS_
+                                           ;	.line	593; "stepmotor2.c"	if (buffer[2] >= OLDHOST_MINOR_VERSION_NUMBER)
+0000a9   1283     bcf	0x3, 0x5             	BANKSEL	_buffer
+0000aa   1303     bcf	0x3, 0x6             
+0000ab   0861     movf	0x61, w             	MOVF	(_buffer + 2),W
+0000ac   1283     bcf	0x3, 0x5             	BANKSEL	r0x1011
+0000ad   1303     bcf	0x3, 0x6             
+0000ae   00d1     movwf	0x51               	MOVWF	r0x1011
+                                           ;unsigned compare: left < lit(0x8=8), size=1
+0000af   3008     movlw	0x8                	MOVLW	0x08
+0000b0   0251     subwf	0x51, w            	SUBWF	r0x1011,W
+0000b1   1c03     btfss	0x3, 0             	BTFSS	STATUS,0
+0000b2   28b8     goto	0xb8                	GOTO	_00286_DS_
+                                           ;genSkipc:3694: created from rifx:0xbf8c33d0
+                                           ;	.line	594; "stepmotor2.c"	sendDataByte(0xff);
+0000b3   30ff     movlw	0xff               	MOVLW	0xff
+0000b4   158a     bsf	0xa, 0x3             	PAGESEL	_sendDataByte
+0000b5   212f     call	0x12f               	CALL	_sendDataByte
+0000b6   118a     bcf	0xa, 0x3             	PAGESEL	$
+0000b7   28c1     goto	0xc1                	GOTO	_00293_DS_
+                                           _00286_DS_
+                                           ;	.line	596; "stepmotor2.c"	sendDataByte(0);    
+0000b8   3000     movlw	0                  	MOVLW	0x00
+0000b9   158a     bsf	0xa, 0x3             	PAGESEL	_sendDataByte
+0000ba   212f     call	0x12f               	CALL	_sendDataByte
+0000bb   118a     bcf	0xa, 0x3             	PAGESEL	$
+0000bc   28c1     goto	0xc1                	GOTO	_00293_DS_
+                                           _00289_DS_
+                                           ;	.line	598; "stepmotor2.c"	sendDataByte(0);
+0000bd   3000     movlw	0                  	MOVLW	0x00
+0000be   158a     bsf	0xa, 0x3             	PAGESEL	_sendDataByte
+0000bf   212f     call	0x12f               	CALL	_sendDataByte
+0000c0   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           _00293_DS_
+                                           ;	.line	599; "stepmotor2.c"	sendDataByte(OLDHOST_MAJOR_VERSION_NUMBER);
+0000c1   3000     movlw	0                  	MOVLW	0x00
+0000c2   158a     bsf	0xa, 0x3             	PAGESEL	_sendDataByte
+0000c3   212f     call	0x12f               	CALL	_sendDataByte
+0000c4   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	600; "stepmotor2.c"	sendDataByte(OLDHOST_MINOR_VERSION_NUMBER);
+0000c5   3008     movlw	0x8                	MOVLW	0x08
+0000c6   158a     bsf	0xa, 0x3             	PAGESEL	_sendDataByte
+0000c7   212f     call	0x12f               	CALL	_sendDataByte
+0000c8   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	601; "stepmotor2.c"	endMessage();
+0000c9   158a     bsf	0xa, 0x3             	PAGESEL	_endMessage
+0000ca   2039     call	0x39                	CALL	_endMessage
+0000cb   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	602; "stepmotor2.c"	break;    
+0000cc   2a19     goto	0x219               	GOTO	_00316_DS_
+                                           _00294_DS_
+                                           ;	.line	605; "stepmotor2.c"	sendReply();
+0000cd   158a     bsf	0xa, 0x3             	PAGESEL	_sendReply
+0000ce   20cd     call	0xcd                	CALL	_sendReply
+0000cf   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	606; "stepmotor2.c"	sendDataByte(CMD_GETMODULETYPE);
+0000d0   30ff     movlw	0xff               	MOVLW	0xff
+0000d1   158a     bsf	0xa, 0x3             	PAGESEL	_sendDataByte
+0000d2   212f     call	0x12f               	CALL	_sendDataByte
+0000d3   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	607; "stepmotor2.c"	sendDataByte(LINEAR_AXIS_TYPE);
+0000d4   3000     movlw	0                  	MOVLW	0x00
+0000d5   158a     bsf	0xa, 0x3             	PAGESEL	_sendDataByte
+0000d6   212f     call	0x12f               	CALL	_sendDataByte
+0000d7   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	608; "stepmotor2.c"	endMessage();
+0000d8   158a     bsf	0xa, 0x3             	PAGESEL	_endMessage
+0000d9   2039     call	0x39                	CALL	_endMessage
+0000da   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	609; "stepmotor2.c"	break;
+0000db   2a19     goto	0x219               	GOTO	_00316_DS_
+                                           _00295_DS_
+                                           ;	.line	613; "stepmotor2.c"	function = func_forward;
+0000dc   3001     movlw	0x1                	MOVLW	0x01
+0000dd   1683     bsf	0x3, 0x5             	BANKSEL	_function
+0000de   1303     bcf	0x3, 0x6             
+0000df   00d0     movwf	0x50               	MOVWF	_function
+                                           ;	.line	614; "stepmotor2.c"	setTimer(buffer[1]);
+0000e0   1283     bcf	0x3, 0x5             	BANKSEL	_buffer
+0000e1   1303     bcf	0x3, 0x6             
+0000e2   0860     movf	0x60, w             	MOVF	(_buffer + 1),W
+0000e3   1283     bcf	0x3, 0x5             	BANKSEL	r0x1011
+0000e4   1303     bcf	0x3, 0x6             
+0000e5   00d1     movwf	0x51               	MOVWF	r0x1011
+0000e6   247f     call	0x47f               	CALL	_setTimer
+                                           ;	.line	615; "stepmotor2.c"	break;
+0000e7   2a19     goto	0x219               	GOTO	_00316_DS_
+                                           _00296_DS_
+                                           ;	.line	619; "stepmotor2.c"	function = func_reverse;
+0000e8   3002     movlw	0x2                	MOVLW	0x02
+0000e9   1683     bsf	0x3, 0x5             	BANKSEL	_function
+0000ea   1303     bcf	0x3, 0x6             
+0000eb   00d0     movwf	0x50               	MOVWF	_function
+                                           ;	.line	620; "stepmotor2.c"	setTimer(buffer[1]);    
+0000ec   1283     bcf	0x3, 0x5             	BANKSEL	_buffer
+0000ed   1303     bcf	0x3, 0x6             
+0000ee   0860     movf	0x60, w             	MOVF	(_buffer + 1),W
+0000ef   1283     bcf	0x3, 0x5             	BANKSEL	r0x1011
+0000f0   1303     bcf	0x3, 0x6             
+0000f1   00d1     movwf	0x51               	MOVWF	r0x1011
+0000f2   247f     call	0x47f               	CALL	_setTimer
+                                           ;	.line	621; "stepmotor2.c"	break;
+0000f3   2a19     goto	0x219               	GOTO	_00316_DS_
+                                           _00297_DS_
+                                           ;	.line	625; "stepmotor2.c"	currentPosition.bytes[0] = buffer[1];
+0000f4   1283     bcf	0x3, 0x5             	BANKSEL	_buffer
+0000f5   1303     bcf	0x3, 0x6             
+0000f6   0860     movf	0x60, w             	MOVF	(_buffer + 1),W
+0000f7   1283     bcf	0x3, 0x5             	BANKSEL	r0x1011
+0000f8   1303     bcf	0x3, 0x6             
+0000f9   00d1     movwf	0x51               	MOVWF	r0x1011
+0000fa   1283     bcf	0x3, 0x5             	BANKSEL	_currentPosition
+0000fb   1303     bcf	0x3, 0x6             
+0000fc   00d3     movwf	0x53               	MOVWF	(_currentPosition + 0)
+                                           ;	.line	626; "stepmotor2.c"	currentPosition.bytes[1] = buffer[2];
+0000fd   1283     bcf	0x3, 0x5             	BANKSEL	_buffer
+0000fe   1303     bcf	0x3, 0x6             
+0000ff   0861     movf	0x61, w             	MOVF	(_buffer + 2),W
+000100   1283     bcf	0x3, 0x5             	BANKSEL	r0x1011
+000101   1303     bcf	0x3, 0x6             
+000102   00d1     movwf	0x51               	MOVWF	r0x1011
+000103   1283     bcf	0x3, 0x5             	BANKSEL	_currentPosition
+000104   1303     bcf	0x3, 0x6             
+000105   00d4     movwf	0x54               	MOVWF	(_currentPosition + 1)
+                                           ;	.line	627; "stepmotor2.c"	break;
+000106   2a19     goto	0x219               	GOTO	_00316_DS_
+                                           _00298_DS_
+                                           ;	.line	631; "stepmotor2.c"	sendReply();
+000107   158a     bsf	0xa, 0x3             	PAGESEL	_sendReply
+000108   20cd     call	0xcd                	CALL	_sendReply
+000109   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	632; "stepmotor2.c"	sendDataByte(CMD_GETPOS);
+00010a   3004     movlw	0x4                	MOVLW	0x04
+00010b   158a     bsf	0xa, 0x3             	PAGESEL	_sendDataByte
+00010c   212f     call	0x12f               	CALL	_sendDataByte
+00010d   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	633; "stepmotor2.c"	sendDataByte(currentPosition.bytes[0]);
+00010e   1283     bcf	0x3, 0x5             	BANKSEL	_currentPosition
+00010f   1303     bcf	0x3, 0x6             
+000110   0853     movf	0x53, w             	MOVF	(_currentPosition + 0),W
+000111   1283     bcf	0x3, 0x5             	BANKSEL	r0x1011
+000112   1303     bcf	0x3, 0x6             
+000113   00d1     movwf	0x51               	MOVWF	r0x1011
+000114   158a     bsf	0xa, 0x3             	PAGESEL	_sendDataByte
+000115   212f     call	0x12f               	CALL	_sendDataByte
+000116   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	634; "stepmotor2.c"	sendDataByte(currentPosition.bytes[1]);
+000117   1283     bcf	0x3, 0x5             	BANKSEL	_currentPosition
+000118   1303     bcf	0x3, 0x6             
+000119   0854     movf	0x54, w             	MOVF	(_currentPosition + 1),W
+00011a   1283     bcf	0x3, 0x5             	BANKSEL	r0x1011
+00011b   1303     bcf	0x3, 0x6             
+00011c   00d1     movwf	0x51               	MOVWF	r0x1011
+00011d   158a     bsf	0xa, 0x3             	PAGESEL	_sendDataByte
+00011e   212f     call	0x12f               	CALL	_sendDataByte
+00011f   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	635; "stepmotor2.c"	endMessage();
+000120   158a     bsf	0xa, 0x3             	PAGESEL	_endMessage
+000121   2039     call	0x39                	CALL	_endMessage
+000122   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	636; "stepmotor2.c"	break;
+000123   2a19     goto	0x219               	GOTO	_00316_DS_
+                                           _00299_DS_
+                                           ;	.line	640; "stepmotor2.c"	seekPosition.bytes[0] = buffer[2];
+000124   1283     bcf	0x3, 0x5             	BANKSEL	_buffer
+000125   1303     bcf	0x3, 0x6             
+000126   0861     movf	0x61, w             	MOVF	(_buffer + 2),W
+000127   1283     bcf	0x3, 0x5             	BANKSEL	r0x1011
+000128   1303     bcf	0x3, 0x6             
+000129   00d1     movwf	0x51               	MOVWF	r0x1011
+00012a   1283     bcf	0x3, 0x5             	BANKSEL	_seekPosition
+00012b   1303     bcf	0x3, 0x6             
+00012c   00d5     movwf	0x55               	MOVWF	(_seekPosition + 0)
+                                           ;	.line	641; "stepmotor2.c"	seekPosition.bytes[1] = buffer[3];
+00012d   1283     bcf	0x3, 0x5             	BANKSEL	_buffer
+00012e   1303     bcf	0x3, 0x6             
+00012f   0862     movf	0x62, w             	MOVF	(_buffer + 3),W
+000130   1283     bcf	0x3, 0x5             	BANKSEL	r0x1011
+000131   1303     bcf	0x3, 0x6             
+000132   00d1     movwf	0x51               	MOVWF	r0x1011
+000133   1283     bcf	0x3, 0x5             	BANKSEL	_seekPosition
+000134   1303     bcf	0x3, 0x6             
+000135   00d6     movwf	0x56               	MOVWF	(_seekPosition + 1)
+                                           ;	.line	643; "stepmotor2.c"	if (sync_mode == sync_seek)
+000136   1683     bsf	0x3, 0x5             	BANKSEL	_sync_mode
+000137   1303     bcf	0x3, 0x6             
+000138   0853     movf	0x53, w             	MOVF	_sync_mode,W
+000139   3a01     xorlw	0x1                	XORLW	0x01
+00013a   1d03     btfss	0x3, 0x2           	BTFSS	STATUS,2
+00013b   2941     goto	0x141               	GOTO	_00301_DS_
+                                           ;	.line	644; "stepmotor2.c"	function = func_syncwait;
+00013c   3003     movlw	0x3                	MOVLW	0x03
+00013d   1683     bsf	0x3, 0x5             	BANKSEL	_function
+00013e   1303     bcf	0x3, 0x6             
+00013f   00d0     movwf	0x50               	MOVWF	_function
+000140   2945     goto	0x145               	GOTO	_00302_DS_
+                                           _00301_DS_
+                                           ;	.line	646; "stepmotor2.c"	function = func_seek;
+000141   3004     movlw	0x4                	MOVLW	0x04
+000142   1683     bsf	0x3, 0x5             	BANKSEL	_function
+000143   1303     bcf	0x3, 0x6             
+000144   00d0     movwf	0x50               	MOVWF	_function
+                                           _00302_DS_
+                                           ;	.line	647; "stepmotor2.c"	setTimer(buffer[1]);
+000145   1283     bcf	0x3, 0x5             	BANKSEL	_buffer
+000146   1303     bcf	0x3, 0x6             
+000147   0860     movf	0x60, w             	MOVF	(_buffer + 1),W
+000148   1283     bcf	0x3, 0x5             	BANKSEL	r0x1011
+000149   1303     bcf	0x3, 0x6             
+00014a   00d1     movwf	0x51               	MOVWF	r0x1011
+00014b   247f     call	0x47f               	CALL	_setTimer
+                                           ;	.line	648; "stepmotor2.c"	break;
+00014c   2a19     goto	0x219               	GOTO	_00316_DS_
+                                           _00303_DS_
+                                           ;	.line	652; "stepmotor2.c"	motor_stop();
+00014d   2557     call	0x557               	CALL	_motor_stop
+                                           ;	.line	653; "stepmotor2.c"	function = func_idle;
+00014e   1683     bsf	0x3, 0x5             	BANKSEL	_function
+00014f   1303     bcf	0x3, 0x6             
+000150   01d0     clrf	0x50                	CLRF	_function
+                                           ;	.line	654; "stepmotor2.c"	break;
+000151   2a19     goto	0x219               	GOTO	_00316_DS_
+                                           _00304_DS_
+                                           ;	.line	658; "stepmotor2.c"	seekNotify = buffer[1];
+000152   1283     bcf	0x3, 0x5             	BANKSEL	_buffer
+000153   1303     bcf	0x3, 0x6             
+000154   0860     movf	0x60, w             	MOVF	(_buffer + 1),W
+000155   1683     bsf	0x3, 0x5             	BANKSEL	_seekNotify
+000156   1303     bcf	0x3, 0x6             
+000157   00d2     movwf	0x52               	MOVWF	_seekNotify
+                                           ;	.line	659; "stepmotor2.c"	break;
+000158   2a19     goto	0x219               	GOTO	_00316_DS_
+                                           _00305_DS_
+                                           ;	.line	663; "stepmotor2.c"	sync_mode = buffer[1];
+000159   1283     bcf	0x3, 0x5             	BANKSEL	_buffer
+00015a   1303     bcf	0x3, 0x6             
+00015b   0860     movf	0x60, w             	MOVF	(_buffer + 1),W
+00015c   1683     bsf	0x3, 0x5             	BANKSEL	_sync_mode
+00015d   1303     bcf	0x3, 0x6             
+00015e   00d3     movwf	0x53               	MOVWF	_sync_mode
+                                           ;	.line	664; "stepmotor2.c"	break;
+00015f   2a19     goto	0x219               	GOTO	_00316_DS_
+                                           _00306_DS_
+                                           ;	.line	668; "stepmotor2.c"	function = func_findmin;
+000160   3005     movlw	0x5                	MOVLW	0x05
+000161   1683     bsf	0x3, 0x5             	BANKSEL	_function
+000162   1303     bcf	0x3, 0x6             
+000163   00d0     movwf	0x50               	MOVWF	_function
+                                           ;	.line	669; "stepmotor2.c"	setTimer(buffer[1]);
+000164   1283     bcf	0x3, 0x5             	BANKSEL	_buffer
+000165   1303     bcf	0x3, 0x6             
+000166   0860     movf	0x60, w             	MOVF	(_buffer + 1),W
+000167   1283     bcf	0x3, 0x5             	BANKSEL	r0x1011
+000168   1303     bcf	0x3, 0x6             
+000169   00d1     movwf	0x51               	MOVWF	r0x1011
+00016a   247f     call	0x47f               	CALL	_setTimer
+                                           ;	.line	670; "stepmotor2.c"	break;
+00016b   2a19     goto	0x219               	GOTO	_00316_DS_
+                                           _00307_DS_
+                                           ;	.line	674; "stepmotor2.c"	sendReply();
+00016c   158a     bsf	0xa, 0x3             	PAGESEL	_sendReply
+00016d   20cd     call	0xcd                	CALL	_sendReply
+00016e   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	675; "stepmotor2.c"	sendDataByte(CMD_GETRANGE);
+00016f   300a     movlw	0xa                	MOVLW	0x0a
+000170   158a     bsf	0xa, 0x3             	PAGESEL	_sendDataByte
+000171   212f     call	0x12f               	CALL	_sendDataByte
+000172   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	676; "stepmotor2.c"	sendDataByte(maxPosition.bytes[0]);
+000173   1283     bcf	0x3, 0x5             	BANKSEL	_maxPosition
+000174   1303     bcf	0x3, 0x6             
+000175   0857     movf	0x57, w             	MOVF	(_maxPosition + 0),W
+000176   1283     bcf	0x3, 0x5             	BANKSEL	r0x1011
+000177   1303     bcf	0x3, 0x6             
+000178   00d1     movwf	0x51               	MOVWF	r0x1011
+000179   158a     bsf	0xa, 0x3             	PAGESEL	_sendDataByte
+00017a   212f     call	0x12f               	CALL	_sendDataByte
+00017b   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	677; "stepmotor2.c"	sendDataByte(maxPosition.bytes[1]);
+00017c   1283     bcf	0x3, 0x5             	BANKSEL	_maxPosition
+00017d   1303     bcf	0x3, 0x6             
+00017e   0858     movf	0x58, w             	MOVF	(_maxPosition + 1),W
+00017f   1283     bcf	0x3, 0x5             	BANKSEL	r0x1011
+000180   1303     bcf	0x3, 0x6             
+000181   00d1     movwf	0x51               	MOVWF	r0x1011
+000182   158a     bsf	0xa, 0x3             	PAGESEL	_sendDataByte
+000183   212f     call	0x12f               	CALL	_sendDataByte
+000184   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	678; "stepmotor2.c"	endMessage();
+000185   158a     bsf	0xa, 0x3             	PAGESEL	_endMessage
+000186   2039     call	0x39                	CALL	_endMessage
+000187   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	679; "stepmotor2.c"	break;
+000188   2a19     goto	0x219               	GOTO	_00316_DS_
+                                           _00308_DS_
+                                           ;	.line	686; "stepmotor2.c"	seekPosition.bytes[0] = buffer[2];
+000189   1283     bcf	0x3, 0x5             	BANKSEL	_buffer
+00018a   1303     bcf	0x3, 0x6             
+00018b   0861     movf	0x61, w             	MOVF	(_buffer + 2),W
+00018c   1283     bcf	0x3, 0x5             	BANKSEL	r0x1011
+00018d   1303     bcf	0x3, 0x6             
+00018e   00d1     movwf	0x51               	MOVWF	r0x1011
+00018f   1283     bcf	0x3, 0x5             	BANKSEL	_seekPosition
+000190   1303     bcf	0x3, 0x6             
+000191   00d5     movwf	0x55               	MOVWF	(_seekPosition + 0)
+                                           ;	.line	687; "stepmotor2.c"	seekPosition.bytes[1] = buffer[3];
+000192   1283     bcf	0x3, 0x5             	BANKSEL	_buffer
+000193   1303     bcf	0x3, 0x6             
+000194   0862     movf	0x62, w             	MOVF	(_buffer + 3),W
+000195   1283     bcf	0x3, 0x5             	BANKSEL	r0x1011
+000196   1303     bcf	0x3, 0x6             
+000197   00d1     movwf	0x51               	MOVWF	r0x1011
+000198   1283     bcf	0x3, 0x5             	BANKSEL	_seekPosition
+000199   1303     bcf	0x3, 0x6             
+00019a   00d6     movwf	0x56               	MOVWF	(_seekPosition + 1)
+                                           ;	.line	688; "stepmotor2.c"	dda_deltay.bytes[0] = buffer[4];
+00019b   1283     bcf	0x3, 0x5             	BANKSEL	_buffer
+00019c   1303     bcf	0x3, 0x6             
+00019d   0863     movf	0x63, w             	MOVF	(_buffer + 4),W
+00019e   1283     bcf	0x3, 0x5             	BANKSEL	r0x1011
+00019f   1303     bcf	0x3, 0x6             
+0001a0   00d1     movwf	0x51               	MOVWF	r0x1011
+0001a1   1283     bcf	0x3, 0x5             	BANKSEL	_dda_deltay
+0001a2   1303     bcf	0x3, 0x6             
+0001a3   00db     movwf	0x5b               	MOVWF	(_dda_deltay + 0)
+                                           ;	.line	689; "stepmotor2.c"	dda_deltay.bytes[1] = buffer[5];
+0001a4   1283     bcf	0x3, 0x5             	BANKSEL	_buffer
+0001a5   1303     bcf	0x3, 0x6             
+0001a6   0864     movf	0x64, w             	MOVF	(_buffer + 5),W
+0001a7   1283     bcf	0x3, 0x5             	BANKSEL	r0x1011
+0001a8   1303     bcf	0x3, 0x6             
+0001a9   00d1     movwf	0x51               	MOVWF	r0x1011
+0001aa   1283     bcf	0x3, 0x5             	BANKSEL	_dda_deltay
+0001ab   1303     bcf	0x3, 0x6             
+0001ac   00dc     movwf	0x5c               	MOVWF	(_dda_deltay + 1)
+                                           ;	.line	690; "stepmotor2.c"	dda_error = 0;
+0001ad   1283     bcf	0x3, 0x5             	BANKSEL	_dda_error
+0001ae   1303     bcf	0x3, 0x6             
+0001af   01d9     clrf	0x59                	CLRF	_dda_error
+0001b0   01da     clrf	0x5a                	CLRF	(_dda_error + 1)
+                                           ;	.line	692; "stepmotor2.c"	dda_deltax = seekPosition.ival - currentPosition.ival;
+0001b1   1283     bcf	0x3, 0x5             	BANKSEL	_seekPosition
+0001b2   1303     bcf	0x3, 0x6             
+0001b3   0855     movf	0x55, w             	MOVF	(_seekPosition + 0),W
+0001b4   1283     bcf	0x3, 0x5             	BANKSEL	r0x1011
+0001b5   1303     bcf	0x3, 0x6             
+0001b6   00d1     movwf	0x51               	MOVWF	r0x1011
+                                           ;;101	MOVF	(_seekPosition + 1),W
+                                           ;;99	MOVWF	r0x1012
+                                           ;;120	MOVF	(_currentPosition + 0),W
+                                           ;;118	MOVWF	r0x1013
+                                           ;;111	MOVF	(_currentPosition + 1),W
+                                           ;;119	MOVF	r0x1013,W
+0001b7   1283     bcf	0x3, 0x5             	BANKSEL	_currentPosition
+0001b8   1303     bcf	0x3, 0x6             
+0001b9   0853     movf	0x53, w             	MOVF	(_currentPosition + 0),W
+0001ba   1283     bcf	0x3, 0x5             	BANKSEL	r0x1011
+0001bb   1303     bcf	0x3, 0x6             
+0001bc   0251     subwf	0x51, w            	SUBWF	r0x1011,W
+0001bd   1283     bcf	0x3, 0x5             	BANKSEL	_dda_deltax
+0001be   1303     bcf	0x3, 0x6             
+0001bf   00dd     movwf	0x5d               	MOVWF	_dda_deltax
+                                           ;;100	MOVF	r0x1012,W
+0001c0   1283     bcf	0x3, 0x5             	BANKSEL	_seekPosition
+0001c1   1303     bcf	0x3, 0x6             
+0001c2   0856     movf	0x56, w             	MOVF	(_seekPosition + 1),W
+0001c3   1283     bcf	0x3, 0x5             	BANKSEL	_dda_deltax
+0001c4   1303     bcf	0x3, 0x6             
+0001c5   00de     movwf	0x5e               	MOVWF	(_dda_deltax + 1)
+                                           ;;110	MOVF	r0x1014,W
+0001c6   1283     bcf	0x3, 0x5             	BANKSEL	_currentPosition
+0001c7   1303     bcf	0x3, 0x6             
+0001c8   0854     movf	0x54, w             	MOVF	(_currentPosition + 1),W
+0001c9   1283     bcf	0x3, 0x5             	BANKSEL	r0x1014
+0001ca   1303     bcf	0x3, 0x6             
+0001cb   00d2     movwf	0x52               	MOVWF	r0x1014
+0001cc   1c03     btfss	0x3, 0             	BTFSS	STATUS,0
+0001cd   0a52     incf	0x52, w             	INCF	r0x1014,W
+0001ce   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+0001cf   29d3     goto	0x1d3               	GOTO	_00001_DS_
+0001d0   1283     bcf	0x3, 0x5             	BANKSEL	_dda_deltax
+0001d1   1303     bcf	0x3, 0x6             
+0001d2   02de     subwf	0x5e, f            	SUBWF	(_dda_deltax + 1),F
+                                           ;signed compare: left < lit(0x0=0), size=2, mask=ffff
+                                           _00001_DS_
+                                           ;	.line	693; "stepmotor2.c"	if (dda_deltax < 0) dda_deltax = -dda_deltax;
+0001d3   1403     bsf	0x3, 0               	BSF	STATUS,0
+0001d4   1283     bcf	0x3, 0x5             	BANKSEL	(_dda_deltax + 1)
+0001d5   1303     bcf	0x3, 0x6             
+0001d6   1fde     btfss	0x5e, 0x7          	BTFSS	(_dda_deltax + 1),7
+0001d7   1003     bcf	0x3, 0               	BCF	STATUS,0
+0001d8   1c03     btfss	0x3, 0             	BTFSS	STATUS,0
+0001d9   29df     goto	0x1df               	GOTO	_00310_DS_
+                                           ;genSkipc:3694: created from rifx:0xbf8c33d0
+0001da   09dd     comf	0x5d, f             	COMF	_dda_deltax,F
+0001db   09de     comf	0x5e, f             	COMF	(_dda_deltax + 1),F
+0001dc   0add     incf	0x5d, f             	INCF	_dda_deltax,F
+0001dd   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+0001de   0ade     incf	0x5e, f             	INCF	(_dda_deltax + 1),F
+                                           _00310_DS_
+                                           ;	.line	695; "stepmotor2.c"	function = func_ddamaster;
+0001df   3007     movlw	0x7                	MOVLW	0x07
+0001e0   1683     bsf	0x3, 0x5             	BANKSEL	_function
+0001e1   1303     bcf	0x3, 0x6             
+0001e2   00d0     movwf	0x50               	MOVWF	_function
+                                           ;	.line	696; "stepmotor2.c"	setTimer(buffer[1]);
+0001e3   1283     bcf	0x3, 0x5             	BANKSEL	_buffer
+0001e4   1303     bcf	0x3, 0x6             
+0001e5   0860     movf	0x60, w             	MOVF	(_buffer + 1),W
+0001e6   1283     bcf	0x3, 0x5             	BANKSEL	r0x1011
+0001e7   1303     bcf	0x3, 0x6             
+0001e8   00d1     movwf	0x51               	MOVWF	r0x1011
+0001e9   247f     call	0x47f               	CALL	_setTimer
+                                           ;	.line	697; "stepmotor2.c"	break;
+0001ea   2a19     goto	0x219               	GOTO	_00316_DS_
+                                           _00311_DS_
+                                           ;	.line	700; "stepmotor2.c"	forward1();
+0001eb   24cd     call	0x4cd               	CALL	_forward1
+                                           ;	.line	701; "stepmotor2.c"	break;
+0001ec   2a19     goto	0x219               	GOTO	_00316_DS_
+                                           _00312_DS_
+                                           ;	.line	704; "stepmotor2.c"	reverse1();
+0001ed   2497     call	0x497               	CALL	_reverse1
+                                           ;	.line	705; "stepmotor2.c"	break;
+0001ee   2a19     goto	0x219               	GOTO	_00316_DS_
+                                           _00313_DS_
+                                           ;	.line	711; "stepmotor2.c"	setPower(buffer[1]);
+0001ef   1283     bcf	0x3, 0x5             	BANKSEL	_buffer
+0001f0   1303     bcf	0x3, 0x6             
+0001f1   0860     movf	0x60, w             	MOVF	(_buffer + 1),W
+0001f2   1283     bcf	0x3, 0x5             	BANKSEL	r0x1011
+0001f3   1303     bcf	0x3, 0x6             
+0001f4   00d1     movwf	0x51               	MOVWF	r0x1011
+0001f5   221c     call	0x21c               	CALL	_setPower
+                                           ;	.line	712; "stepmotor2.c"	break;
+0001f6   2a19     goto	0x219               	GOTO	_00316_DS_
+                                           _00314_DS_
+                                           ;	.line	715; "stepmotor2.c"	sendReply();
+0001f7   158a     bsf	0xa, 0x3             	PAGESEL	_sendReply
+0001f8   20cd     call	0xcd                	CALL	_sendReply
+0001f9   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	716; "stepmotor2.c"	sendDataByte(CMD_GETSENSOR);
+0001fa   300f     movlw	0xf                	MOVLW	0x0f
+0001fb   158a     bsf	0xa, 0x3             	PAGESEL	_sendDataByte
+0001fc   212f     call	0x12f               	CALL	_sendDataByte
+0001fd   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	717; "stepmotor2.c"	sendDataByte(PORTA);
+0001fe   1283     bcf	0x3, 0x5             	BANKSEL	_PORTA
+0001ff   1303     bcf	0x3, 0x6             
+000200   0805     movf	0x5, w              	MOVF	_PORTA,W
+000201   158a     bsf	0xa, 0x3             	PAGESEL	_sendDataByte
+000202   212f     call	0x12f               	CALL	_sendDataByte
+000203   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	718; "stepmotor2.c"	sendDataByte(PORTB);
+000204   1283     bcf	0x3, 0x5             	BANKSEL	_PORTB
+000205   1303     bcf	0x3, 0x6             
+000206   0806     movf	0x6, w              	MOVF	_PORTB,W
+000207   158a     bsf	0xa, 0x3             	PAGESEL	_sendDataByte
+000208   212f     call	0x12f               	CALL	_sendDataByte
+000209   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	719; "stepmotor2.c"	endMessage();
+00020a   158a     bsf	0xa, 0x3             	PAGESEL	_endMessage
+00020b   2039     call	0x39                	CALL	_endMessage
+00020c   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	720; "stepmotor2.c"	break;
+00020d   2a19     goto	0x219               	GOTO	_00316_DS_
+                                           _00315_DS_
+                                           ;	.line	724; "stepmotor2.c"	function = func_homereset;
+00020e   3008     movlw	0x8                	MOVLW	0x08
+00020f   1683     bsf	0x3, 0x5             	BANKSEL	_function
+000210   1303     bcf	0x3, 0x6             
+000211   00d0     movwf	0x50               	MOVWF	_function
+                                           ;	.line	725; "stepmotor2.c"	setTimer(buffer[1]);
+000212   1283     bcf	0x3, 0x5             	BANKSEL	_buffer
+000213   1303     bcf	0x3, 0x6             
+000214   0860     movf	0x60, w             	MOVF	(_buffer + 1),W
+000215   1283     bcf	0x3, 0x5             	BANKSEL	r0x1011
+000216   1303     bcf	0x3, 0x6             
+000217   00d1     movwf	0x51               	MOVWF	r0x1011
+000218   247f     call	0x47f               	CALL	_setTimer
+                                           _00316_DS_
+000219   1683     bsf	0x3, 0x5             	BANKSEL _coilPosition
+00021a   1303     bcf	0x3, 0x6             
+00021b   0008     return                   	RETURN	
+                                           ; exit point of _processCommand
+                                           
+                                           ;***
+                                           ;  pBlock Stats: dbName = C
+                                           ;***
+                                           ;entry:  _setPower	;Function start
+                                           ; 2 exit points
+                                           ;has an exit
+                                           ;2 compiler assigned registers:
+                                           ;   r0x101C
+                                           ;   r0x1016
+                                           ;; Starting pCode block
+                                           _setPower	;Function start
+                                           ; 2 exit points
+                                           ;	.line	564; "stepmotor2.c"	void setPower(byte p)
+00021c   1283     bcf	0x3, 0x5             	BANKSEL	r0x101C
+00021d   1303     bcf	0x3, 0x6             
+00021e   00d0     movwf	0x50               	MOVWF	r0x101C
+                                           ;shiftRight_Left2ResultLit:6973: shCount=1, size=1, sign=0, same=0, offr=0
+                                           ;	.line	569; "stepmotor2.c"	CCPR1L = p >> 2;
+00021f   1003     bcf	0x3, 0               	BCF	STATUS,0
+000220   0c50     rrf	0x50, w              	RRF	r0x101C,W
+000221   1283     bcf	0x3, 0x5             	BANKSEL	_CCPR1L
+000222   1303     bcf	0x3, 0x6             
+000223   0095     movwf	0x15               	MOVWF	_CCPR1L
+                                           ;shiftRight_Left2ResultLit:6973: shCount=1, size=1, sign=0, same=1, offr=0
+000224   1003     bcf	0x3, 0               	BCF	STATUS,0
+000225   0c95     rrf	0x15, f              	RRF	_CCPR1L,F
+                                           ;	.line	570; "stepmotor2.c"	PR2 = 16;  // The maximum range
+000226   3010     movlw	0x10               	MOVLW	0x10
+000227   1683     bsf	0x3, 0x5             	BANKSEL	_PR2
+000228   1303     bcf	0x3, 0x6             
+000229   0092     movwf	0x12               	MOVWF	_PR2
+                                           ;	.line	572; "stepmotor2.c"	CCP1CON = BIN(1100) | ((p & BIN(11)) << 4);
+00022a   3003     movlw	0x3                	MOVLW	0x03
+00022b   1283     bcf	0x3, 0x5             	BANKSEL	r0x101C
+00022c   1303     bcf	0x3, 0x6             
+00022d   05d0     andwf	0x50, f            	ANDWF	r0x101C,F
+00022e   0e50     swapf	0x50, w            	SWAPF	r0x101C,W
+00022f   39f0     andlw	0xf0               	ANDLW	0xf0
+000230   00c6     movwf	0x46               	MOVWF	r0x1016
+000231   300c     movlw	0xc                	MOVLW	0x0c
+000232   0446     iorwf	0x46, w            	IORWF	r0x1016,W
+000233   1283     bcf	0x3, 0x5             	BANKSEL	_CCP1CON
+000234   1303     bcf	0x3, 0x6             
+000235   0097     movwf	0x17               	MOVWF	_CCP1CON
+000236   0008     return                   	RETURN	
+                                           ; exit point of _setPower
+                                           
+                                           ;***
+                                           ;  pBlock Stats: dbName = C
+                                           ;***
+                                           ;entry:  _syncStrobe	;Function start
+                                           ; 2 exit points
+                                           ;has an exit
+                                           ;functions called:
+                                           ;   _forward1
+                                           ;   _reverse1
+                                           ;   _forward1
+                                           ;   _reverse1
+                                           ;; Starting pCode block
+                                           _syncStrobe	;Function start
+                                           ; 2 exit points
+                                           ;swapping arguments (AOP_TYPEs 1/3)
+                                           ;unsigned compare: left >= lit(0x4=4), size=1
+                                           ;	.line	546; "stepmotor2.c"	switch(sync_mode) {
+000237   3004     movlw	0x4                	MOVLW	0x04
+000238   1683     bsf	0x3, 0x5             	BANKSEL	_sync_mode
+000239   1303     bcf	0x3, 0x6             
+00023a   0253     subwf	0x53, w            	SUBWF	_sync_mode,W
+00023b   1803     btfsc	0x3, 0             	BTFSC	STATUS,0
+00023c   2a5a     goto	0x25a               	GOTO	_00270_DS_
+                                           ;genSkipc:3694: created from rifx:0xbf8c33d0
+00023d   3002     movlw	0x2                	MOVLW	HIGH(_00274_DS_)
+00023e   008a     movwf	0xa                	MOVWF	PCLATH
+00023f   3046     movlw	0x46               	MOVLW	_00274_DS_
+000240   0753     addwf	0x53, w            	ADDWF	_sync_mode,W
+000241   1803     btfsc	0x3, 0             	BTFSC	STATUS,0
+000242   0a8a     incf	0xa, f              	INCF	PCLATH,F
+000243   1283     bcf	0x3, 0x5             	BANKSEL	PCL
+000244   1303     bcf	0x3, 0x6             
+000245   0082     movwf	0x2                	MOVWF	PCL
+                                           _00274_DS_
+000246   2a4a     goto	0x24a               	GOTO	_00263_DS_
+000247   2a4b     goto	0x24b               	GOTO	_00264_DS_
+000248   2a57     goto	0x257               	GOTO	_00267_DS_
+000249   2a59     goto	0x259               	GOTO	_00268_DS_
+                                           _00263_DS_
+                                           ;	.line	548; "stepmotor2.c"	break;
+00024a   2a5a     goto	0x25a               	GOTO	_00270_DS_
+                                           _00264_DS_
+                                           ;	.line	550; "stepmotor2.c"	if (function = func_syncwait) {
+00024b   3003     movlw	0x3                	MOVLW	0x03
+00024c   1683     bsf	0x3, 0x5             	BANKSEL	_function
+00024d   1303     bcf	0x3, 0x6             
+00024e   00d0     movwf	0x50               	MOVWF	_function
+                                           ;	.line	551; "stepmotor2.c"	sync_mode = sync_none;
+00024f   1683     bsf	0x3, 0x5             	BANKSEL	_sync_mode
+000250   1303     bcf	0x3, 0x6             
+000251   01d3     clrf	0x53                	CLRF	_sync_mode
+                                           ;	.line	552; "stepmotor2.c"	function = func_seek;
+000252   3004     movlw	0x4                	MOVLW	0x04
+000253   1683     bsf	0x3, 0x5             	BANKSEL	_function
+000254   1303     bcf	0x3, 0x6             
+000255   00d0     movwf	0x50               	MOVWF	_function
+                                           ;	.line	554; "stepmotor2.c"	break;
+000256   2a5a     goto	0x25a               	GOTO	_00270_DS_
+                                           _00267_DS_
+                                           ;	.line	556; "stepmotor2.c"	forward1();
+000257   24cd     call	0x4cd               	CALL	_forward1
+                                           ;	.line	557; "stepmotor2.c"	break;
+000258   2a5a     goto	0x25a               	GOTO	_00270_DS_
+                                           _00268_DS_
+                                           ;	.line	559; "stepmotor2.c"	reverse1();
+000259   2497     call	0x497               	CALL	_reverse1
+                                           _00270_DS_
+                                           ;	.line	561; "stepmotor2.c"	}
+00025a   0008     return                   	RETURN	
+                                           ; exit point of _syncStrobe
+                                           
+                                           ;***
+                                           ;  pBlock Stats: dbName = C
+                                           ;***
+                                           ;entry:  _timerTick	;Function start
+                                           ; 2 exit points
+                                           ;has an exit
+                                           ;functions called:
+                                           ;   _LEDon
+                                           ;   _forward1
+                                           ;   _reverse1
+                                           ;   _forward1
+                                           ;   _reverse1
+                                           ;   _LEDon
+                                           ;   _sendMessageISR
+                                           ;   _sendDataByteISR
+                                           ;   _sendDataByteISR
+                                           ;   _sendDataByteISR
+                                           ;   _endMessageISR
+                                           ;   _reverse1
+                                           ;   _forward1
+                                           ;   _sendMessageISR
+                                           ;   _sendDataByteISR
+                                           ;   _sendDataByteISR
+                                           ;   _sendDataByteISR
+                                           ;   _endMessageISR
+                                           ;   _dda_step
+                                           ;   _reverse1
+                                           ;   _sendMessageISR
+                                           ;   _sendDataByteISR
+                                           ;   _endMessageISR
+                                           ;   _setTimer
+                                           ;   _LEDon
+                                           ;   _forward1
+                                           ;   _reverse1
+                                           ;   _forward1
+                                           ;   _reverse1
+                                           ;   _LEDon
+                                           ;   _sendMessageISR
+                                           ;   _sendDataByteISR
+                                           ;   _sendDataByteISR
+                                           ;   _sendDataByteISR
+                                           ;   _endMessageISR
+                                           ;   _reverse1
+                                           ;   _forward1
+                                           ;   _sendMessageISR
+                                           ;   _sendDataByteISR
+                                           ;   _sendDataByteISR
+                                           ;   _sendDataByteISR
+                                           ;   _endMessageISR
+                                           ;   _dda_step
+                                           ;   _reverse1
+                                           ;   _sendMessageISR
+                                           ;   _sendDataByteISR
+                                           ;   _endMessageISR
+                                           ;   _setTimer
+                                           ;5 compiler assigned registers:
+                                           ;   r0x1021
+                                           ;   r0x1019
+                                           ;   r0x101A
+                                           ;   r0x101B
+                                           ;   r0x101C
+                                           ;; Starting pCode block
+                                           _timerTick	;Function start
+                                           ; 2 exit points
+                                           ;	.line	447; "stepmotor2.c"	switch(function) {
+00025b   1683     bsf	0x3, 0x5             	BANKSEL	_function
+00025c   1303     bcf	0x3, 0x6             
+00025d   0850     movf	0x50, w             	MOVF	_function,W
+00025e   1283     bcf	0x3, 0x5             	BANKSEL	r0x1021
+00025f   1303     bcf	0x3, 0x6             
+000260   00cc     movwf	0x4c               	MOVWF	r0x1021
+                                           ;swapping arguments (AOP_TYPEs 1/2)
+                                           ;unsigned compare: left >= lit(0x9=9), size=1
+000261   3009     movlw	0x9                	MOVLW	0x09
+000262   024c     subwf	0x4c, w            	SUBWF	r0x1021,W
+000263   1803     btfsc	0x3, 0             	BTFSC	STATUS,0
+000264   2b99     goto	0x399               	GOTO	_00234_DS_
+                                           ;genSkipc:3694: created from rifx:0xbf8c33d0
+000265   3002     movlw	0x2                	MOVLW	HIGH(_00253_DS_)
+000266   008a     movwf	0xa                	MOVWF	PCLATH
+000267   306e     movlw	0x6e               	MOVLW	_00253_DS_
+000268   074c     addwf	0x4c, w            	ADDWF	r0x1021,W
+000269   1803     btfsc	0x3, 0             	BTFSC	STATUS,0
+00026a   0a8a     incf	0xa, f              	INCF	PCLATH,F
+00026b   1283     bcf	0x3, 0x5             	BANKSEL	PCL
+00026c   1303     bcf	0x3, 0x6             
+00026d   0082     movwf	0x2                	MOVWF	PCL
+                                           _00253_DS_
+00026e   2a77     goto	0x277               	GOTO	_00192_DS_
+00026f   2a81     goto	0x281               	GOTO	_00193_DS_
+000270   2a83     goto	0x283               	GOTO	_00194_DS_
+000271   2b67     goto	0x367               	GOTO	_00222_DS_
+000272   2a85     goto	0x285               	GOTO	_00195_DS_
+000273   2b08     goto	0x308               	GOTO	_00208_DS_
+000274   2b17     goto	0x317               	GOTO	_00212_DS_
+000275   2b68     goto	0x368               	GOTO	_00223_DS_
+000276   2b6a     goto	0x36a               	GOTO	_00224_DS_
+                                           _00192_DS_
+                                           ;	.line	449; "stepmotor2.c"	TMR1ON = 0;
+000277   1283     bcf	0x3, 0x5             	BANKSEL	_T1CON_bits
+000278   1303     bcf	0x3, 0x6             
+000279   1010     bcf	0x10, 0              	BCF	_T1CON_bits,0
+                                           ;	.line	450; "stepmotor2.c"	speed = 0;
+00027a   1683     bsf	0x3, 0x5             	BANKSEL	_speed
+00027b   1303     bcf	0x3, 0x6             
+00027c   01d1     clrf	0x51                	CLRF	_speed
+                                           ;	.line	451; "stepmotor2.c"	LEDon();
+00027d   158a     bsf	0xa, 0x3             	PAGESEL	_LEDon
+00027e   2409     call	0x409               	CALL	_LEDon
+00027f   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	452; "stepmotor2.c"	break;
+000280   2b99     goto	0x399               	GOTO	_00234_DS_
+                                           _00193_DS_
+                                           ;	.line	454; "stepmotor2.c"	forward1();
+000281   24cd     call	0x4cd               	CALL	_forward1
+                                           ;	.line	455; "stepmotor2.c"	break;
+000282   2b99     goto	0x399               	GOTO	_00234_DS_
+                                           _00194_DS_
+                                           ;	.line	457; "stepmotor2.c"	reverse1();
+000283   2497     call	0x497               	CALL	_reverse1
+                                           ;	.line	458; "stepmotor2.c"	break;
+000284   2b99     goto	0x399               	GOTO	_00234_DS_
+                                           _00195_DS_
+                                           ;	.line	460; "stepmotor2.c"	if (currentPosition.ival < seekPosition.ival) {
+000285   1283     bcf	0x3, 0x5             	BANKSEL	_currentPosition
+000286   1303     bcf	0x3, 0x6             
+000287   0853     movf	0x53, w             	MOVF	(_currentPosition + 0),W
+000288   1283     bcf	0x3, 0x5             	BANKSEL	r0x1021
+000289   1303     bcf	0x3, 0x6             
+00028a   00cc     movwf	0x4c               	MOVWF	r0x1021
+                                           ;;117	MOVF	(_currentPosition + 1),W
+00028b   1283     bcf	0x3, 0x5             	BANKSEL	_seekPosition
+00028c   1303     bcf	0x3, 0x6             
+00028d   0855     movf	0x55, w             	MOVF	(_seekPosition + 0),W
+00028e   1283     bcf	0x3, 0x5             	BANKSEL	r0x101A
+00028f   1303     bcf	0x3, 0x6             
+000290   00ce     movwf	0x4e               	MOVWF	r0x101A
+                                           ;;109	MOVF	(_seekPosition + 1),W
+                                           ;;116	MOVF	r0x1019,W
+000291   1283     bcf	0x3, 0x5             	BANKSEL	_currentPosition
+000292   1303     bcf	0x3, 0x6             
+000293   0854     movf	0x54, w             	MOVF	(_currentPosition + 1),W
+000294   1283     bcf	0x3, 0x5             	BANKSEL	r0x1019
+000295   1303     bcf	0x3, 0x6             
+000296   00cd     movwf	0x4d               	MOVWF	r0x1019
+000297   3e80     addlw	0x80               	ADDLW	0x80
+000298   00d0     movwf	0x50               	MOVWF	r0x101C
+                                           ;;108	MOVF	r0x101B,W
+000299   1283     bcf	0x3, 0x5             	BANKSEL	_seekPosition
+00029a   1303     bcf	0x3, 0x6             
+00029b   0856     movf	0x56, w             	MOVF	(_seekPosition + 1),W
+00029c   1283     bcf	0x3, 0x5             	BANKSEL	r0x101B
+00029d   1303     bcf	0x3, 0x6             
+00029e   00cf     movwf	0x4f               	MOVWF	r0x101B
+00029f   3e80     addlw	0x80               	ADDLW	0x80
+0002a0   0250     subwf	0x50, w            	SUBWF	r0x101C,W
+0002a1   1d03     btfss	0x3, 0x2           	BTFSS	STATUS,2
+0002a2   2aa5     goto	0x2a5               	GOTO	_00254_DS_
+0002a3   084e     movf	0x4e, w             	MOVF	r0x101A,W
+0002a4   024c     subwf	0x4c, w            	SUBWF	r0x1021,W
+                                           _00254_DS_
+0002a5   1803     btfsc	0x3, 0             	BTFSC	STATUS,0
+0002a6   2aa9     goto	0x2a9               	GOTO	_00200_DS_
+                                           ;genSkipc:3694: created from rifx:0xbf8c33d0
+                                           ;	.line	461; "stepmotor2.c"	forward1();
+0002a7   24cd     call	0x4cd               	CALL	_forward1
+0002a8   2ad3     goto	0x2d3               	GOTO	_00201_DS_
+                                           _00200_DS_
+                                           ;	.line	462; "stepmotor2.c"	} else if (currentPosition.ival > seekPosition.ival) {
+0002a9   1283     bcf	0x3, 0x5             	BANKSEL	_currentPosition
+0002aa   1303     bcf	0x3, 0x6             
+0002ab   0853     movf	0x53, w             	MOVF	(_currentPosition + 0),W
+0002ac   1283     bcf	0x3, 0x5             	BANKSEL	r0x1021
+0002ad   1303     bcf	0x3, 0x6             
+0002ae   00cc     movwf	0x4c               	MOVWF	r0x1021
+                                           ;;107	MOVF	(_currentPosition + 1),W
+0002af   1283     bcf	0x3, 0x5             	BANKSEL	_seekPosition
+0002b0   1303     bcf	0x3, 0x6             
+0002b1   0855     movf	0x55, w             	MOVF	(_seekPosition + 0),W
+0002b2   1283     bcf	0x3, 0x5             	BANKSEL	r0x101A
+0002b3   1303     bcf	0x3, 0x6             
+0002b4   00ce     movwf	0x4e               	MOVWF	r0x101A
+0002b5   1283     bcf	0x3, 0x5             	BANKSEL	_seekPosition
+0002b6   1303     bcf	0x3, 0x6             
+0002b7   0856     movf	0x56, w             	MOVF	(_seekPosition + 1),W
+0002b8   1283     bcf	0x3, 0x5             	BANKSEL	r0x101B
+0002b9   1303     bcf	0x3, 0x6             
+0002ba   00cf     movwf	0x4f               	MOVWF	r0x101B
+0002bb   3e80     addlw	0x80               	ADDLW	0x80
+0002bc   00d0     movwf	0x50               	MOVWF	r0x101C
+                                           ;;106	MOVF	r0x1019,W
+0002bd   1283     bcf	0x3, 0x5             	BANKSEL	_currentPosition
+0002be   1303     bcf	0x3, 0x6             
+0002bf   0854     movf	0x54, w             	MOVF	(_currentPosition + 1),W
+0002c0   1283     bcf	0x3, 0x5             	BANKSEL	r0x1019
+0002c1   1303     bcf	0x3, 0x6             
+0002c2   00cd     movwf	0x4d               	MOVWF	r0x1019
+0002c3   3e80     addlw	0x80               	ADDLW	0x80
+0002c4   0250     subwf	0x50, w            	SUBWF	r0x101C,W
+0002c5   1d03     btfss	0x3, 0x2           	BTFSS	STATUS,2
+0002c6   2ac9     goto	0x2c9               	GOTO	_00255_DS_
+0002c7   084c     movf	0x4c, w             	MOVF	r0x1021,W
+0002c8   024e     subwf	0x4e, w            	SUBWF	r0x101A,W
+                                           _00255_DS_
+0002c9   1803     btfsc	0x3, 0             	BTFSC	STATUS,0
+0002ca   2acd     goto	0x2cd               	GOTO	_00197_DS_
+                                           ;genSkipc:3694: created from rifx:0xbf8c33d0
+                                           ;	.line	463; "stepmotor2.c"	reverse1();
+0002cb   2497     call	0x497               	CALL	_reverse1
+0002cc   2ad3     goto	0x2d3               	GOTO	_00201_DS_
+                                           _00197_DS_
+                                           ;	.line	466; "stepmotor2.c"	LEDon();
+0002cd   158a     bsf	0xa, 0x3             	PAGESEL	_LEDon
+0002ce   2409     call	0x409               	CALL	_LEDon
+0002cf   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	469; "stepmotor2.c"	function=func_idle;
+0002d0   1683     bsf	0x3, 0x5             	BANKSEL	_function
+0002d1   1303     bcf	0x3, 0x6             
+0002d2   01d0     clrf	0x50                	CLRF	_function
+                                           _00201_DS_
+                                           ;	.line	471; "stepmotor2.c"	if (function == func_idle && seekNotify != 255) {
+0002d3   3000     movlw	0                  	MOVLW	0x00
+0002d4   1683     bsf	0x3, 0x5             	BANKSEL	_function
+0002d5   1303     bcf	0x3, 0x6             
+0002d6   0450     iorwf	0x50, w            	IORWF	_function,W
+0002d7   1d03     btfss	0x3, 0x2           	BTFSS	STATUS,2
+0002d8   2b99     goto	0x399               	GOTO	_00234_DS_
+0002d9   1683     bsf	0x3, 0x5             	BANKSEL	_seekNotify
+0002da   1303     bcf	0x3, 0x6             
+0002db   0852     movf	0x52, w             	MOVF	_seekNotify,W
+                                           ;	.line	472; "stepmotor2.c"	if (sendMessageISR(seekNotify)) {
+0002dc   3aff     xorlw	0xff               	XORLW	0xff
+0002dd   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+0002de   2b99     goto	0x399               	GOTO	_00234_DS_
+0002df   0852     movf	0x52, w             	MOVF	_seekNotify,W
+0002e0   158a     bsf	0xa, 0x3             	PAGESEL	_sendMessageISR
+0002e1   20fa     call	0xfa                	CALL	_sendMessageISR
+0002e2   118a     bcf	0xa, 0x3             	PAGESEL	$
+0002e3   1283     bcf	0x3, 0x5             	BANKSEL	r0x1021
+0002e4   1303     bcf	0x3, 0x6             
+0002e5   00cc     movwf	0x4c               	MOVWF	r0x1021
+0002e6   084c     movf	0x4c, w             	MOVF	r0x1021,W
+0002e7   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+0002e8   2b03     goto	0x303               	GOTO	_00203_DS_
+                                           ;	.line	473; "stepmotor2.c"	sendDataByteISR(CMD_SEEK);
+0002e9   3005     movlw	0x5                	MOVLW	0x05
+0002ea   158a     bsf	0xa, 0x3             	PAGESEL	_sendDataByteISR
+0002eb   212d     call	0x12d               	CALL	_sendDataByteISR
+0002ec   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	474; "stepmotor2.c"	sendDataByteISR(currentPosition.bytes[0]);
+0002ed   1283     bcf	0x3, 0x5             	BANKSEL	_currentPosition
+0002ee   1303     bcf	0x3, 0x6             
+0002ef   0853     movf	0x53, w             	MOVF	(_currentPosition + 0),W
+0002f0   1283     bcf	0x3, 0x5             	BANKSEL	r0x1021
+0002f1   1303     bcf	0x3, 0x6             
+0002f2   00cc     movwf	0x4c               	MOVWF	r0x1021
+0002f3   158a     bsf	0xa, 0x3             	PAGESEL	_sendDataByteISR
+0002f4   212d     call	0x12d               	CALL	_sendDataByteISR
+0002f5   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	475; "stepmotor2.c"	sendDataByteISR(currentPosition.bytes[1]);
+0002f6   1283     bcf	0x3, 0x5             	BANKSEL	_currentPosition
+0002f7   1303     bcf	0x3, 0x6             
+0002f8   0854     movf	0x54, w             	MOVF	(_currentPosition + 1),W
+0002f9   1283     bcf	0x3, 0x5             	BANKSEL	r0x1021
+0002fa   1303     bcf	0x3, 0x6             
+0002fb   00cc     movwf	0x4c               	MOVWF	r0x1021
+0002fc   158a     bsf	0xa, 0x3             	PAGESEL	_sendDataByteISR
+0002fd   212d     call	0x12d               	CALL	_sendDataByteISR
+0002fe   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	476; "stepmotor2.c"	endMessageISR();
+0002ff   158a     bsf	0xa, 0x3             	PAGESEL	_endMessageISR
+000300   205b     call	0x5b                	CALL	_endMessageISR
+000301   118a     bcf	0xa, 0x3             	PAGESEL	$
+000302   2b99     goto	0x399               	GOTO	_00234_DS_
+                                           _00203_DS_
+                                           ;	.line	479; "stepmotor2.c"	function=func_seek;
+000303   3004     movlw	0x4                	MOVLW	0x04
+000304   1683     bsf	0x3, 0x5             	BANKSEL	_function
+000305   1303     bcf	0x3, 0x6             
+000306   00d0     movwf	0x50               	MOVWF	_function
+                                           ;	.line	482; "stepmotor2.c"	break;
+000307   2b99     goto	0x399               	GOTO	_00234_DS_
+                                           _00208_DS_
+                                           ;	.line	484; "stepmotor2.c"	if (MINSENSOR) {
+000308   1283     bcf	0x3, 0x5             	BANKSEL	_PORTB_bits
+000309   1303     bcf	0x3, 0x6             
+00030a   1c06     btfss	0x6, 0             	BTFSS	_PORTB_bits,0
+00030b   2b15     goto	0x315               	GOTO	_00210_DS_
+                                           ;gen.c:9306: size=0/1, offset=0, AOP_TYPE(res)=13
+                                           ;	.line	485; "stepmotor2.c"	currentPosition.bytes[0] = 0;
+00030c   1283     bcf	0x3, 0x5             	BANKSEL	_currentPosition
+00030d   1303     bcf	0x3, 0x6             
+00030e   01d3     clrf	0x53                	CLRF	(_currentPosition + 0)
+                                           ;gen.c:9306: size=0/1, offset=0, AOP_TYPE(res)=13
+                                           ;	.line	486; "stepmotor2.c"	currentPosition.bytes[1] = 0;
+00030f   01d4     clrf	0x54                	CLRF	(_currentPosition + 1)
+                                           ;	.line	487; "stepmotor2.c"	function = func_findmax;
+000310   3006     movlw	0x6                	MOVLW	0x06
+000311   1683     bsf	0x3, 0x5             	BANKSEL	_function
+000312   1303     bcf	0x3, 0x6             
+000313   00d0     movwf	0x50               	MOVWF	_function
+000314   2b99     goto	0x399               	GOTO	_00234_DS_
+                                           _00210_DS_
+                                           ;	.line	489; "stepmotor2.c"	reverse1();
+000315   2497     call	0x497               	CALL	_reverse1
+                                           ;	.line	491; "stepmotor2.c"	break;
+000316   2b99     goto	0x399               	GOTO	_00234_DS_
+                                           _00212_DS_
+                                           ;	.line	493; "stepmotor2.c"	if (MAXSENSOR) {
+000317   1283     bcf	0x3, 0x5             	BANKSEL	_PORTA_bits
+000318   1303     bcf	0x3, 0x6             
+000319   1e85     btfss	0x5, 0x5           	BTFSS	_PORTA_bits,5
+00031a   2b31     goto	0x331               	GOTO	_00214_DS_
+                                           ;	.line	494; "stepmotor2.c"	maxPosition.bytes[0] = currentPosition.bytes[0];
+00031b   1283     bcf	0x3, 0x5             	BANKSEL	_currentPosition
+00031c   1303     bcf	0x3, 0x6             
+00031d   0853     movf	0x53, w             	MOVF	(_currentPosition + 0),W
+00031e   1283     bcf	0x3, 0x5             	BANKSEL	r0x1021
+00031f   1303     bcf	0x3, 0x6             
+000320   00cc     movwf	0x4c               	MOVWF	r0x1021
+000321   1283     bcf	0x3, 0x5             	BANKSEL	_maxPosition
+000322   1303     bcf	0x3, 0x6             
+000323   00d7     movwf	0x57               	MOVWF	(_maxPosition + 0)
+                                           ;	.line	495; "stepmotor2.c"	maxPosition.bytes[1] = currentPosition.bytes[1];
+000324   1283     bcf	0x3, 0x5             	BANKSEL	_currentPosition
+000325   1303     bcf	0x3, 0x6             
+000326   0854     movf	0x54, w             	MOVF	(_currentPosition + 1),W
+000327   1283     bcf	0x3, 0x5             	BANKSEL	r0x1021
+000328   1303     bcf	0x3, 0x6             
+000329   00cc     movwf	0x4c               	MOVWF	r0x1021
+00032a   1283     bcf	0x3, 0x5             	BANKSEL	_maxPosition
+00032b   1303     bcf	0x3, 0x6             
+00032c   00d8     movwf	0x58               	MOVWF	(_maxPosition + 1)
+                                           ;	.line	496; "stepmotor2.c"	function = func_idle;
+00032d   1683     bsf	0x3, 0x5             	BANKSEL	_function
+00032e   1303     bcf	0x3, 0x6             
+00032f   01d0     clrf	0x50                	CLRF	_function
+000330   2b32     goto	0x332               	GOTO	_00215_DS_
+                                           _00214_DS_
+                                           ;	.line	498; "stepmotor2.c"	forward1();
+000331   24cd     call	0x4cd               	CALL	_forward1
+                                           _00215_DS_
+                                           ;	.line	500; "stepmotor2.c"	if (function == func_idle && seekNotify != 255) {
+000332   3000     movlw	0                  	MOVLW	0x00
+000333   1683     bsf	0x3, 0x5             	BANKSEL	_function
+000334   1303     bcf	0x3, 0x6             
+000335   0450     iorwf	0x50, w            	IORWF	_function,W
+000336   1d03     btfss	0x3, 0x2           	BTFSS	STATUS,2
+000337   2b99     goto	0x399               	GOTO	_00234_DS_
+000338   1683     bsf	0x3, 0x5             	BANKSEL	_seekNotify
+000339   1303     bcf	0x3, 0x6             
+00033a   0852     movf	0x52, w             	MOVF	_seekNotify,W
+                                           ;	.line	501; "stepmotor2.c"	if (sendMessageISR(seekNotify)) {
+00033b   3aff     xorlw	0xff               	XORLW	0xff
+00033c   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+00033d   2b99     goto	0x399               	GOTO	_00234_DS_
+00033e   0852     movf	0x52, w             	MOVF	_seekNotify,W
+00033f   158a     bsf	0xa, 0x3             	PAGESEL	_sendMessageISR
+000340   20fa     call	0xfa                	CALL	_sendMessageISR
+000341   118a     bcf	0xa, 0x3             	PAGESEL	$
+000342   1283     bcf	0x3, 0x5             	BANKSEL	r0x1021
+000343   1303     bcf	0x3, 0x6             
+000344   00cc     movwf	0x4c               	MOVWF	r0x1021
+000345   084c     movf	0x4c, w             	MOVF	r0x1021,W
+000346   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+000347   2b62     goto	0x362               	GOTO	_00217_DS_
+                                           ;	.line	502; "stepmotor2.c"	sendDataByteISR(CMD_CALIBRATE);
+000348   3009     movlw	0x9                	MOVLW	0x09
+000349   158a     bsf	0xa, 0x3             	PAGESEL	_sendDataByteISR
+00034a   212d     call	0x12d               	CALL	_sendDataByteISR
+00034b   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	503; "stepmotor2.c"	sendDataByteISR(currentPosition.bytes[0]);
+00034c   1283     bcf	0x3, 0x5             	BANKSEL	_currentPosition
+00034d   1303     bcf	0x3, 0x6             
+00034e   0853     movf	0x53, w             	MOVF	(_currentPosition + 0),W
+00034f   1283     bcf	0x3, 0x5             	BANKSEL	r0x1021
+000350   1303     bcf	0x3, 0x6             
+000351   00cc     movwf	0x4c               	MOVWF	r0x1021
+000352   158a     bsf	0xa, 0x3             	PAGESEL	_sendDataByteISR
+000353   212d     call	0x12d               	CALL	_sendDataByteISR
+000354   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	504; "stepmotor2.c"	sendDataByteISR(currentPosition.bytes[1]);
+000355   1283     bcf	0x3, 0x5             	BANKSEL	_currentPosition
+000356   1303     bcf	0x3, 0x6             
+000357   0854     movf	0x54, w             	MOVF	(_currentPosition + 1),W
+000358   1283     bcf	0x3, 0x5             	BANKSEL	r0x1021
+000359   1303     bcf	0x3, 0x6             
+00035a   00cc     movwf	0x4c               	MOVWF	r0x1021
+00035b   158a     bsf	0xa, 0x3             	PAGESEL	_sendDataByteISR
+00035c   212d     call	0x12d               	CALL	_sendDataByteISR
+00035d   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	505; "stepmotor2.c"	endMessageISR();
+00035e   158a     bsf	0xa, 0x3             	PAGESEL	_endMessageISR
+00035f   205b     call	0x5b                	CALL	_endMessageISR
+000360   118a     bcf	0xa, 0x3             	PAGESEL	$
+000361   2b99     goto	0x399               	GOTO	_00234_DS_
+                                           _00217_DS_
+                                           ;	.line	508; "stepmotor2.c"	function = func_findmax;
+000362   3006     movlw	0x6                	MOVLW	0x06
+000363   1683     bsf	0x3, 0x5             	BANKSEL	_function
+000364   1303     bcf	0x3, 0x6             
+000365   00d0     movwf	0x50               	MOVWF	_function
+                                           ;	.line	511; "stepmotor2.c"	break;
+000366   2b99     goto	0x399               	GOTO	_00234_DS_
+                                           _00222_DS_
+                                           ;	.line	514; "stepmotor2.c"	break;
+000367   2b99     goto	0x399               	GOTO	_00234_DS_
+                                           _00223_DS_
+                                           ;	.line	516; "stepmotor2.c"	dda_step();
+000368   23a0     call	0x3a0               	CALL	_dda_step
+                                           ;	.line	517; "stepmotor2.c"	break;
+000369   2b99     goto	0x399               	GOTO	_00234_DS_
+                                           _00224_DS_
+                                           ;	.line	519; "stepmotor2.c"	if (MINSENSOR) {
+00036a   1283     bcf	0x3, 0x5             	BANKSEL	_PORTB_bits
+00036b   1303     bcf	0x3, 0x6             
+00036c   1c06     btfss	0x6, 0             	BTFSS	_PORTB_bits,0
+00036d   2b76     goto	0x376               	GOTO	_00226_DS_
+                                           ;gen.c:9306: size=0/1, offset=0, AOP_TYPE(res)=13
+                                           ;	.line	520; "stepmotor2.c"	currentPosition.bytes[0] = 0;
+00036e   1283     bcf	0x3, 0x5             	BANKSEL	_currentPosition
+00036f   1303     bcf	0x3, 0x6             
+000370   01d3     clrf	0x53                	CLRF	(_currentPosition + 0)
+                                           ;gen.c:9306: size=0/1, offset=0, AOP_TYPE(res)=13
+                                           ;	.line	521; "stepmotor2.c"	currentPosition.bytes[1] = 0;
+000371   01d4     clrf	0x54                	CLRF	(_currentPosition + 1)
+                                           ;	.line	522; "stepmotor2.c"	function = func_idle;
+000372   1683     bsf	0x3, 0x5             	BANKSEL	_function
+000373   1303     bcf	0x3, 0x6             
+000374   01d0     clrf	0x50                	CLRF	_function
+000375   2b77     goto	0x377               	GOTO	_00227_DS_
+                                           _00226_DS_
+                                           ;	.line	524; "stepmotor2.c"	reverse1();
+000376   2497     call	0x497               	CALL	_reverse1
+                                           _00227_DS_
+                                           ;	.line	526; "stepmotor2.c"	if (function == func_idle && seekNotify != 255) {
+000377   3000     movlw	0                  	MOVLW	0x00
+000378   1683     bsf	0x3, 0x5             	BANKSEL	_function
+000379   1303     bcf	0x3, 0x6             
+00037a   0450     iorwf	0x50, w            	IORWF	_function,W
+00037b   1d03     btfss	0x3, 0x2           	BTFSS	STATUS,2
+00037c   2b99     goto	0x399               	GOTO	_00234_DS_
+00037d   1683     bsf	0x3, 0x5             	BANKSEL	_seekNotify
+00037e   1303     bcf	0x3, 0x6             
+00037f   0852     movf	0x52, w             	MOVF	_seekNotify,W
+                                           ;	.line	527; "stepmotor2.c"	if (sendMessageISR(seekNotify)) {
+000380   3aff     xorlw	0xff               	XORLW	0xff
+000381   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+000382   2b99     goto	0x399               	GOTO	_00234_DS_
+000383   0852     movf	0x52, w             	MOVF	_seekNotify,W
+000384   158a     bsf	0xa, 0x3             	PAGESEL	_sendMessageISR
+000385   20fa     call	0xfa                	CALL	_sendMessageISR
+000386   118a     bcf	0xa, 0x3             	PAGESEL	$
+000387   1283     bcf	0x3, 0x5             	BANKSEL	r0x1021
+000388   1303     bcf	0x3, 0x6             
+000389   00cc     movwf	0x4c               	MOVWF	r0x1021
+00038a   084c     movf	0x4c, w             	MOVF	r0x1021,W
+00038b   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+00038c   2b95     goto	0x395               	GOTO	_00229_DS_
+                                           ;	.line	528; "stepmotor2.c"	sendDataByteISR(CMD_HOMERESET);
+00038d   3010     movlw	0x10               	MOVLW	0x10
+00038e   158a     bsf	0xa, 0x3             	PAGESEL	_sendDataByteISR
+00038f   212d     call	0x12d               	CALL	_sendDataByteISR
+000390   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	529; "stepmotor2.c"	endMessageISR();
+000391   158a     bsf	0xa, 0x3             	PAGESEL	_endMessageISR
+000392   205b     call	0x5b                	CALL	_endMessageISR
+000393   118a     bcf	0xa, 0x3             	PAGESEL	$
+000394   2b99     goto	0x399               	GOTO	_00234_DS_
+                                           _00229_DS_
+                                           ;	.line	532; "stepmotor2.c"	function = func_homereset;
+000395   3008     movlw	0x8                	MOVLW	0x08
+000396   1683     bsf	0x3, 0x5             	BANKSEL	_function
+000397   1303     bcf	0x3, 0x6             
+000398   00d0     movwf	0x50               	MOVWF	_function
+                                           _00234_DS_
+                                           ;	.line	537; "stepmotor2.c"	setTimer(speed);
+000399   1683     bsf	0x3, 0x5             	BANKSEL	_speed
+00039a   1303     bcf	0x3, 0x6             
+00039b   0851     movf	0x51, w             	MOVF	_speed,W
+00039c   247f     call	0x47f               	CALL	_setTimer
+00039d   1683     bsf	0x3, 0x5             	BANKSEL _coilPosition
+00039e   1303     bcf	0x3, 0x6             
+00039f   0008     return                   	RETURN	
+                                           ; exit point of _timerTick
+                                           
+                                           ;***
+                                           ;  pBlock Stats: dbName = C
+                                           ;***
+                                           ;entry:  _dda_step	;Function start
+                                           ; 2 exit points
+                                           ;has an exit
+                                           ;functions called:
+                                           ;   _forward1
+                                           ;   _reverse1
+                                           ;   _sendMessageISR
+                                           ;   _sendDataByteISR
+                                           ;   _sendDataByteISR
+                                           ;   _sendDataByteISR
+                                           ;   _endMessageISR
+                                           ;   _strobe_sync
+                                           ;   _forward1
+                                           ;   _reverse1
+                                           ;   _sendMessageISR
+                                           ;   _sendDataByteISR
+                                           ;   _sendDataByteISR
+                                           ;   _sendDataByteISR
+                                           ;   _endMessageISR
+                                           ;   _strobe_sync
+                                           ;5 compiler assigned registers:
+                                           ;   r0x101D
+                                           ;   r0x101E
+                                           ;   r0x101F
+                                           ;   r0x1020
+                                           ;   r0x1021
+                                           ;; Starting pCode block
+                                           _dda_step	;Function start
+                                           ; 2 exit points
+                                           ;	.line	413; "stepmotor2.c"	if (currentPosition.ival == seekPosition.ival) {
+0003a0   1283     bcf	0x3, 0x5             	BANKSEL	_currentPosition
+0003a1   1303     bcf	0x3, 0x6             
+0003a2   0853     movf	0x53, w             	MOVF	(_currentPosition + 0),W
+0003a3   1283     bcf	0x3, 0x5             	BANKSEL	r0x101D
+0003a4   1303     bcf	0x3, 0x6             
+0003a5   00c8     movwf	0x48               	MOVWF	r0x101D
+0003a6   1283     bcf	0x3, 0x5             	BANKSEL	_currentPosition
+0003a7   1303     bcf	0x3, 0x6             
+0003a8   0854     movf	0x54, w             	MOVF	(_currentPosition + 1),W
+0003a9   1283     bcf	0x3, 0x5             	BANKSEL	r0x101E
+0003aa   1303     bcf	0x3, 0x6             
+0003ab   00c9     movwf	0x49               	MOVWF	r0x101E
+0003ac   1283     bcf	0x3, 0x5             	BANKSEL	_seekPosition
+0003ad   1303     bcf	0x3, 0x6             
+0003ae   0855     movf	0x55, w             	MOVF	(_seekPosition + 0),W
+0003af   1283     bcf	0x3, 0x5             	BANKSEL	r0x101F
+0003b0   1303     bcf	0x3, 0x6             
+0003b1   00ca     movwf	0x4a               	MOVWF	r0x101F
+0003b2   1283     bcf	0x3, 0x5             	BANKSEL	_seekPosition
+0003b3   1303     bcf	0x3, 0x6             
+0003b4   0856     movf	0x56, w             	MOVF	(_seekPosition + 1),W
+0003b5   1283     bcf	0x3, 0x5             	BANKSEL	r0x1020
+0003b6   1303     bcf	0x3, 0x6             
+0003b7   00cb     movwf	0x4b               	MOVWF	r0x1020
+0003b8   084a     movf	0x4a, w             	MOVF	r0x101F,W
+0003b9   0648     xorwf	0x48, w            	XORWF	r0x101D,W
+0003ba   1d03     btfss	0x3, 0x2           	BTFSS	STATUS,2
+0003bb   2bc4     goto	0x3c4               	GOTO	_00163_DS_
+0003bc   084b     movf	0x4b, w             	MOVF	r0x1020,W
+0003bd   0649     xorwf	0x49, w            	XORWF	r0x101E,W
+0003be   1d03     btfss	0x3, 0x2           	BTFSS	STATUS,2
+0003bf   2bc4     goto	0x3c4               	GOTO	_00163_DS_
+                                           ;	.line	414; "stepmotor2.c"	function = func_idle;
+0003c0   1683     bsf	0x3, 0x5             	BANKSEL	_function
+0003c1   1303     bcf	0x3, 0x6             
+0003c2   01d0     clrf	0x50                	CLRF	_function
+0003c3   2be9     goto	0x3e9               	GOTO	_00164_DS_
+                                           _00163_DS_
+                                           ;	.line	415; "stepmotor2.c"	} else if (currentPosition.ival < seekPosition.ival) {
+0003c4   1283     bcf	0x3, 0x5             	BANKSEL	_currentPosition
+0003c5   1303     bcf	0x3, 0x6             
+0003c6   0853     movf	0x53, w             	MOVF	(_currentPosition + 0),W
+0003c7   1283     bcf	0x3, 0x5             	BANKSEL	r0x101D
+0003c8   1303     bcf	0x3, 0x6             
+0003c9   00c8     movwf	0x48               	MOVWF	r0x101D
+                                           ;;115	MOVF	(_currentPosition + 1),W
+0003ca   1283     bcf	0x3, 0x5             	BANKSEL	_seekPosition
+0003cb   1303     bcf	0x3, 0x6             
+0003cc   0855     movf	0x55, w             	MOVF	(_seekPosition + 0),W
+0003cd   1283     bcf	0x3, 0x5             	BANKSEL	r0x101F
+0003ce   1303     bcf	0x3, 0x6             
+0003cf   00ca     movwf	0x4a               	MOVWF	r0x101F
+                                           ;;105	MOVF	(_seekPosition + 1),W
+                                           ;;114	MOVF	r0x101E,W
+0003d0   1283     bcf	0x3, 0x5             	BANKSEL	_currentPosition
+0003d1   1303     bcf	0x3, 0x6             
+0003d2   0854     movf	0x54, w             	MOVF	(_currentPosition + 1),W
+0003d3   1283     bcf	0x3, 0x5             	BANKSEL	r0x101E
+0003d4   1303     bcf	0x3, 0x6             
+0003d5   00c9     movwf	0x49               	MOVWF	r0x101E
+0003d6   3e80     addlw	0x80               	ADDLW	0x80
+0003d7   00cc     movwf	0x4c               	MOVWF	r0x1021
+                                           ;;104	MOVF	r0x1020,W
+0003d8   1283     bcf	0x3, 0x5             	BANKSEL	_seekPosition
+0003d9   1303     bcf	0x3, 0x6             
+0003da   0856     movf	0x56, w             	MOVF	(_seekPosition + 1),W
+0003db   1283     bcf	0x3, 0x5             	BANKSEL	r0x1020
+0003dc   1303     bcf	0x3, 0x6             
+0003dd   00cb     movwf	0x4b               	MOVWF	r0x1020
+0003de   3e80     addlw	0x80               	ADDLW	0x80
+0003df   024c     subwf	0x4c, w            	SUBWF	r0x1021,W
+0003e0   1d03     btfss	0x3, 0x2           	BTFSS	STATUS,2
+0003e1   2be4     goto	0x3e4               	GOTO	_00185_DS_
+0003e2   084a     movf	0x4a, w             	MOVF	r0x101F,W
+0003e3   0248     subwf	0x48, w            	SUBWF	r0x101D,W
+                                           _00185_DS_
+0003e4   1803     btfsc	0x3, 0             	BTFSC	STATUS,0
+0003e5   2be8     goto	0x3e8               	GOTO	_00160_DS_
+                                           ;genSkipc:3694: created from rifx:0xbf8c33d0
+                                           ;	.line	416; "stepmotor2.c"	forward1();
+0003e6   24cd     call	0x4cd               	CALL	_forward1
+0003e7   2be9     goto	0x3e9               	GOTO	_00164_DS_
+                                           _00160_DS_
+                                           ;	.line	418; "stepmotor2.c"	reverse1();
+0003e8   2497     call	0x497               	CALL	_reverse1
+                                           _00164_DS_
+                                           ;	.line	420; "stepmotor2.c"	if (function == func_idle && seekNotify != 255) {
+0003e9   3000     movlw	0                  	MOVLW	0x00
+0003ea   1683     bsf	0x3, 0x5             	BANKSEL	_function
+0003eb   1303     bcf	0x3, 0x6             
+0003ec   0450     iorwf	0x50, w            	IORWF	_function,W
+0003ed   1d03     btfss	0x3, 0x2           	BTFSS	STATUS,2
+0003ee   2c1e     goto	0x41e               	GOTO	_00173_DS_
+0003ef   1683     bsf	0x3, 0x5             	BANKSEL	_seekNotify
+0003f0   1303     bcf	0x3, 0x6             
+0003f1   0852     movf	0x52, w             	MOVF	_seekNotify,W
+                                           ;	.line	421; "stepmotor2.c"	if (sendMessageISR(seekNotify)) { 
+0003f2   3aff     xorlw	0xff               	XORLW	0xff
+0003f3   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+0003f4   2c1e     goto	0x41e               	GOTO	_00173_DS_
+0003f5   0852     movf	0x52, w             	MOVF	_seekNotify,W
+0003f6   158a     bsf	0xa, 0x3             	PAGESEL	_sendMessageISR
+0003f7   20fa     call	0xfa                	CALL	_sendMessageISR
+0003f8   118a     bcf	0xa, 0x3             	PAGESEL	$
+0003f9   1283     bcf	0x3, 0x5             	BANKSEL	r0x101D
+0003fa   1303     bcf	0x3, 0x6             
+0003fb   00c8     movwf	0x48               	MOVWF	r0x101D
+0003fc   0848     movf	0x48, w             	MOVF	r0x101D,W
+0003fd   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+0003fe   2c19     goto	0x419               	GOTO	_00166_DS_
+                                           ;	.line	422; "stepmotor2.c"	sendDataByteISR(CMD_DDA);
+0003ff   300b     movlw	0xb                	MOVLW	0x0b
+000400   158a     bsf	0xa, 0x3             	PAGESEL	_sendDataByteISR
+000401   212d     call	0x12d               	CALL	_sendDataByteISR
+000402   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	423; "stepmotor2.c"	sendDataByteISR(currentPosition.bytes[0]);
+000403   1283     bcf	0x3, 0x5             	BANKSEL	_currentPosition
+000404   1303     bcf	0x3, 0x6             
+000405   0853     movf	0x53, w             	MOVF	(_currentPosition + 0),W
+000406   1283     bcf	0x3, 0x5             	BANKSEL	r0x101D
+000407   1303     bcf	0x3, 0x6             
+000408   00c8     movwf	0x48               	MOVWF	r0x101D
+000409   158a     bsf	0xa, 0x3             	PAGESEL	_sendDataByteISR
+00040a   212d     call	0x12d               	CALL	_sendDataByteISR
+00040b   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	424; "stepmotor2.c"	sendDataByteISR(currentPosition.bytes[1]);
+00040c   1283     bcf	0x3, 0x5             	BANKSEL	_currentPosition
+00040d   1303     bcf	0x3, 0x6             
+00040e   0854     movf	0x54, w             	MOVF	(_currentPosition + 1),W
+00040f   1283     bcf	0x3, 0x5             	BANKSEL	r0x101D
+000410   1303     bcf	0x3, 0x6             
+000411   00c8     movwf	0x48               	MOVWF	r0x101D
+000412   158a     bsf	0xa, 0x3             	PAGESEL	_sendDataByteISR
+000413   212d     call	0x12d               	CALL	_sendDataByteISR
+000414   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	425; "stepmotor2.c"	endMessageISR();
+000415   158a     bsf	0xa, 0x3             	PAGESEL	_endMessageISR
+000416   205b     call	0x5b                	CALL	_endMessageISR
+000417   118a     bcf	0xa, 0x3             	PAGESEL	$
+000418   2c6a     goto	0x46a               	GOTO	_00003_DS_
+                                           _00166_DS_
+                                           ;	.line	428; "stepmotor2.c"	function = func_ddamaster;
+000419   3007     movlw	0x7                	MOVLW	0x07
+00041a   1683     bsf	0x3, 0x5             	BANKSEL	_function
+00041b   1303     bcf	0x3, 0x6             
+00041c   00d0     movwf	0x50               	MOVWF	_function
+00041d   2c6a     goto	0x46a               	GOTO	_00003_DS_
+                                           _00173_DS_
+                                           ;	.line	430; "stepmotor2.c"	} else if (function != func_idle) {
+00041e   3000     movlw	0                  	MOVLW	0x00
+00041f   1683     bsf	0x3, 0x5             	BANKSEL	_function
+000420   1303     bcf	0x3, 0x6             
+000421   0450     iorwf	0x50, w            	IORWF	_function,W
+000422   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+000423   2c6a     goto	0x46a               	GOTO	_00003_DS_
+                                           ;;113	MOVF	(_dda_deltay + 0),W
+                                           ;;103	MOVF	(_dda_deltay + 1),W
+                                           ;;112	MOVF	r0x101D,W
+                                           ;	.line	431; "stepmotor2.c"	dda_error += dda_deltay.ival;
+000424   1283     bcf	0x3, 0x5             	BANKSEL	_dda_deltay
+000425   1303     bcf	0x3, 0x6             
+000426   085b     movf	0x5b, w             	MOVF	(_dda_deltay + 0),W
+000427   1283     bcf	0x3, 0x5             	BANKSEL	r0x101D
+000428   1303     bcf	0x3, 0x6             
+000429   00c8     movwf	0x48               	MOVWF	r0x101D
+00042a   1283     bcf	0x3, 0x5             	BANKSEL	_dda_error
+00042b   1303     bcf	0x3, 0x6             
+00042c   07d9     addwf	0x59, f            	ADDWF	_dda_error,F
+                                           ;;102	MOVF	r0x101E,W
+00042d   1283     bcf	0x3, 0x5             	BANKSEL	_dda_deltay
+00042e   1303     bcf	0x3, 0x6             
+00042f   085c     movf	0x5c, w             	MOVF	(_dda_deltay + 1),W
+000430   1283     bcf	0x3, 0x5             	BANKSEL	r0x101E
+000431   1303     bcf	0x3, 0x6             
+000432   00c9     movwf	0x49               	MOVWF	r0x101E
+000433   1803     btfsc	0x3, 0             	BTFSC	STATUS,0
+000434   0a49     incf	0x49, w             	INCF	r0x101E,W
+000435   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+000436   2c3a     goto	0x43a               	GOTO	_00002_DS_
+000437   1283     bcf	0x3, 0x5             	BANKSEL	_dda_error
+000438   1303     bcf	0x3, 0x6             
+000439   07da     addwf	0x5a, f            	ADDWF	(_dda_error + 1),F
+                                           _00002_DS_
+                                           ;	.line	432; "stepmotor2.c"	if ((dda_error + dda_error) > dda_deltax) {
+00043a   1003     bcf	0x3, 0               	BCF	STATUS,0
+00043b   1283     bcf	0x3, 0x5             	BANKSEL	_dda_error
+00043c   1303     bcf	0x3, 0x6             
+00043d   0d59     rlf	0x59, w              	RLF	_dda_error,W
+00043e   1283     bcf	0x3, 0x5             	BANKSEL	r0x101D
+00043f   1303     bcf	0x3, 0x6             
+000440   00c8     movwf	0x48               	MOVWF	r0x101D
+000441   1283     bcf	0x3, 0x5             	BANKSEL	_dda_error
+000442   1303     bcf	0x3, 0x6             
+000443   0d5a     rlf	0x5a, w              	RLF	(_dda_error + 1),W
+000444   1283     bcf	0x3, 0x5             	BANKSEL	r0x101E
+000445   1303     bcf	0x3, 0x6             
+000446   00c9     movwf	0x49               	MOVWF	r0x101E
+000447   1283     bcf	0x3, 0x5             	BANKSEL	_dda_deltax
+000448   1303     bcf	0x3, 0x6             
+000449   085e     movf	0x5e, w             	MOVF	(_dda_deltax + 1),W
+00044a   3e80     addlw	0x80               	ADDLW	0x80
+00044b   1283     bcf	0x3, 0x5             	BANKSEL	r0x1021
+00044c   1303     bcf	0x3, 0x6             
+00044d   00cc     movwf	0x4c               	MOVWF	r0x1021
+00044e   0849     movf	0x49, w             	MOVF	r0x101E,W
+00044f   3e80     addlw	0x80               	ADDLW	0x80
+000450   024c     subwf	0x4c, w            	SUBWF	r0x1021,W
+000451   1d03     btfss	0x3, 0x2           	BTFSS	STATUS,2
+000452   2c57     goto	0x457               	GOTO	_00187_DS_
+000453   0848     movf	0x48, w             	MOVF	r0x101D,W
+000454   1283     bcf	0x3, 0x5             	BANKSEL	_dda_deltax
+000455   1303     bcf	0x3, 0x6             
+000456   025d     subwf	0x5d, w            	SUBWF	_dda_deltax,W
+                                           _00187_DS_
+000457   1803     btfsc	0x3, 0             	BTFSC	STATUS,0
+000458   2c6a     goto	0x46a               	GOTO	_00003_DS_
+                                           ;genSkipc:3694: created from rifx:0xbf8c33d0
+                                           ;	.line	434; "stepmotor2.c"	strobe_sync();
+000459   246b     call	0x46b               	CALL	_strobe_sync
+                                           ;	.line	435; "stepmotor2.c"	dda_error -= dda_deltax;
+00045a   1283     bcf	0x3, 0x5             	BANKSEL	_dda_deltax
+00045b   1303     bcf	0x3, 0x6             
+00045c   085d     movf	0x5d, w             	MOVF	_dda_deltax,W
+00045d   1283     bcf	0x3, 0x5             	BANKSEL	_dda_error
+00045e   1303     bcf	0x3, 0x6             
+00045f   02d9     subwf	0x59, f            	SUBWF	_dda_error,F
+000460   1283     bcf	0x3, 0x5             	BANKSEL	_dda_deltax
+000461   1303     bcf	0x3, 0x6             
+000462   085e     movf	0x5e, w             	MOVF	(_dda_deltax + 1),W
+000463   1c03     btfss	0x3, 0             	BTFSS	STATUS,0
+000464   0a5e     incf	0x5e, w             	INCF	(_dda_deltax + 1),W
+000465   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+000466   2c6a     goto	0x46a               	GOTO	_00003_DS_
+000467   1283     bcf	0x3, 0x5             	BANKSEL	_dda_error
+000468   1303     bcf	0x3, 0x6             
+000469   02da     subwf	0x5a, f            	SUBWF	(_dda_error + 1),F
+                                           _00003_DS_
+00046a   0008     return                   	RETURN	
+                                           ; exit point of _dda_step
+                                           
+                                           ;***
+                                           ;  pBlock Stats: dbName = C
+                                           ;***
+                                           ;entry:  _strobe_sync	;Function start
+                                           ; 2 exit points
+                                           ;has an exit
+                                           ;1 compiler assigned register :
+                                           ;   r0x1022
+                                           ;; Starting pCode block
+                                           _strobe_sync	;Function start
+                                           ; 2 exit points
+                                           ;	.line	393; "stepmotor2.c"	SYNCA = 0; // Pull low
+00046b   1283     bcf	0x3, 0x5             	BANKSEL	_PORTA_bits
+00046c   1303     bcf	0x3, 0x6             
+00046d   1085     bcf	0x5, 0x1             	BCF	_PORTA_bits,1
+                                           ;	.line	394; "stepmotor2.c"	SYNCA_TRIS = 0; // Set to output during stobe
+00046e   1683     bsf	0x3, 0x5             	BANKSEL	_TRISA_bits
+00046f   1303     bcf	0x3, 0x6             
+000470   1085     bcf	0x5, 0x1             	BCF	_TRISA_bits,1
+                                           ;	.line	397; "stepmotor2.c"	for(delay = 0; delay <= 254; delay++)
+000471   30ff     movlw	0xff               	MOVLW	0xff
+000472   1283     bcf	0x3, 0x5             	BANKSEL	r0x1022
+000473   1303     bcf	0x3, 0x6             
+000474   00c7     movwf	0x47               	MOVWF	r0x1022
+                                           _00154_DS_
+000475   1283     bcf	0x3, 0x5             	BANKSEL	r0x1022
+000476   1303     bcf	0x3, 0x6             
+000477   0bc7     decfsz	0x47, f           	DECFSZ	r0x1022,F
+000478   2c75     goto	0x475               	GOTO	_00154_DS_
+                                           ;	.line	400; "stepmotor2.c"	SYNCA_TRIS = 1; // Back to input so we don't drive the sync line
+000479   1683     bsf	0x3, 0x5             	BANKSEL	_TRISA_bits
+00047a   1303     bcf	0x3, 0x6             
+00047b   1485     bsf	0x5, 0x1             	BSF	_TRISA_bits,1
+00047c   1683     bsf	0x3, 0x5             	BANKSEL _coilPosition
+00047d   1303     bcf	0x3, 0x6             
+00047e   0008     return                   	RETURN	
+                                           ; exit point of _strobe_sync
+                                           
+                                           ;***
+                                           ;  pBlock Stats: dbName = C
+                                           ;***
+                                           ;entry:  _setTimer	;Function start
+                                           ; 2 exit points
+                                           ;has an exit
+                                           ;; Starting pCode block
+                                           _setTimer	;Function start
+                                           ; 2 exit points
+                                           ;	.line	371; "stepmotor2.c"	void setTimer(byte newspeed)
+00047f   1683     bsf	0x3, 0x5             	BANKSEL	_speed
+000480   1303     bcf	0x3, 0x6             
+000481   00d1     movwf	0x51               	MOVWF	_speed
+                                           ;	.line	374; "stepmotor2.c"	if (speed) {
+000482   0851     movf	0x51, w             	MOVF	_speed,W
+000483   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+000484   2c91     goto	0x491               	GOTO	_00146_DS_
+                                           ;	.line	375; "stepmotor2.c"	TMR1ON = 0;  //TMR1H, TMR1L should only be set, when TMR1ON is off
+000485   1283     bcf	0x3, 0x5             	BANKSEL	_T1CON_bits
+000486   1303     bcf	0x3, 0x6             
+000487   1010     bcf	0x10, 0              	BCF	_T1CON_bits,0
+                                           ;	.line	376; "stepmotor2.c"	TMR1H = speed;
+000488   1683     bsf	0x3, 0x5             	BANKSEL	_speed
+000489   1303     bcf	0x3, 0x6             
+00048a   0851     movf	0x51, w             	MOVF	_speed,W
+00048b   1283     bcf	0x3, 0x5             	BANKSEL	_TMR1H
+00048c   1303     bcf	0x3, 0x6             
+00048d   008f     movwf	0xf                	MOVWF	_TMR1H
+                                           ;	.line	377; "stepmotor2.c"	TMR1L = 0;
+00048e   018e     clrf	0xe                 	CLRF	_TMR1L
+                                           ;	.line	378; "stepmotor2.c"	TMR1ON = 1;
+00048f   1410     bsf	0x10, 0              	BSF	_T1CON_bits,0
+000490   2c94     goto	0x494               	GOTO	_00147_DS_
+                                           _00146_DS_
+                                           ;	.line	380; "stepmotor2.c"	TMR1ON = 0;
+000491   1283     bcf	0x3, 0x5             	BANKSEL	_T1CON_bits
+000492   1303     bcf	0x3, 0x6             
+000493   1010     bcf	0x10, 0              	BCF	_T1CON_bits,0
+                                           _00147_DS_
+000494   1683     bsf	0x3, 0x5             	BANKSEL _coilPosition
+000495   1303     bcf	0x3, 0x6             
+000496   0008     return                   	RETURN	
+                                           ; exit point of _setTimer
+                                           
+                                           ;***
+                                           ;  pBlock Stats: dbName = C
+                                           ;***
+                                           ;entry:  _reverse1	;Function start
+                                           ; 2 exit points
+                                           ;has an exit
+                                           ;functions called:
+                                           ;   _flashLED
+                                           ;   _motor_stop
+                                           ;   _motor_click
+                                           ;   _flashLED
+                                           ;   _motor_stop
+                                           ;   _motor_click
+                                           ;2 compiler assigned registers:
+                                           ;   r0x1015
+                                           ;   r0x1016
+                                           ;; Starting pCode block
+                                           _reverse1	;Function start
+                                           ; 2 exit points
+                                           ;	.line	353; "stepmotor2.c"	flashLED();
+000497   158a     bsf	0xa, 0x3             	PAGESEL	_flashLED
+000498   240d     call	0x40d               	CALL	_flashLED
+000499   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	354; "stepmotor2.c"	if (MINSENSOR) {
+00049a   1283     bcf	0x3, 0x5             	BANKSEL	_PORTB_bits
+00049b   1303     bcf	0x3, 0x6             
+00049c   1c06     btfss	0x6, 0             	BTFSS	_PORTB_bits,0
+00049d   2ca3     goto	0x4a3               	GOTO	_00139_DS_
+                                           ;	.line	356; "stepmotor2.c"	motor_stop();
+00049e   2557     call	0x557               	CALL	_motor_stop
+                                           ;	.line	357; "stepmotor2.c"	function = func_idle;
+00049f   1683     bsf	0x3, 0x5             	BANKSEL	_function
+0004a0   1303     bcf	0x3, 0x6             
+0004a1   01d0     clrf	0x50                	CLRF	_function
+0004a2   2cca     goto	0x4ca               	GOTO	_00140_DS_
+                                           _00139_DS_
+                                           ;	.line	359; "stepmotor2.c"	currentPosition.ival--;
+0004a3   1283     bcf	0x3, 0x5             	BANKSEL	_currentPosition
+0004a4   1303     bcf	0x3, 0x6             
+0004a5   0853     movf	0x53, w             	MOVF	(_currentPosition + 0),W
+0004a6   1283     bcf	0x3, 0x5             	BANKSEL	r0x1015
+0004a7   1303     bcf	0x3, 0x6             
+0004a8   00c5     movwf	0x45               	MOVWF	r0x1015
+0004a9   1283     bcf	0x3, 0x5             	BANKSEL	_currentPosition
+0004aa   1303     bcf	0x3, 0x6             
+0004ab   0854     movf	0x54, w             	MOVF	(_currentPosition + 1),W
+0004ac   1283     bcf	0x3, 0x5             	BANKSEL	r0x1016
+0004ad   1303     bcf	0x3, 0x6             
+0004ae   00c6     movwf	0x46               	MOVWF	r0x1016
+0004af   30ff     movlw	0xff               	MOVLW	0xff
+0004b0   07c5     addwf	0x45, f            	ADDWF	r0x1015,F
+0004b1   1c03     btfss	0x3, 0             	BTFSS	STATUS,0
+0004b2   03c6     decf	0x46, f             	DECF	r0x1016,F
+                                           ;gen.c:9306: size=1/2, offset=0, AOP_TYPE(res)=13
+0004b3   0845     movf	0x45, w             	MOVF	r0x1015,W
+0004b4   1283     bcf	0x3, 0x5             	BANKSEL	_currentPosition
+0004b5   1303     bcf	0x3, 0x6             
+0004b6   00d3     movwf	0x53               	MOVWF	(_currentPosition + 0)
+                                           ;gen.c:9306: size=0/2, offset=1, AOP_TYPE(res)=13
+0004b7   1283     bcf	0x3, 0x5             	BANKSEL	r0x1016
+0004b8   1303     bcf	0x3, 0x6             
+0004b9   0846     movf	0x46, w             	MOVF	r0x1016,W
+0004ba   1283     bcf	0x3, 0x5             	BANKSEL	_currentPosition
+0004bb   1303     bcf	0x3, 0x6             
+0004bc   00d4     movwf	0x54               	MOVWF	(_currentPosition + 1)
+                                           ;	.line	360; "stepmotor2.c"	coilPosition = (coilPosition + stepCount - 1) & (stepCount - 1);
+0004bd   3003     movlw	0x3                	MOVLW	0x03
+0004be   1683     bsf	0x3, 0x5             	BANKSEL	_coilPosition
+0004bf   1303     bcf	0x3, 0x6             
+0004c0   074f     addwf	0x4f, w            	ADDWF	_coilPosition,W
+0004c1   1283     bcf	0x3, 0x5             	BANKSEL	r0x1015
+0004c2   1303     bcf	0x3, 0x6             
+0004c3   00c5     movwf	0x45               	MOVWF	r0x1015
+0004c4   3003     movlw	0x3                	MOVLW	0x03
+0004c5   0545     andwf	0x45, w            	ANDWF	r0x1015,W
+0004c6   1683     bsf	0x3, 0x5             	BANKSEL	_coilPosition
+0004c7   1303     bcf	0x3, 0x6             
+0004c8   00cf     movwf	0x4f               	MOVWF	_coilPosition
+                                           ;	.line	361; "stepmotor2.c"	motor_click();
+0004c9   2501     call	0x501               	CALL	_motor_click
+                                           _00140_DS_
+0004ca   1683     bsf	0x3, 0x5             	BANKSEL _coilPosition;
+0004cb   1303     bcf	0x3, 0x6             
+0004cc   0008     return                   	RETURN	
+                                           ; exit point of _reverse1
+                                           
+                                           ;***
+                                           ;  pBlock Stats: dbName = C
+                                           ;***
+                                           ;entry:  _forward1	;Function start
+                                           ; 2 exit points
+                                           ;has an exit
+                                           ;functions called:
+                                           ;   _flashLED
+                                           ;   _motor_stop
+                                           ;   _motor_click
+                                           ;   _flashLED
+                                           ;   _motor_stop
+                                           ;   _motor_click
+                                           ;2 compiler assigned registers:
+                                           ;   r0x1015
+                                           ;   r0x1016
+                                           ;; Starting pCode block
+                                           _forward1	;Function start
+                                           ; 2 exit points
+                                           ;	.line	333; "stepmotor2.c"	flashLED();
+0004cd   158a     bsf	0xa, 0x3             	PAGESEL	_flashLED
+0004ce   240d     call	0x40d               	CALL	_flashLED
+0004cf   118a     bcf	0xa, 0x3             	PAGESEL	$
+                                           ;	.line	334; "stepmotor2.c"	if (MAXSENSOR) {
+0004d0   1283     bcf	0x3, 0x5             	BANKSEL	_PORTA_bits
+0004d1   1303     bcf	0x3, 0x6             
+0004d2   1e85     btfss	0x5, 0x5           	BTFSS	_PORTA_bits,5
+0004d3   2cd9     goto	0x4d9               	GOTO	_00132_DS_
+                                           ;	.line	336; "stepmotor2.c"	motor_stop();
+0004d4   2557     call	0x557               	CALL	_motor_stop
+                                           ;	.line	337; "stepmotor2.c"	function = func_idle;
+0004d5   1683     bsf	0x3, 0x5             	BANKSEL	_function
+0004d6   1303     bcf	0x3, 0x6             
+0004d7   01d0     clrf	0x50                	CLRF	_function
+0004d8   2cfe     goto	0x4fe               	GOTO	_00133_DS_
+                                           _00132_DS_
+                                           ;	.line	339; "stepmotor2.c"	currentPosition.ival++;
+0004d9   1283     bcf	0x3, 0x5             	BANKSEL	_currentPosition
+0004da   1303     bcf	0x3, 0x6             
+0004db   0853     movf	0x53, w             	MOVF	(_currentPosition + 0),W
+0004dc   1283     bcf	0x3, 0x5             	BANKSEL	r0x1015
+0004dd   1303     bcf	0x3, 0x6             
+0004de   00c5     movwf	0x45               	MOVWF	r0x1015
+0004df   1283     bcf	0x3, 0x5             	BANKSEL	_currentPosition
+0004e0   1303     bcf	0x3, 0x6             
+0004e1   0854     movf	0x54, w             	MOVF	(_currentPosition + 1),W
+0004e2   1283     bcf	0x3, 0x5             	BANKSEL	r0x1016
+0004e3   1303     bcf	0x3, 0x6             
+0004e4   00c6     movwf	0x46               	MOVWF	r0x1016
+0004e5   0ac5     incf	0x45, f             	INCF	r0x1015,F
+0004e6   1903     btfsc	0x3, 0x2           	BTFSC	STATUS,2
+0004e7   0ac6     incf	0x46, f             	INCF	r0x1016,F
+                                           ;gen.c:9306: size=1/2, offset=0, AOP_TYPE(res)=13
+0004e8   0845     movf	0x45, w             	MOVF	r0x1015,W
+0004e9   1283     bcf	0x3, 0x5             	BANKSEL	_currentPosition
+0004ea   1303     bcf	0x3, 0x6             
+0004eb   00d3     movwf	0x53               	MOVWF	(_currentPosition + 0)
+                                           ;gen.c:9306: size=0/2, offset=1, AOP_TYPE(res)=13
+0004ec   1283     bcf	0x3, 0x5             	BANKSEL	r0x1016
+0004ed   1303     bcf	0x3, 0x6             
+0004ee   0846     movf	0x46, w             	MOVF	r0x1016,W
+0004ef   1283     bcf	0x3, 0x5             	BANKSEL	_currentPosition
+0004f0   1303     bcf	0x3, 0x6             
+0004f1   00d4     movwf	0x54               	MOVWF	(_currentPosition + 1)
+                                           ;	.line	340; "stepmotor2.c"	coilPosition = (coilPosition + 1) & (stepCount - 1);
+0004f2   1683     bsf	0x3, 0x5             	BANKSEL	_coilPosition
+0004f3   1303     bcf	0x3, 0x6             
+0004f4   0a4f     incf	0x4f, w             	INCF	_coilPosition,W
+0004f5   1283     bcf	0x3, 0x5             	BANKSEL	r0x1015
+0004f6   1303     bcf	0x3, 0x6             
+0004f7   00c5     movwf	0x45               	MOVWF	r0x1015
+0004f8   3003     movlw	0x3                	MOVLW	0x03
+0004f9   0545     andwf	0x45, w            	ANDWF	r0x1015,W
+0004fa   1683     bsf	0x3, 0x5             	BANKSEL	_coilPosition
+0004fb   1303     bcf	0x3, 0x6             
+0004fc   00cf     movwf	0x4f               	MOVWF	_coilPosition
+                                           ;	.line	341; "stepmotor2.c"	motor_click();
+0004fd   2501     call	0x501               	CALL	_motor_click
+                                           _00133_DS_
+0004fe   1683     bsf	0x3, 0x5             	BANKSEL _coilPosition
+0004ff   1303     bcf	0x3, 0x6             
+000500   0008     return                   	RETURN	
+                                           ; exit point of _forward1
+                                           
+                                           ;***
+                                           ;  pBlock Stats: dbName = C
+                                           ;***
+                                           ;entry:  _motor_click	;Function start
+                                           ; 2 exit points
+                                           ;has an exit
+                                           ;1 compiler assigned register :
+                                           ;   r0x1017
+                                           ;; Starting pCode block
+                                           _motor_click	;Function start
+                                           ; 2 exit points
+                                           ;	.line	192; "stepmotor2.c"	cp = coilPosition << 1;
+000501   1003     bcf	0x3, 0               	BCF	STATUS,0
+000502   1683     bsf	0x3, 0x5             	BANKSEL	_coilPosition
+000503   1303     bcf	0x3, 0x6             
+000504   0d4f     rlf	0x4f, w              	RLF	_coilPosition,W
+000505   1283     bcf	0x3, 0x5             	BANKSEL	r0x1017
+000506   1303     bcf	0x3, 0x6             
+000507   00c4     movwf	0x44               	MOVWF	r0x1017
+                                           ;swapping arguments (AOP_TYPEs 1/2)
+                                           ;unsigned compare: left >= lit(0x8=8), size=1
+                                           ;	.line	194; "stepmotor2.c"	switch(cp) {
+000508   3008     movlw	0x8                	MOVLW	0x08
+000509   0244     subwf	0x44, w            	SUBWF	r0x1017,W
+00050a   1803     btfsc	0x3, 0             	BTFSC	STATUS,0
+00050b   2d54     goto	0x554               	GOTO	_00121_DS_
+                                           ;genSkipc:3694: created from rifx:0xbf8c33d0
+00050c   3005     movlw	0x5                	MOVLW	HIGH(_00126_DS_)
+00050d   008a     movwf	0xa                	MOVWF	PCLATH
+00050e   3015     movlw	0x15               	MOVLW	_00126_DS_
+00050f   0744     addwf	0x44, w            	ADDWF	r0x1017,W
+000510   1803     btfsc	0x3, 0             	BTFSC	STATUS,0
+000511   0a8a     incf	0xa, f              	INCF	PCLATH,F
+000512   1283     bcf	0x3, 0x5             	BANKSEL	PCL
+000513   1303     bcf	0x3, 0x6             
+000514   0082     movwf	0x2                	MOVWF	PCL
+                                           _00126_DS_
+000515   2d4e     goto	0x54e               	GOTO	_00120_DS_
+000516   2d47     goto	0x547               	GOTO	_00119_DS_
+000517   2d40     goto	0x540               	GOTO	_00118_DS_
+000518   2d39     goto	0x539               	GOTO	_00117_DS_
+000519   2d32     goto	0x532               	GOTO	_00116_DS_
+00051a   2d2b     goto	0x52b               	GOTO	_00115_DS_
+00051b   2d24     goto	0x524               	GOTO	_00114_DS_
+00051c   2d1d     goto	0x51d               	GOTO	_00113_DS_
+                                           _00113_DS_
+                                           ;	.line	197; "stepmotor2.c"	RB5 = 1;
+00051d   1283     bcf	0x3, 0x5             	BANKSEL	_PORTB_bits
+00051e   1303     bcf	0x3, 0x6             
+00051f   1686     bsf	0x6, 0x5             	BSF	_PORTB_bits,5
+                                           ;	.line	198; "stepmotor2.c"	RB4 = 0;
+000520   1206     bcf	0x6, 0x4             	BCF	_PORTB_bits,4
+                                           ;	.line	199; "stepmotor2.c"	RA2 = 1;
+000521   1505     bsf	0x5, 0x2             	BSF	_PORTA_bits,2
+                                           ;	.line	200; "stepmotor2.c"	RA0 = 0;
+000522   1005     bcf	0x5, 0               	BCF	_PORTA_bits,0
+                                           ;	.line	201; "stepmotor2.c"	break;
+000523   2d54     goto	0x554               	GOTO	_00121_DS_
+                                           _00114_DS_
+                                           ;	.line	204; "stepmotor2.c"	RB5 = 1;
+000524   1283     bcf	0x3, 0x5             	BANKSEL	_PORTB_bits
+000525   1303     bcf	0x3, 0x6             
+000526   1686     bsf	0x6, 0x5             	BSF	_PORTB_bits,5
+                                           ;	.line	205; "stepmotor2.c"	RB4 = 0;
+000527   1206     bcf	0x6, 0x4             	BCF	_PORTB_bits,4
+                                           ;	.line	206; "stepmotor2.c"	RA2 = 0;
+000528   1105     bcf	0x5, 0x2             	BCF	_PORTA_bits,2
+                                           ;	.line	207; "stepmotor2.c"	RA0 = 0;
+000529   1005     bcf	0x5, 0               	BCF	_PORTA_bits,0
+                                           ;	.line	208; "stepmotor2.c"	break;    
+00052a   2d54     goto	0x554               	GOTO	_00121_DS_
+                                           _00115_DS_
+                                           ;	.line	211; "stepmotor2.c"	RB5 = 1;
+00052b   1283     bcf	0x3, 0x5             	BANKSEL	_PORTB_bits
+00052c   1303     bcf	0x3, 0x6             
+00052d   1686     bsf	0x6, 0x5             	BSF	_PORTB_bits,5
+                                           ;	.line	212; "stepmotor2.c"	RB4 = 0;
+00052e   1206     bcf	0x6, 0x4             	BCF	_PORTB_bits,4
+                                           ;	.line	213; "stepmotor2.c"	RA2 = 0;
+00052f   1105     bcf	0x5, 0x2             	BCF	_PORTA_bits,2
+                                           ;	.line	214; "stepmotor2.c"	RA0 = 1;
+000530   1405     bsf	0x5, 0               	BSF	_PORTA_bits,0
+                                           ;	.line	215; "stepmotor2.c"	break;     
+000531   2d54     goto	0x554               	GOTO	_00121_DS_
+                                           _00116_DS_
+                                           ;	.line	218; "stepmotor2.c"	RB5 = 0;
+000532   1283     bcf	0x3, 0x5             	BANKSEL	_PORTB_bits
+000533   1303     bcf	0x3, 0x6             
+000534   1286     bcf	0x6, 0x5             	BCF	_PORTB_bits,5
+                                           ;	.line	219; "stepmotor2.c"	RB4 = 0;
+000535   1206     bcf	0x6, 0x4             	BCF	_PORTB_bits,4
+                                           ;	.line	220; "stepmotor2.c"	RA2 = 0;
+000536   1105     bcf	0x5, 0x2             	BCF	_PORTA_bits,2
+                                           ;	.line	221; "stepmotor2.c"	RA0 = 1;
+000537   1405     bsf	0x5, 0               	BSF	_PORTA_bits,0
+                                           ;	.line	222; "stepmotor2.c"	break;     
+000538   2d54     goto	0x554               	GOTO	_00121_DS_
+                                           _00117_DS_
+                                           ;	.line	225; "stepmotor2.c"	RB5 = 0;
+000539   1283     bcf	0x3, 0x5             	BANKSEL	_PORTB_bits
+00053a   1303     bcf	0x3, 0x6             
+00053b   1286     bcf	0x6, 0x5             	BCF	_PORTB_bits,5
+                                           ;	.line	226; "stepmotor2.c"	RB4 = 1;
+00053c   1606     bsf	0x6, 0x4             	BSF	_PORTB_bits,4
+                                           ;	.line	227; "stepmotor2.c"	RA2 = 0;
+00053d   1105     bcf	0x5, 0x2             	BCF	_PORTA_bits,2
+                                           ;	.line	228; "stepmotor2.c"	RA0 = 1;
+00053e   1405     bsf	0x5, 0               	BSF	_PORTA_bits,0
+                                           ;	.line	229; "stepmotor2.c"	break;     
+00053f   2d54     goto	0x554               	GOTO	_00121_DS_
+                                           _00118_DS_
+                                           ;	.line	232; "stepmotor2.c"	RB5 = 0;
+000540   1283     bcf	0x3, 0x5             	BANKSEL	_PORTB_bits
+000541   1303     bcf	0x3, 0x6             
+000542   1286     bcf	0x6, 0x5             	BCF	_PORTB_bits,5
+                                           ;	.line	233; "stepmotor2.c"	RB4 = 1;
+000543   1606     bsf	0x6, 0x4             	BSF	_PORTB_bits,4
+                                           ;	.line	234; "stepmotor2.c"	RA2 = 0;
+000544   1105     bcf	0x5, 0x2             	BCF	_PORTA_bits,2
+                                           ;	.line	235; "stepmotor2.c"	RA0 = 0;
+000545   1005     bcf	0x5, 0               	BCF	_PORTA_bits,0
+                                           ;	.line	236; "stepmotor2.c"	break;    
+000546   2d54     goto	0x554               	GOTO	_00121_DS_
+                                           _00119_DS_
+                                           ;	.line	239; "stepmotor2.c"	RB5 = 0;
+000547   1283     bcf	0x3, 0x5             	BANKSEL	_PORTB_bits
+000548   1303     bcf	0x3, 0x6             
+000549   1286     bcf	0x6, 0x5             	BCF	_PORTB_bits,5
+                                           ;	.line	240; "stepmotor2.c"	RB4 = 1;
+00054a   1606     bsf	0x6, 0x4             	BSF	_PORTB_bits,4
+                                           ;	.line	241; "stepmotor2.c"	RA2 = 1;
+00054b   1505     bsf	0x5, 0x2             	BSF	_PORTA_bits,2
+                                           ;	.line	242; "stepmotor2.c"	RA0 = 0;
+00054c   1005     bcf	0x5, 0               	BCF	_PORTA_bits,0
+                                           ;	.line	243; "stepmotor2.c"	break;    
+00054d   2d54     goto	0x554               	GOTO	_00121_DS_
+                                           _00120_DS_
+                                           ;	.line	246; "stepmotor2.c"	RB5 = 0;
+00054e   1283     bcf	0x3, 0x5             	BANKSEL	_PORTB_bits
+00054f   1303     bcf	0x3, 0x6             
+000550   1286     bcf	0x6, 0x5             	BCF	_PORTB_bits,5
+                                           ;	.line	247; "stepmotor2.c"	RB4 = 0;
+000551   1206     bcf	0x6, 0x4             	BCF	_PORTB_bits,4
+                                           ;	.line	248; "stepmotor2.c"	RA2 = 1;
+000552   1505     bsf	0x5, 0x2             	BSF	_PORTA_bits,2
+                                           ;	.line	249; "stepmotor2.c"	RA0 = 0;
+000553   1005     bcf	0x5, 0               	BCF	_PORTA_bits,0
+                                           _00121_DS_
+000554   1683     bsf	0x3, 0x5             	BANKSEL _coilPosition
+000555   1303     bcf	0x3, 0x6             
+000556   0008     return                   	RETURN	
+                                           ; exit point of _motor_click
+                                           
+                                           ;***
+                                           ;  pBlock Stats: dbName = C
+                                           ;***
+                                           ;entry:  _motor_stop	;Function start
+                                           ; 2 exit points
+                                           ;has an exit
+                                           ;; Starting pCode block
+                                           _motor_stop	;Function start
+                                           ; 2 exit points
+                                           ;	.line	169; "stepmotor2.c"	PORTB = PORTB & BIN(11001111);
+000557   30cf     movlw	0xcf               	MOVLW	0xcf
+000558   1283     bcf	0x3, 0x5             	BANKSEL	_PORTB
+000559   1303     bcf	0x3, 0x6             
+00055a   0586     andwf	0x6, f             	ANDWF	_PORTB,F
+                                           ;	.line	170; "stepmotor2.c"	PORTA = PORTA & BIN(11111010);
+00055b   30fa     movlw	0xfa               	MOVLW	0xfa
+00055c   0585     andwf	0x5, f             	ANDWF	_PORTA,F
+00055d   1683     bsf	0x3, 0x5             	BANKSEL _coilPosition
+00055e   1303     bcf	0x3, 0x6             
+00055f   0008     return                   	RETURN	
+                                           ; exit point of _motor_stop
+                                           
+                                           ;***
+                                           ;  pBlock Stats: dbName = C
+                                           ;***
+                                           ;entry:  _init2	;Function start
+                                           ; 2 exit points
+                                           ;has an exit
+                                           ;; Starting pCode block
+                                           _init2	;Function start
+                                           ; 2 exit points
+                                           ;	.line	148; "stepmotor2.c"	speed = 0;
+000560   1683     bsf	0x3, 0x5             	BANKSEL	_speed
+000561   1303     bcf	0x3, 0x6             
+000562   01d1     clrf	0x51                	CLRF	_speed
+                                           ;	.line	149; "stepmotor2.c"	function = func_idle;
+000563   1683     bsf	0x3, 0x5             	BANKSEL	_function
+000564   1303     bcf	0x3, 0x6             
+000565   01d0     clrf	0x50                	CLRF	_function
+                                           ;	.line	150; "stepmotor2.c"	coilPosition = 0;
+000566   1683     bsf	0x3, 0x5             	BANKSEL	_coilPosition
+000567   1303     bcf	0x3, 0x6             
+000568   01cf     clrf	0x4f                	CLRF	_coilPosition
+                                           ;	.line	151; "stepmotor2.c"	sync_mode = sync_none;
+000569   1683     bsf	0x3, 0x5             	BANKSEL	_sync_mode
+00056a   1303     bcf	0x3, 0x6             
+00056b   01d3     clrf	0x53                	CLRF	_sync_mode
+                                           ;	.line	152; "stepmotor2.c"	seekNotify = 255;
+00056c   30ff     movlw	0xff               	MOVLW	0xff
+00056d   1683     bsf	0x3, 0x5             	BANKSEL	_seekNotify
+00056e   1303     bcf	0x3, 0x6             
+00056f   00d2     movwf	0x52               	MOVWF	_seekNotify
+                                           ;gen.c:9306: size=0/1, offset=0, AOP_TYPE(res)=13
+                                           ;	.line	154; "stepmotor2.c"	currentPosition.bytes[0] = 0;
+000570   1283     bcf	0x3, 0x5             	BANKSEL	_currentPosition
+000571   1303     bcf	0x3, 0x6             
+000572   01d3     clrf	0x53                	CLRF	(_currentPosition + 0)
+                                           ;gen.c:9306: size=0/1, offset=0, AOP_TYPE(res)=13
+                                           ;	.line	155; "stepmotor2.c"	currentPosition.bytes[1] = 0;
+000573   01d4     clrf	0x54                	CLRF	(_currentPosition + 1)
+                                           ;gen.c:9306: size=0/1, offset=0, AOP_TYPE(res)=13
+                                           ;	.line	156; "stepmotor2.c"	seekPosition.bytes[0] = 0;
+000574   1283     bcf	0x3, 0x5             	BANKSEL	_seekPosition
+000575   1303     bcf	0x3, 0x6             
+000576   01d5     clrf	0x55                	CLRF	(_seekPosition + 0)
+                                           ;gen.c:9306: size=0/1, offset=0, AOP_TYPE(res)=13
+                                           ;	.line	157; "stepmotor2.c"	seekPosition.bytes[1] = 0;
+000577   01d6     clrf	0x56                	CLRF	(_seekPosition + 1)
+                                           ;gen.c:9306: size=0/1, offset=0, AOP_TYPE(res)=13
+                                           ;	.line	158; "stepmotor2.c"	maxPosition.bytes[0] = 0;
+000578   1283     bcf	0x3, 0x5             	BANKSEL	_maxPosition
+000579   1303     bcf	0x3, 0x6             
+00057a   01d7     clrf	0x57                	CLRF	(_maxPosition + 0)
+                                           ;gen.c:9306: size=0/1, offset=0, AOP_TYPE(res)=13
+                                           ;	.line	159; "stepmotor2.c"	maxPosition.bytes[1] = 0;
+00057b   01d8     clrf	0x58                	CLRF	(_maxPosition + 1)
+00057c   0008     return                   	RETURN	
+                                           ; exit point of _init2
+                                           
+                                           
+                                           ;	code size estimation:
+                                           ;	  749+  355 =  1104 instructions ( 2918 byte)
+                                           
+                                           	end
+                                                   LIST
+                                           ; P16F648A.INC  Standard Header File, Version 1.00    Microchip Technology, Inc.
+                                                   NOLIST
+                                                   LIST
+                                           ; P16F648A.INC  Standard Header File, Version 1.00    Microchip Technology, Inc.
+                                                   NOLIST
+                                                   LIST
+                                           ; P16F877.INC  Standard Header File, Version 1.00    Microchip Technology, Inc.
+                                                   NOLIST
+                                                   LIST
+                                           ; P16F877.INC  Standard Header File, Version 1.00    Microchip Technology, Inc.
+                                                   NOLIST
+                                                   LIST
+                                           ; P16F648A.INC  Standard Header File, Version 1.00    Microchip Technology, Inc.
+                                                   NOLIST

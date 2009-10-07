@@ -1,0 +1,7 @@
+#!/bin/sh
+cp cartesian_dda.h.dist cartesian_dda.h
+cp extruder.h.dist extruder.h
+cp parameters.h.dist parameters.h
+cp pins.h.dist pins.h
+cp vectors.h.dist vectors.h
+

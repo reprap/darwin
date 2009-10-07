@@ -1,0 +1,2745 @@
+gpasm-0.13.4 beta               stepmotorz-stepmotor2.asm6-13-2008  14:34:03          PAGE  1
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+               00001 ;--------------------------------------------------------
+               00002 ; File Created by SDCC : free open source ANSI-C Compiler
+               00003 ; Version 2.7.4 #4943 (Oct 27 2007) (UNIX)
+               00004 ; This file was generated Fri Jun 13 14:34:02 2008
+               00005 ;--------------------------------------------------------
+               00006 ; PIC port for the 14-bit core
+               00007 ;--------------------------------------------------------
+               00008 ;       .module stepmotor2
+               00009         list    p=16f648a
+               00010         radix dec
+               00011         include "p16f648a.inc"
+               00001         LIST
+               00002 ; P16F648A.INC  Standard Header File, Version 1.00    Microchip Technology, Inc.
+               00264         LIST
+               00012 ;--------------------------------------------------------
+               00013 ; external declarations
+               00014 ;--------------------------------------------------------
+               00015         extern  _flashLED
+               00016         extern  _LEDon
+               00017         extern  _setFlash
+               00018         extern  _uartTransmit
+               00019         extern  _sendReply
+               00020         extern  _sendMessage
+               00021         extern  _sendDataByte
+               00022         extern  _endMessage
+               00023         extern  _sendMessageISR
+               00024         extern  _sendDataByteISR
+               00025         extern  _endMessageISR
+               00026         extern  _releaseLock
+               00027         extern  _serialInterruptHandler
+               00028         extern  _packetReady
+               00029         extern  _uartNotifyReceive
+               00030         extern  _serial_init
+               00031         extern  _delay_10us
+               00032         extern  _clearwdt
+               00033         extern  _CCP1CON_bits
+               00034         extern  _CMCON_bits
+               00035         extern  _EECON1_bits
+               00036         extern  _INTCON_bits
+               00037         extern  _OPTION_REG_bits
+               00038         extern  _PCON_bits
+               00039         extern  _PIE1_bits
+               00040         extern  _PIR1_bits
+               00041         extern  _PORTA_bits
+               00042         extern  _PORTB_bits
+               00043         extern  _RCSTA_bits
+               00044         extern  _STATUS_bits
+               00045         extern  _T1CON_bits
+               00046         extern  _T2CON_bits
+               00047         extern  _TRISA_bits
+               00048         extern  _TRISB_bits
+               00049         extern  _TXSTA_bits
+               00050         extern  _VRCON_bits
+               00051         extern  _syncEnabled
+gpasm-0.13.4 beta               stepmotorz-stepmotor2.asm6-13-2008  14:34:03          PAGE  2
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+               00052         extern  _syncCounter
+               00053         extern  _buffer
+               00054         extern  _serialStatus
+               00055         extern  _INDF
+               00056         extern  _TMR0
+               00057         extern  _PCL
+               00058         extern  _STATUS
+               00059         extern  _FSR
+               00060         extern  _PORTA
+               00061         extern  _PORTB
+               00062         extern  _PCLATH
+               00063         extern  _INTCON
+               00064         extern  _PIR1
+               00065         extern  _TMR1L
+               00066         extern  _TMR1H
+               00067         extern  _T1CON
+               00068         extern  _TMR2
+               00069         extern  _T2CON
+               00070         extern  _CCPR1L
+               00071         extern  _CCPR1H
+               00072         extern  _CCP1CON
+               00073         extern  _RCSTA
+               00074         extern  _TXREG
+               00075         extern  _RCREG
+               00076         extern  _CMCON
+               00077         extern  _OPTION_REG
+               00078         extern  _TRISA
+               00079         extern  _TRISB
+               00080         extern  _PIE1
+               00081         extern  _PCON
+               00082         extern  _PR2
+               00083         extern  _TXSTA
+               00084         extern  _SPBRG
+               00085         extern  _EEDATA
+               00086         extern  _EEADR
+               00087         extern  _EECON1
+               00088         extern  _EECON2
+               00089         extern  _VRCON
+               00090 
+               00091         extern PSAVE
+               00092         extern SSAVE
+               00093         extern WSAVE
+               00094         extern STK12
+               00095         extern STK11
+               00096         extern STK10
+               00097         extern STK09
+               00098         extern STK08
+               00099         extern STK07
+               00100         extern STK06
+               00101         extern STK05
+               00102         extern STK04
+               00103         extern STK03
+               00104         extern STK02
+               00105         extern STK01
+gpasm-0.13.4 beta               stepmotorz-stepmotor2.asm6-13-2008  14:34:03          PAGE  3
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+               00106         extern STK00
+               00107 ;--------------------------------------------------------
+               00108 ; global declarations
+               00109 ;--------------------------------------------------------
+               00110         global  _processCommand
+               00111         global  _setPower
+               00112         global  _syncStrobe
+               00113         global  _timerTick
+               00114         global  _init2
+               00115         global  _motor_stop
+               00116         global  _motor_click
+               00117         global  _forward1
+               00118         global  _reverse1
+               00119         global  _setTimer
+               00120         global  _strobe_sync
+               00121 
+               00122 ;--------------------------------------------------------
+               00123 ; global definitions
+               00124 ;--------------------------------------------------------
+               00125 ;--------------------------------------------------------
+               00126 ; absolute symbol definitions
+               00127 ;--------------------------------------------------------
+               00128 ;--------------------------------------------------------
+               00129 ; compiler-defined variables
+               00130 ;--------------------------------------------------------
+               00131 UDL_stepmotor2_0        udata
+               00132 r0x1017 res     1
+               00133 r0x1015 res     1
+               00134 r0x1016 res     1
+               00135 r0x1022 res     1
+               00136 r0x101D res     1
+               00137 r0x101E res     1
+               00138 r0x101F res     1
+               00139 r0x1020 res     1
+               00140 r0x1021 res     1
+               00141 r0x1019 res     1
+               00142 r0x101A res     1
+               00143 r0x101B res     1
+               00144 r0x101C res     1
+               00145 r0x1011 res     1
+               00146 r0x1014 res     1
+               00147 _currentPosition        res     2
+               00148 _seekPosition   res     2
+               00149 _maxPosition    res     2
+               00150 _dda_error      res     2
+               00151 _dda_deltay     res     2
+               00152 _dda_deltax     res     2
+               00153 ;--------------------------------------------------------
+               00154 ; initialized data
+               00155 ;--------------------------------------------------------
+               00156 
+               00157 ID_stepmotor2_0 idata
+0000           00158 _coilPosition
+               00159         db      0x00
+gpasm-0.13.4 beta               stepmotorz-stepmotor2.asm6-13-2008  14:34:03          PAGE  4
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+               00160 
+               00161 
+               00162 ID_stepmotor2_1 idata
+0000           00163 _function
+               00164         db      0x00
+               00165 
+               00166 
+               00167 ID_stepmotor2_2 idata
+0000           00168 _speed
+               00169         db      0x00
+               00170 
+               00171 
+               00172 ID_stepmotor2_3 idata
+0000           00173 _seekNotify
+               00174         db      0xff
+               00175 
+               00176 
+               00177 ID_stepmotor2_4 idata
+0000           00178 _sync_mode
+               00179         db      0x00
+               00180 
+               00181 ;--------------------------------------------------------
+               00182 ; overlayable items in internal ram 
+               00183 ;--------------------------------------------------------
+               00184 ;       udata_ovr
+               00185 ;--------------------------------------------------------
+               00186 ; code
+               00187 ;--------------------------------------------------------
+               00188 code_stepmotor2 code
+               00189 ;***
+               00190 ;  pBlock Stats: dbName = C
+               00191 ;***
+               00192 ;entry:  _processCommand        ;Function start
+               00193 ; 2 exit points
+               00194 ;has an exit
+               00195 ;functions called:
+               00196 ;   _sendReply
+               00197 ;   _sendDataByte
+               00198 ;   _sendDataByte
+               00199 ;   _sendDataByte
+               00200 ;   _endMessage
+               00201 ;   _sendReply
+               00202 ;   _sendDataByte
+               00203 ;   _sendDataByte
+               00204 ;   _sendDataByte
+               00205 ;   _sendDataByte
+               00206 ;   _sendDataByte
+               00207 ;   _sendDataByte
+               00208 ;   _sendDataByte
+               00209 ;   _endMessage
+               00210 ;   _sendReply
+               00211 ;   _sendDataByte
+               00212 ;   _sendDataByte
+               00213 ;   _endMessage
+gpasm-0.13.4 beta               stepmotorz-stepmotor2.asm6-13-2008  14:34:03          PAGE  5
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+               00214 ;   _setTimer
+               00215 ;   _setTimer
+               00216 ;   _sendReply
+               00217 ;   _sendDataByte
+               00218 ;   _sendDataByte
+               00219 ;   _sendDataByte
+               00220 ;   _endMessage
+               00221 ;   _setTimer
+               00222 ;   _motor_stop
+               00223 ;   _setTimer
+               00224 ;   _sendReply
+               00225 ;   _sendDataByte
+               00226 ;   _sendDataByte
+               00227 ;   _sendDataByte
+               00228 ;   _endMessage
+               00229 ;   _setTimer
+               00230 ;   _forward1
+               00231 ;   _reverse1
+               00232 ;   _setPower
+               00233 ;   _sendReply
+               00234 ;   _sendDataByte
+               00235 ;   _sendDataByte
+               00236 ;   _sendDataByte
+               00237 ;   _endMessage
+               00238 ;   _setTimer
+               00239 ;   _sendReply
+               00240 ;   _sendDataByte
+               00241 ;   _sendDataByte
+               00242 ;   _sendDataByte
+               00243 ;   _endMessage
+               00244 ;   _sendReply
+               00245 ;   _sendDataByte
+               00246 ;   _sendDataByte
+               00247 ;   _sendDataByte
+               00248 ;   _sendDataByte
+               00249 ;   _sendDataByte
+               00250 ;   _sendDataByte
+               00251 ;   _sendDataByte
+               00252 ;   _endMessage
+               00253 ;   _sendReply
+               00254 ;   _sendDataByte
+               00255 ;   _sendDataByte
+               00256 ;   _endMessage
+               00257 ;   _setTimer
+               00258 ;   _setTimer
+               00259 ;   _sendReply
+               00260 ;   _sendDataByte
+               00261 ;   _sendDataByte
+               00262 ;   _sendDataByte
+               00263 ;   _endMessage
+               00264 ;   _setTimer
+               00265 ;   _motor_stop
+               00266 ;   _setTimer
+               00267 ;   _sendReply
+gpasm-0.13.4 beta               stepmotorz-stepmotor2.asm6-13-2008  14:34:03          PAGE  6
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+               00268 ;   _sendDataByte
+               00269 ;   _sendDataByte
+               00270 ;   _sendDataByte
+               00271 ;   _endMessage
+               00272 ;   _setTimer
+               00273 ;   _forward1
+               00274 ;   _reverse1
+               00275 ;   _setPower
+               00276 ;   _sendReply
+               00277 ;   _sendDataByte
+               00278 ;   _sendDataByte
+               00279 ;   _sendDataByte
+               00280 ;   _endMessage
+               00281 ;   _setTimer
+               00282 ;4 compiler assigned registers:
+               00283 ;   r0x1011
+               00284 ;   r0x1012
+               00285 ;   r0x1013
+               00286 ;   r0x1014
+               00287 ;; Starting pCode block
+0000           00288 _processCommand ;Function start
+               00289 ; 2 exit points
+               00290 ;       .line   577; "stepmotor2.c"     switch(buffer[0]) {
+0000 0000 0000 00291         BANKSEL _buffer
+0002 0800      00292         MOVF    (_buffer + 0),W
+0003 0000 0000 00293         BANKSEL r0x1011
+0005 0080      00294         MOVWF   r0x1011
+0006 1903      00295         BTFSC   STATUS,2
+0007 2800      00296         GOTO    _00283_DS_
+0008 0800      00297         MOVF    r0x1011,W
+0009 3A01      00298         XORLW   0x01
+000A 1903      00299         BTFSC   STATUS,2
+000B 2800      00300         GOTO    _00295_DS_
+000C 0800      00301         MOVF    r0x1011,W
+000D 3A02      00302         XORLW   0x02
+000E 1903      00303         BTFSC   STATUS,2
+000F 2800      00304         GOTO    _00296_DS_
+0010 0800      00305         MOVF    r0x1011,W
+0011 3A03      00306         XORLW   0x03
+0012 1903      00307         BTFSC   STATUS,2
+0013 2800      00308         GOTO    _00297_DS_
+0014 0800      00309         MOVF    r0x1011,W
+0015 3A04      00310         XORLW   0x04
+0016 1903      00311         BTFSC   STATUS,2
+0017 2800      00312         GOTO    _00298_DS_
+0018 0800      00313         MOVF    r0x1011,W
+0019 3A05      00314         XORLW   0x05
+001A 1903      00315         BTFSC   STATUS,2
+001B 2800      00316         GOTO    _00299_DS_
+001C 0800      00317         MOVF    r0x1011,W
+001D 3A06      00318         XORLW   0x06
+001E 1903      00319         BTFSC   STATUS,2
+001F 2800      00320         GOTO    _00303_DS_
+0020 0800      00321         MOVF    r0x1011,W
+gpasm-0.13.4 beta               stepmotorz-stepmotor2.asm6-13-2008  14:34:03          PAGE  7
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+0021 3A07      00322         XORLW   0x07
+0022 1903      00323         BTFSC   STATUS,2
+0023 2800      00324         GOTO    _00304_DS_
+0024 0800      00325         MOVF    r0x1011,W
+0025 3A08      00326         XORLW   0x08
+0026 1903      00327         BTFSC   STATUS,2
+0027 2800      00328         GOTO    _00305_DS_
+0028 0800      00329         MOVF    r0x1011,W
+0029 3A09      00330         XORLW   0x09
+002A 1903      00331         BTFSC   STATUS,2
+002B 2800      00332         GOTO    _00306_DS_
+002C 0800      00333         MOVF    r0x1011,W
+002D 3A0A      00334         XORLW   0x0a
+002E 1903      00335         BTFSC   STATUS,2
+002F 2800      00336         GOTO    _00307_DS_
+0030 0800      00337         MOVF    r0x1011,W
+0031 3A0B      00338         XORLW   0x0b
+0032 1903      00339         BTFSC   STATUS,2
+0033 2800      00340         GOTO    _00308_DS_
+0034 0800      00341         MOVF    r0x1011,W
+0035 3A0C      00342         XORLW   0x0c
+0036 1903      00343         BTFSC   STATUS,2
+0037 2800      00344         GOTO    _00311_DS_
+0038 0800      00345         MOVF    r0x1011,W
+0039 3A0D      00346         XORLW   0x0d
+003A 1903      00347         BTFSC   STATUS,2
+003B 2800      00348         GOTO    _00312_DS_
+003C 0800      00349         MOVF    r0x1011,W
+003D 3A0E      00350         XORLW   0x0e
+003E 1903      00351         BTFSC   STATUS,2
+003F 2800      00352         GOTO    _00313_DS_
+0040 0800      00353         MOVF    r0x1011,W
+0041 3A0F      00354         XORLW   0x0f
+0042 1903      00355         BTFSC   STATUS,2
+0043 2800      00356         GOTO    _00314_DS_
+0044 0800      00357         MOVF    r0x1011,W
+0045 3A10      00358         XORLW   0x10
+0046 1903      00359         BTFSC   STATUS,2
+0047 2800      00360         GOTO    _00315_DS_
+0048 0800      00361         MOVF    r0x1011,W
+0049 3AFE      00362         XORLW   0xfe
+004A 1903      00363         BTFSC   STATUS,2
+004B 2800      00364         GOTO    _00284_DS_
+004C 0800      00365         MOVF    r0x1011,W
+004D 3AFF      00366         XORLW   0xff
+004E 1903      00367         BTFSC   STATUS,2
+004F 2800      00368         GOTO    _00294_DS_
+0050 2800      00369         GOTO    _00316_DS_
+0051           00370 _00283_DS_
+               00371 ;       .line   579; "stepmotor2.c"     sendReply();
+0051 0000      00372         PAGESEL _sendReply
+0052 2000      00373         CALL    _sendReply
+0053 0000      00374         PAGESEL $
+               00375 ;       .line   580; "stepmotor2.c"     sendDataByte(CMD_VERSION);  // Response type 0
+gpasm-0.13.4 beta               stepmotorz-stepmotor2.asm6-13-2008  14:34:03          PAGE  8
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+0054 3000      00376         MOVLW   0x00
+0055 0000      00377         PAGESEL _sendDataByte
+0056 2000      00378         CALL    _sendDataByte
+0057 0000      00379         PAGESEL $
+               00380 ;       .line   581; "stepmotor2.c"     sendDataByte(MAJOR_VERSION_NUMBER);
+0058 3001      00381         MOVLW   0x01
+0059 0000      00382         PAGESEL _sendDataByte
+005A 2000      00383         CALL    _sendDataByte
+005B 0000      00384         PAGESEL $
+               00385 ;       .line   582; "stepmotor2.c"     sendDataByte(MINOR_VERSION_NUMBER);
+005C 3000      00386         MOVLW   0x00
+005D 0000      00387         PAGESEL _sendDataByte
+005E 2000      00388         CALL    _sendDataByte
+005F 0000      00389         PAGESEL $
+               00390 ;       .line   583; "stepmotor2.c"     endMessage();
+0060 0000      00391         PAGESEL _endMessage
+0061 2000      00392         CALL    _endMessage
+0062 0000      00393         PAGESEL $
+               00394 ;       .line   584; "stepmotor2.c"     break;
+0063 2800      00395         GOTO    _00316_DS_
+0064           00396 _00284_DS_
+               00397 ;       .line   587; "stepmotor2.c"     sendReply();
+0064 0000      00398         PAGESEL _sendReply
+0065 2000      00399         CALL    _sendReply
+0066 0000      00400         PAGESEL $
+               00401 ;       .line   588; "stepmotor2.c"     sendDataByte(CMD_CHECKHOSTVERSION);    
+0067 30FE      00402         MOVLW   0xfe
+0068 0000      00403         PAGESEL _sendDataByte
+0069 2000      00404         CALL    _sendDataByte
+006A 0000      00405         PAGESEL $
+               00406 ;       .line   589; "stepmotor2.c"     if(buffer[1] > OLDHOST_MAJOR_VERSION_NUMBER)
+006B 0000 0000 00407         BANKSEL _buffer
+006D 0800      00408         MOVF    (_buffer + 1),W
+006E 0000 0000 00409         BANKSEL r0x1011
+0070 0080      00410         MOVWF   r0x1011
+0071 1903      00411         BTFSC   STATUS,2
+0072 2800      00412         GOTO    _00292_DS_
+               00413 ;       .line   590; "stepmotor2.c"     sendDataByte(0xff);    
+0073 30FF      00414         MOVLW   0xff
+0074 0000      00415         PAGESEL _sendDataByte
+0075 2000      00416         CALL    _sendDataByte
+0076 0000      00417         PAGESEL $
+0077 2800      00418         GOTO    _00293_DS_
+0078           00419 _00292_DS_
+               00420 ;       .line   591; "stepmotor2.c"     else if (buffer[1] == OLDHOST_MAJOR_VERSION_NUMBER)
+0078 0000 0000 00421         BANKSEL _buffer
+007A 0800      00422         MOVF    (_buffer + 1),W
+007B 0000 0000 00423         BANKSEL r0x1011
+007D 0080      00424         MOVWF   r0x1011
+007E 0800      00425         MOVF    r0x1011,W
+007F 1D03      00426         BTFSS   STATUS,2
+0080 2800      00427         GOTO    _00289_DS_
+               00428 ;       .line   593; "stepmotor2.c"     if (buffer[2] >= OLDHOST_MINOR_VERSION_NUMBER)
+0081 0000 0000 00429         BANKSEL _buffer
+gpasm-0.13.4 beta               stepmotorz-stepmotor2.asm6-13-2008  14:34:03          PAGE  9
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+0083 0800      00430         MOVF    (_buffer + 2),W
+0084 0000 0000 00431         BANKSEL r0x1011
+0086 0080      00432         MOVWF   r0x1011
+               00433 ;unsigned compare: left < lit(0x8=8), size=1
+0087 3008      00434         MOVLW   0x08
+0088 0200      00435         SUBWF   r0x1011,W
+0089 1C03      00436         BTFSS   STATUS,0
+008A 2800      00437         GOTO    _00286_DS_
+               00438 ;genSkipc:3694: created from rifx:0xbf8c33d0
+               00439 ;       .line   594; "stepmotor2.c"     sendDataByte(0xff);
+008B 30FF      00440         MOVLW   0xff
+008C 0000      00441         PAGESEL _sendDataByte
+008D 2000      00442         CALL    _sendDataByte
+008E 0000      00443         PAGESEL $
+008F 2800      00444         GOTO    _00293_DS_
+0090           00445 _00286_DS_
+               00446 ;       .line   596; "stepmotor2.c"     sendDataByte(0);    
+0090 3000      00447         MOVLW   0x00
+0091 0000      00448         PAGESEL _sendDataByte
+0092 2000      00449         CALL    _sendDataByte
+0093 0000      00450         PAGESEL $
+0094 2800      00451         GOTO    _00293_DS_
+0095           00452 _00289_DS_
+               00453 ;       .line   598; "stepmotor2.c"     sendDataByte(0);
+0095 3000      00454         MOVLW   0x00
+0096 0000      00455         PAGESEL _sendDataByte
+0097 2000      00456         CALL    _sendDataByte
+0098 0000      00457         PAGESEL $
+0099           00458 _00293_DS_
+               00459 ;       .line   599; "stepmotor2.c"     sendDataByte(OLDHOST_MAJOR_VERSION_NUMBER);
+0099 3000      00460         MOVLW   0x00
+009A 0000      00461         PAGESEL _sendDataByte
+009B 2000      00462         CALL    _sendDataByte
+009C 0000      00463         PAGESEL $
+               00464 ;       .line   600; "stepmotor2.c"     sendDataByte(OLDHOST_MINOR_VERSION_NUMBER);
+009D 3008      00465         MOVLW   0x08
+009E 0000      00466         PAGESEL _sendDataByte
+009F 2000      00467         CALL    _sendDataByte
+00A0 0000      00468         PAGESEL $
+               00469 ;       .line   601; "stepmotor2.c"     endMessage();
+00A1 0000      00470         PAGESEL _endMessage
+00A2 2000      00471         CALL    _endMessage
+00A3 0000      00472         PAGESEL $
+               00473 ;       .line   602; "stepmotor2.c"     break;    
+00A4 2800      00474         GOTO    _00316_DS_
+00A5           00475 _00294_DS_
+               00476 ;       .line   605; "stepmotor2.c"     sendReply();
+00A5 0000      00477         PAGESEL _sendReply
+00A6 2000      00478         CALL    _sendReply
+00A7 0000      00479         PAGESEL $
+               00480 ;       .line   606; "stepmotor2.c"     sendDataByte(CMD_GETMODULETYPE);
+00A8 30FF      00481         MOVLW   0xff
+00A9 0000      00482         PAGESEL _sendDataByte
+00AA 2000      00483         CALL    _sendDataByte
+gpasm-0.13.4 beta               stepmotorz-stepmotor2.asm6-13-2008  14:34:03          PAGE 10
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+00AB 0000      00484         PAGESEL $
+               00485 ;       .line   607; "stepmotor2.c"     sendDataByte(LINEAR_AXIS_TYPE);
+00AC 3000      00486         MOVLW   0x00
+00AD 0000      00487         PAGESEL _sendDataByte
+00AE 2000      00488         CALL    _sendDataByte
+00AF 0000      00489         PAGESEL $
+               00490 ;       .line   608; "stepmotor2.c"     endMessage();
+00B0 0000      00491         PAGESEL _endMessage
+00B1 2000      00492         CALL    _endMessage
+00B2 0000      00493         PAGESEL $
+               00494 ;       .line   609; "stepmotor2.c"     break;
+00B3 2800      00495         GOTO    _00316_DS_
+00B4           00496 _00295_DS_
+               00497 ;       .line   613; "stepmotor2.c"     function = func_forward;
+00B4 3001      00498         MOVLW   0x01
+00B5 0000 0000 00499         BANKSEL _function
+00B7 0080      00500         MOVWF   _function
+               00501 ;       .line   614; "stepmotor2.c"     setTimer(buffer[1]);
+00B8 0000 0000 00502         BANKSEL _buffer
+00BA 0800      00503         MOVF    (_buffer + 1),W
+00BB 0000 0000 00504         BANKSEL r0x1011
+00BD 0080      00505         MOVWF   r0x1011
+00BE 2000      00506         CALL    _setTimer
+               00507 ;       .line   615; "stepmotor2.c"     break;
+00BF 2800      00508         GOTO    _00316_DS_
+00C0           00509 _00296_DS_
+               00510 ;       .line   619; "stepmotor2.c"     function = func_reverse;
+00C0 3002      00511         MOVLW   0x02
+00C1 0000 0000 00512         BANKSEL _function
+00C3 0080      00513         MOVWF   _function
+               00514 ;       .line   620; "stepmotor2.c"     setTimer(buffer[1]);    
+00C4 0000 0000 00515         BANKSEL _buffer
+00C6 0800      00516         MOVF    (_buffer + 1),W
+00C7 0000 0000 00517         BANKSEL r0x1011
+00C9 0080      00518         MOVWF   r0x1011
+00CA 2000      00519         CALL    _setTimer
+               00520 ;       .line   621; "stepmotor2.c"     break;
+00CB 2800      00521         GOTO    _00316_DS_
+00CC           00522 _00297_DS_
+               00523 ;       .line   625; "stepmotor2.c"     currentPosition.bytes[0] = buffer[1];
+00CC 0000 0000 00524         BANKSEL _buffer
+00CE 0800      00525         MOVF    (_buffer + 1),W
+00CF 0000 0000 00526         BANKSEL r0x1011
+00D1 0080      00527         MOVWF   r0x1011
+00D2 0000 0000 00528         BANKSEL _currentPosition
+00D4 0080      00529         MOVWF   (_currentPosition + 0)
+               00530 ;       .line   626; "stepmotor2.c"     currentPosition.bytes[1] = buffer[2];
+00D5 0000 0000 00531         BANKSEL _buffer
+00D7 0800      00532         MOVF    (_buffer + 2),W
+00D8 0000 0000 00533         BANKSEL r0x1011
+00DA 0080      00534         MOVWF   r0x1011
+00DB 0000 0000 00535         BANKSEL _currentPosition
+00DD 0080      00536         MOVWF   (_currentPosition + 1)
+               00537 ;       .line   627; "stepmotor2.c"     break;
+gpasm-0.13.4 beta               stepmotorz-stepmotor2.asm6-13-2008  14:34:03          PAGE 11
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+00DE 2800      00538         GOTO    _00316_DS_
+00DF           00539 _00298_DS_
+               00540 ;       .line   631; "stepmotor2.c"     sendReply();
+00DF 0000      00541         PAGESEL _sendReply
+00E0 2000      00542         CALL    _sendReply
+00E1 0000      00543         PAGESEL $
+               00544 ;       .line   632; "stepmotor2.c"     sendDataByte(CMD_GETPOS);
+00E2 3004      00545         MOVLW   0x04
+00E3 0000      00546         PAGESEL _sendDataByte
+00E4 2000      00547         CALL    _sendDataByte
+00E5 0000      00548         PAGESEL $
+               00549 ;       .line   633; "stepmotor2.c"     sendDataByte(currentPosition.bytes[0]);
+00E6 0000 0000 00550         BANKSEL _currentPosition
+00E8 0800      00551         MOVF    (_currentPosition + 0),W
+00E9 0000 0000 00552         BANKSEL r0x1011
+00EB 0080      00553         MOVWF   r0x1011
+00EC 0000      00554         PAGESEL _sendDataByte
+00ED 2000      00555         CALL    _sendDataByte
+00EE 0000      00556         PAGESEL $
+               00557 ;       .line   634; "stepmotor2.c"     sendDataByte(currentPosition.bytes[1]);
+00EF 0000 0000 00558         BANKSEL _currentPosition
+00F1 0800      00559         MOVF    (_currentPosition + 1),W
+00F2 0000 0000 00560         BANKSEL r0x1011
+00F4 0080      00561         MOVWF   r0x1011
+00F5 0000      00562         PAGESEL _sendDataByte
+00F6 2000      00563         CALL    _sendDataByte
+00F7 0000      00564         PAGESEL $
+               00565 ;       .line   635; "stepmotor2.c"     endMessage();
+00F8 0000      00566         PAGESEL _endMessage
+00F9 2000      00567         CALL    _endMessage
+00FA 0000      00568         PAGESEL $
+               00569 ;       .line   636; "stepmotor2.c"     break;
+00FB 2800      00570         GOTO    _00316_DS_
+00FC           00571 _00299_DS_
+               00572 ;       .line   640; "stepmotor2.c"     seekPosition.bytes[0] = buffer[2];
+00FC 0000 0000 00573         BANKSEL _buffer
+00FE 0800      00574         MOVF    (_buffer + 2),W
+00FF 0000 0000 00575         BANKSEL r0x1011
+0101 0080      00576         MOVWF   r0x1011
+0102 0000 0000 00577         BANKSEL _seekPosition
+0104 0080      00578         MOVWF   (_seekPosition + 0)
+               00579 ;       .line   641; "stepmotor2.c"     seekPosition.bytes[1] = buffer[3];
+0105 0000 0000 00580         BANKSEL _buffer
+0107 0800      00581         MOVF    (_buffer + 3),W
+0108 0000 0000 00582         BANKSEL r0x1011
+010A 0080      00583         MOVWF   r0x1011
+010B 0000 0000 00584         BANKSEL _seekPosition
+010D 0080      00585         MOVWF   (_seekPosition + 1)
+               00586 ;       .line   643; "stepmotor2.c"     if (sync_mode == sync_seek)
+010E 0000 0000 00587         BANKSEL _sync_mode
+0110 0800      00588         MOVF    _sync_mode,W
+0111 3A01      00589         XORLW   0x01
+0112 1D03      00590         BTFSS   STATUS,2
+0113 2800      00591         GOTO    _00301_DS_
+gpasm-0.13.4 beta               stepmotorz-stepmotor2.asm6-13-2008  14:34:03          PAGE 12
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+               00592 ;       .line   644; "stepmotor2.c"     function = func_syncwait;
+0114 3003      00593         MOVLW   0x03
+0115 0000 0000 00594         BANKSEL _function
+0117 0080      00595         MOVWF   _function
+0118 2800      00596         GOTO    _00302_DS_
+0119           00597 _00301_DS_
+               00598 ;       .line   646; "stepmotor2.c"     function = func_seek;
+0119 3004      00599         MOVLW   0x04
+011A 0000 0000 00600         BANKSEL _function
+011C 0080      00601         MOVWF   _function
+011D           00602 _00302_DS_
+               00603 ;       .line   647; "stepmotor2.c"     setTimer(buffer[1]);
+011D 0000 0000 00604         BANKSEL _buffer
+011F 0800      00605         MOVF    (_buffer + 1),W
+0120 0000 0000 00606         BANKSEL r0x1011
+0122 0080      00607         MOVWF   r0x1011
+0123 2000      00608         CALL    _setTimer
+               00609 ;       .line   648; "stepmotor2.c"     break;
+0124 2800      00610         GOTO    _00316_DS_
+0125           00611 _00303_DS_
+               00612 ;       .line   652; "stepmotor2.c"     motor_stop();
+0125 2000      00613         CALL    _motor_stop
+               00614 ;       .line   653; "stepmotor2.c"     function = func_idle;
+0126 0000 0000 00615         BANKSEL _function
+0128 0180      00616         CLRF    _function
+               00617 ;       .line   654; "stepmotor2.c"     break;
+0129 2800      00618         GOTO    _00316_DS_
+012A           00619 _00304_DS_
+               00620 ;       .line   658; "stepmotor2.c"     seekNotify = buffer[1];
+012A 0000 0000 00621         BANKSEL _buffer
+012C 0800      00622         MOVF    (_buffer + 1),W
+012D 0000 0000 00623         BANKSEL _seekNotify
+012F 0080      00624         MOVWF   _seekNotify
+               00625 ;       .line   659; "stepmotor2.c"     break;
+0130 2800      00626         GOTO    _00316_DS_
+0131           00627 _00305_DS_
+               00628 ;       .line   663; "stepmotor2.c"     sync_mode = buffer[1];
+0131 0000 0000 00629         BANKSEL _buffer
+0133 0800      00630         MOVF    (_buffer + 1),W
+0134 0000 0000 00631         BANKSEL _sync_mode
+0136 0080      00632         MOVWF   _sync_mode
+               00633 ;       .line   664; "stepmotor2.c"     break;
+0137 2800      00634         GOTO    _00316_DS_
+0138           00635 _00306_DS_
+               00636 ;       .line   668; "stepmotor2.c"     function = func_findmin;
+0138 3005      00637         MOVLW   0x05
+0139 0000 0000 00638         BANKSEL _function
+013B 0080      00639         MOVWF   _function
+               00640 ;       .line   669; "stepmotor2.c"     setTimer(buffer[1]);
+013C 0000 0000 00641         BANKSEL _buffer
+013E 0800      00642         MOVF    (_buffer + 1),W
+013F 0000 0000 00643         BANKSEL r0x1011
+0141 0080      00644         MOVWF   r0x1011
+0142 2000      00645         CALL    _setTimer
+gpasm-0.13.4 beta               stepmotorz-stepmotor2.asm6-13-2008  14:34:03          PAGE 13
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+               00646 ;       .line   670; "stepmotor2.c"     break;
+0143 2800      00647         GOTO    _00316_DS_
+0144           00648 _00307_DS_
+               00649 ;       .line   674; "stepmotor2.c"     sendReply();
+0144 0000      00650         PAGESEL _sendReply
+0145 2000      00651         CALL    _sendReply
+0146 0000      00652         PAGESEL $
+               00653 ;       .line   675; "stepmotor2.c"     sendDataByte(CMD_GETRANGE);
+0147 300A      00654         MOVLW   0x0a
+0148 0000      00655         PAGESEL _sendDataByte
+0149 2000      00656         CALL    _sendDataByte
+014A 0000      00657         PAGESEL $
+               00658 ;       .line   676; "stepmotor2.c"     sendDataByte(maxPosition.bytes[0]);
+014B 0000 0000 00659         BANKSEL _maxPosition
+014D 0800      00660         MOVF    (_maxPosition + 0),W
+014E 0000 0000 00661         BANKSEL r0x1011
+0150 0080      00662         MOVWF   r0x1011
+0151 0000      00663         PAGESEL _sendDataByte
+0152 2000      00664         CALL    _sendDataByte
+0153 0000      00665         PAGESEL $
+               00666 ;       .line   677; "stepmotor2.c"     sendDataByte(maxPosition.bytes[1]);
+0154 0000 0000 00667         BANKSEL _maxPosition
+0156 0800      00668         MOVF    (_maxPosition + 1),W
+0157 0000 0000 00669         BANKSEL r0x1011
+0159 0080      00670         MOVWF   r0x1011
+015A 0000      00671         PAGESEL _sendDataByte
+015B 2000      00672         CALL    _sendDataByte
+015C 0000      00673         PAGESEL $
+               00674 ;       .line   678; "stepmotor2.c"     endMessage();
+015D 0000      00675         PAGESEL _endMessage
+015E 2000      00676         CALL    _endMessage
+015F 0000      00677         PAGESEL $
+               00678 ;       .line   679; "stepmotor2.c"     break;
+0160 2800      00679         GOTO    _00316_DS_
+0161           00680 _00308_DS_
+               00681 ;       .line   686; "stepmotor2.c"     seekPosition.bytes[0] = buffer[2];
+0161 0000 0000 00682         BANKSEL _buffer
+0163 0800      00683         MOVF    (_buffer + 2),W
+0164 0000 0000 00684         BANKSEL r0x1011
+0166 0080      00685         MOVWF   r0x1011
+0167 0000 0000 00686         BANKSEL _seekPosition
+0169 0080      00687         MOVWF   (_seekPosition + 0)
+               00688 ;       .line   687; "stepmotor2.c"     seekPosition.bytes[1] = buffer[3];
+016A 0000 0000 00689         BANKSEL _buffer
+016C 0800      00690         MOVF    (_buffer + 3),W
+016D 0000 0000 00691         BANKSEL r0x1011
+016F 0080      00692         MOVWF   r0x1011
+0170 0000 0000 00693         BANKSEL _seekPosition
+0172 0080      00694         MOVWF   (_seekPosition + 1)
+               00695 ;       .line   688; "stepmotor2.c"     dda_deltay.bytes[0] = buffer[4];
+0173 0000 0000 00696         BANKSEL _buffer
+0175 0800      00697         MOVF    (_buffer + 4),W
+0176 0000 0000 00698         BANKSEL r0x1011
+0178 0080      00699         MOVWF   r0x1011
+gpasm-0.13.4 beta               stepmotorz-stepmotor2.asm6-13-2008  14:34:03          PAGE 14
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+0179 0000 0000 00700         BANKSEL _dda_deltay
+017B 0080      00701         MOVWF   (_dda_deltay + 0)
+               00702 ;       .line   689; "stepmotor2.c"     dda_deltay.bytes[1] = buffer[5];
+017C 0000 0000 00703         BANKSEL _buffer
+017E 0800      00704         MOVF    (_buffer + 5),W
+017F 0000 0000 00705         BANKSEL r0x1011
+0181 0080      00706         MOVWF   r0x1011
+0182 0000 0000 00707         BANKSEL _dda_deltay
+0184 0080      00708         MOVWF   (_dda_deltay + 1)
+               00709 ;       .line   690; "stepmotor2.c"     dda_error = 0;
+0185 0000 0000 00710         BANKSEL _dda_error
+0187 0180      00711         CLRF    _dda_error
+0188 0180      00712         CLRF    (_dda_error + 1)
+               00713 ;       .line   692; "stepmotor2.c"     dda_deltax = seekPosition.ival - currentPosition.ival;
+0189 0000 0000 00714         BANKSEL _seekPosition
+018B 0800      00715         MOVF    (_seekPosition + 0),W
+018C 0000 0000 00716         BANKSEL r0x1011
+018E 0080      00717         MOVWF   r0x1011
+               00718 ;;101   MOVF    (_seekPosition + 1),W
+               00719 ;;99    MOVWF   r0x1012
+               00720 ;;120   MOVF    (_currentPosition + 0),W
+               00721 ;;118   MOVWF   r0x1013
+               00722 ;;111   MOVF    (_currentPosition + 1),W
+               00723 ;;119   MOVF    r0x1013,W
+018F 0000 0000 00724         BANKSEL _currentPosition
+0191 0800      00725         MOVF    (_currentPosition + 0),W
+0192 0000 0000 00726         BANKSEL r0x1011
+0194 0200      00727         SUBWF   r0x1011,W
+0195 0000 0000 00728         BANKSEL _dda_deltax
+0197 0080      00729         MOVWF   _dda_deltax
+               00730 ;;100   MOVF    r0x1012,W
+0198 0000 0000 00731         BANKSEL _seekPosition
+019A 0800      00732         MOVF    (_seekPosition + 1),W
+019B 0000 0000 00733         BANKSEL _dda_deltax
+019D 0080      00734         MOVWF   (_dda_deltax + 1)
+               00735 ;;110   MOVF    r0x1014,W
+019E 0000 0000 00736         BANKSEL _currentPosition
+01A0 0800      00737         MOVF    (_currentPosition + 1),W
+01A1 0000 0000 00738         BANKSEL r0x1014
+01A3 0080      00739         MOVWF   r0x1014
+01A4 1C03      00740         BTFSS   STATUS,0
+01A5 0A00      00741         INCF    r0x1014,W
+01A6 1903      00742         BTFSC   STATUS,2
+01A7 2800      00743         GOTO    _00001_DS_
+01A8 0000 0000 00744         BANKSEL _dda_deltax
+01AA 0280      00745         SUBWF   (_dda_deltax + 1),F
+               00746 ;signed compare: left < lit(0x0=0), size=2, mask=ffff
+01AB           00747 _00001_DS_
+               00748 ;       .line   693; "stepmotor2.c"     if (dda_deltax < 0) dda_deltax = -dda_deltax;
+01AB 1403      00749         BSF     STATUS,0
+01AC 0000 0000 00750         BANKSEL (_dda_deltax + 1)
+01AE 1F80      00751         BTFSS   (_dda_deltax + 1),7
+01AF 1003      00752         BCF     STATUS,0
+01B0 1C03      00753         BTFSS   STATUS,0
+gpasm-0.13.4 beta               stepmotorz-stepmotor2.asm6-13-2008  14:34:03          PAGE 15
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+01B1 2800      00754         GOTO    _00310_DS_
+               00755 ;genSkipc:3694: created from rifx:0xbf8c33d0
+01B2 0980      00756         COMF    _dda_deltax,F
+01B3 0980      00757         COMF    (_dda_deltax + 1),F
+01B4 0A80      00758         INCF    _dda_deltax,F
+01B5 1903      00759         BTFSC   STATUS,2
+01B6 0A80      00760         INCF    (_dda_deltax + 1),F
+01B7           00761 _00310_DS_
+               00762 ;       .line   695; "stepmotor2.c"     function = func_ddamaster;
+01B7 3007      00763         MOVLW   0x07
+01B8 0000 0000 00764         BANKSEL _function
+01BA 0080      00765         MOVWF   _function
+               00766 ;       .line   696; "stepmotor2.c"     setTimer(buffer[1]);
+01BB 0000 0000 00767         BANKSEL _buffer
+01BD 0800      00768         MOVF    (_buffer + 1),W
+01BE 0000 0000 00769         BANKSEL r0x1011
+01C0 0080      00770         MOVWF   r0x1011
+01C1 2000      00771         CALL    _setTimer
+               00772 ;       .line   697; "stepmotor2.c"     break;
+01C2 2800      00773         GOTO    _00316_DS_
+01C3           00774 _00311_DS_
+               00775 ;       .line   700; "stepmotor2.c"     forward1();
+01C3 2000      00776         CALL    _forward1
+               00777 ;       .line   701; "stepmotor2.c"     break;
+01C4 2800      00778         GOTO    _00316_DS_
+01C5           00779 _00312_DS_
+               00780 ;       .line   704; "stepmotor2.c"     reverse1();
+01C5 2000      00781         CALL    _reverse1
+               00782 ;       .line   705; "stepmotor2.c"     break;
+01C6 2800      00783         GOTO    _00316_DS_
+01C7           00784 _00313_DS_
+               00785 ;       .line   711; "stepmotor2.c"     setPower(buffer[1]);
+01C7 0000 0000 00786         BANKSEL _buffer
+01C9 0800      00787         MOVF    (_buffer + 1),W
+01CA 0000 0000 00788         BANKSEL r0x1011
+01CC 0080      00789         MOVWF   r0x1011
+01CD 2000      00790         CALL    _setPower
+               00791 ;       .line   712; "stepmotor2.c"     break;
+01CE 2800      00792         GOTO    _00316_DS_
+01CF           00793 _00314_DS_
+               00794 ;       .line   715; "stepmotor2.c"     sendReply();
+01CF 0000      00795         PAGESEL _sendReply
+01D0 2000      00796         CALL    _sendReply
+01D1 0000      00797         PAGESEL $
+               00798 ;       .line   716; "stepmotor2.c"     sendDataByte(CMD_GETSENSOR);
+01D2 300F      00799         MOVLW   0x0f
+01D3 0000      00800         PAGESEL _sendDataByte
+01D4 2000      00801         CALL    _sendDataByte
+01D5 0000      00802         PAGESEL $
+               00803 ;       .line   717; "stepmotor2.c"     sendDataByte(PORTA);
+01D6 0000 0000 00804         BANKSEL _PORTA
+01D8 0800      00805         MOVF    _PORTA,W
+01D9 0000      00806         PAGESEL _sendDataByte
+01DA 2000      00807         CALL    _sendDataByte
+gpasm-0.13.4 beta               stepmotorz-stepmotor2.asm6-13-2008  14:34:03          PAGE 16
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+01DB 0000      00808         PAGESEL $
+               00809 ;       .line   718; "stepmotor2.c"     sendDataByte(PORTB);
+01DC 0000 0000 00810         BANKSEL _PORTB
+01DE 0800      00811         MOVF    _PORTB,W
+01DF 0000      00812         PAGESEL _sendDataByte
+01E0 2000      00813         CALL    _sendDataByte
+01E1 0000      00814         PAGESEL $
+               00815 ;       .line   719; "stepmotor2.c"     endMessage();
+01E2 0000      00816         PAGESEL _endMessage
+01E3 2000      00817         CALL    _endMessage
+01E4 0000      00818         PAGESEL $
+               00819 ;       .line   720; "stepmotor2.c"     break;
+01E5 2800      00820         GOTO    _00316_DS_
+01E6           00821 _00315_DS_
+               00822 ;       .line   724; "stepmotor2.c"     function = func_homereset;
+01E6 3008      00823         MOVLW   0x08
+01E7 0000 0000 00824         BANKSEL _function
+01E9 0080      00825         MOVWF   _function
+               00826 ;       .line   725; "stepmotor2.c"     setTimer(buffer[1]);
+01EA 0000 0000 00827         BANKSEL _buffer
+01EC 0800      00828         MOVF    (_buffer + 1),W
+01ED 0000 0000 00829         BANKSEL r0x1011
+01EF 0080      00830         MOVWF   r0x1011
+01F0 2000      00831         CALL    _setTimer
+01F1           00832 _00316_DS_
+01F1 0000 0000 00833         BANKSEL _coilPosition
+01F3 0008      00834         RETURN  
+               00835 ; exit point of _processCommand
+               00836 
+               00837 ;***
+               00838 ;  pBlock Stats: dbName = C
+               00839 ;***
+               00840 ;entry:  _setPower      ;Function start
+               00841 ; 2 exit points
+               00842 ;has an exit
+               00843 ;2 compiler assigned registers:
+               00844 ;   r0x101C
+               00845 ;   r0x1016
+               00846 ;; Starting pCode block
+01F4           00847 _setPower       ;Function start
+               00848 ; 2 exit points
+               00849 ;       .line   564; "stepmotor2.c"     void setPower(byte p)
+01F4 0000 0000 00850         BANKSEL r0x101C
+01F6 0080      00851         MOVWF   r0x101C
+               00852 ;shiftRight_Left2ResultLit:6973: shCount=1, size=1, sign=0, same=0, offr=0
+               00853 ;       .line   569; "stepmotor2.c"     CCPR1L = p >> 2;
+01F7 1003      00854         BCF     STATUS,0
+01F8 0C00      00855         RRF     r0x101C,W
+01F9 0000 0000 00856         BANKSEL _CCPR1L
+01FB 0080      00857         MOVWF   _CCPR1L
+               00858 ;shiftRight_Left2ResultLit:6973: shCount=1, size=1, sign=0, same=1, offr=0
+01FC 1003      00859         BCF     STATUS,0
+01FD 0C80      00860         RRF     _CCPR1L,F
+               00861 ;       .line   570; "stepmotor2.c"     PR2 = 16;  // The maximum range
+gpasm-0.13.4 beta               stepmotorz-stepmotor2.asm6-13-2008  14:34:03          PAGE 17
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+01FE 3010      00862         MOVLW   0x10
+01FF 0000 0000 00863         BANKSEL _PR2
+0201 0080      00864         MOVWF   _PR2
+               00865 ;       .line   572; "stepmotor2.c"     CCP1CON = BIN(1100) | ((p & BIN(11)) << 4);
+0202 3003      00866         MOVLW   0x03
+0203 0000 0000 00867         BANKSEL r0x101C
+0205 0580      00868         ANDWF   r0x101C,F
+0206 0E00      00869         SWAPF   r0x101C,W
+0207 39F0      00870         ANDLW   0xf0
+0208 0080      00871         MOVWF   r0x1016
+0209 300C      00872         MOVLW   0x0c
+020A 0400      00873         IORWF   r0x1016,W
+020B 0000 0000 00874         BANKSEL _CCP1CON
+020D 0080      00875         MOVWF   _CCP1CON
+020E 0008      00876         RETURN  
+               00877 ; exit point of _setPower
+               00878 
+               00879 ;***
+               00880 ;  pBlock Stats: dbName = C
+               00881 ;***
+               00882 ;entry:  _syncStrobe    ;Function start
+               00883 ; 2 exit points
+               00884 ;has an exit
+               00885 ;functions called:
+               00886 ;   _forward1
+               00887 ;   _reverse1
+               00888 ;   _forward1
+               00889 ;   _reverse1
+               00890 ;; Starting pCode block
+020F           00891 _syncStrobe     ;Function start
+               00892 ; 2 exit points
+               00893 ;swapping arguments (AOP_TYPEs 1/3)
+               00894 ;unsigned compare: left >= lit(0x4=4), size=1
+               00895 ;       .line   546; "stepmotor2.c"     switch(sync_mode) {
+020F 3004      00896         MOVLW   0x04
+0210 0000 0000 00897         BANKSEL _sync_mode
+0212 0200      00898         SUBWF   _sync_mode,W
+0213 1803      00899         BTFSC   STATUS,0
+0214 2800      00900         GOTO    _00270_DS_
+               00901 ;genSkipc:3694: created from rifx:0xbf8c33d0
+0215 3000      00902         MOVLW   HIGH(_00274_DS_)
+0216 008A      00903         MOVWF   PCLATH
+0217 3000      00904         MOVLW   _00274_DS_
+0218 0700      00905         ADDWF   _sync_mode,W
+0219 1803      00906         BTFSC   STATUS,0
+021A 0A8A      00907         INCF    PCLATH,F
+021B 1283 1303 00908         BANKSEL PCL
+021D 0082      00909         MOVWF   PCL
+021E           00910 _00274_DS_
+021E 2800      00911         GOTO    _00263_DS_
+021F 2800      00912         GOTO    _00264_DS_
+0220 2800      00913         GOTO    _00267_DS_
+0221 2800      00914         GOTO    _00268_DS_
+0222           00915 _00263_DS_
+gpasm-0.13.4 beta               stepmotorz-stepmotor2.asm6-13-2008  14:34:03          PAGE 18
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+               00916 ;       .line   548; "stepmotor2.c"     break;
+0222 2800      00917         GOTO    _00270_DS_
+0223           00918 _00264_DS_
+               00919 ;       .line   550; "stepmotor2.c"     if (function = func_syncwait) {
+0223 3003      00920         MOVLW   0x03
+0224 0000 0000 00921         BANKSEL _function
+0226 0080      00922         MOVWF   _function
+               00923 ;       .line   551; "stepmotor2.c"     sync_mode = sync_none;
+0227 0000 0000 00924         BANKSEL _sync_mode
+0229 0180      00925         CLRF    _sync_mode
+               00926 ;       .line   552; "stepmotor2.c"     function = func_seek;
+022A 3004      00927         MOVLW   0x04
+022B 0000 0000 00928         BANKSEL _function
+022D 0080      00929         MOVWF   _function
+               00930 ;       .line   554; "stepmotor2.c"     break;
+022E 2800      00931         GOTO    _00270_DS_
+022F           00932 _00267_DS_
+               00933 ;       .line   556; "stepmotor2.c"     forward1();
+022F 2000      00934         CALL    _forward1
+               00935 ;       .line   557; "stepmotor2.c"     break;
+0230 2800      00936         GOTO    _00270_DS_
+0231           00937 _00268_DS_
+               00938 ;       .line   559; "stepmotor2.c"     reverse1();
+0231 2000      00939         CALL    _reverse1
+0232           00940 _00270_DS_
+               00941 ;       .line   561; "stepmotor2.c"     }
+0232 0008      00942         RETURN  
+               00943 ; exit point of _syncStrobe
+               00944 
+               00945 ;***
+               00946 ;  pBlock Stats: dbName = C
+               00947 ;***
+               00948 ;entry:  _timerTick     ;Function start
+               00949 ; 2 exit points
+               00950 ;has an exit
+               00951 ;functions called:
+               00952 ;   _LEDon
+               00953 ;   _forward1
+               00954 ;   _reverse1
+               00955 ;   _forward1
+               00956 ;   _reverse1
+               00957 ;   _LEDon
+               00958 ;   _sendMessageISR
+               00959 ;   _sendDataByteISR
+               00960 ;   _sendDataByteISR
+               00961 ;   _sendDataByteISR
+               00962 ;   _endMessageISR
+               00963 ;   _reverse1
+               00964 ;   _forward1
+               00965 ;   _sendMessageISR
+               00966 ;   _sendDataByteISR
+               00967 ;   _sendDataByteISR
+               00968 ;   _sendDataByteISR
+               00969 ;   _endMessageISR
+gpasm-0.13.4 beta               stepmotorz-stepmotor2.asm6-13-2008  14:34:03          PAGE 19
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+               00970 ;   _dda_step
+               00971 ;   _reverse1
+               00972 ;   _sendMessageISR
+               00973 ;   _sendDataByteISR
+               00974 ;   _endMessageISR
+               00975 ;   _setTimer
+               00976 ;   _LEDon
+               00977 ;   _forward1
+               00978 ;   _reverse1
+               00979 ;   _forward1
+               00980 ;   _reverse1
+               00981 ;   _LEDon
+               00982 ;   _sendMessageISR
+               00983 ;   _sendDataByteISR
+               00984 ;   _sendDataByteISR
+               00985 ;   _sendDataByteISR
+               00986 ;   _endMessageISR
+               00987 ;   _reverse1
+               00988 ;   _forward1
+               00989 ;   _sendMessageISR
+               00990 ;   _sendDataByteISR
+               00991 ;   _sendDataByteISR
+               00992 ;   _sendDataByteISR
+               00993 ;   _endMessageISR
+               00994 ;   _dda_step
+               00995 ;   _reverse1
+               00996 ;   _sendMessageISR
+               00997 ;   _sendDataByteISR
+               00998 ;   _endMessageISR
+               00999 ;   _setTimer
+               01000 ;5 compiler assigned registers:
+               01001 ;   r0x1021
+               01002 ;   r0x1019
+               01003 ;   r0x101A
+               01004 ;   r0x101B
+               01005 ;   r0x101C
+               01006 ;; Starting pCode block
+0233           01007 _timerTick      ;Function start
+               01008 ; 2 exit points
+               01009 ;       .line   447; "stepmotor2.c"     switch(function) {
+0233 0000 0000 01010         BANKSEL _function
+0235 0800      01011         MOVF    _function,W
+0236 0000 0000 01012         BANKSEL r0x1021
+0238 0080      01013         MOVWF   r0x1021
+               01014 ;swapping arguments (AOP_TYPEs 1/2)
+               01015 ;unsigned compare: left >= lit(0x9=9), size=1
+0239 3009      01016         MOVLW   0x09
+023A 0200      01017         SUBWF   r0x1021,W
+023B 1803      01018         BTFSC   STATUS,0
+023C 2800      01019         GOTO    _00234_DS_
+               01020 ;genSkipc:3694: created from rifx:0xbf8c33d0
+023D 3000      01021         MOVLW   HIGH(_00253_DS_)
+023E 008A      01022         MOVWF   PCLATH
+023F 3000      01023         MOVLW   _00253_DS_
+gpasm-0.13.4 beta               stepmotorz-stepmotor2.asm6-13-2008  14:34:03          PAGE 20
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+0240 0700      01024         ADDWF   r0x1021,W
+0241 1803      01025         BTFSC   STATUS,0
+0242 0A8A      01026         INCF    PCLATH,F
+0243 1283 1303 01027         BANKSEL PCL
+0245 0082      01028         MOVWF   PCL
+0246           01029 _00253_DS_
+0246 2800      01030         GOTO    _00192_DS_
+0247 2800      01031         GOTO    _00193_DS_
+0248 2800      01032         GOTO    _00194_DS_
+0249 2800      01033         GOTO    _00222_DS_
+024A 2800      01034         GOTO    _00195_DS_
+024B 2800      01035         GOTO    _00208_DS_
+024C 2800      01036         GOTO    _00212_DS_
+024D 2800      01037         GOTO    _00223_DS_
+024E 2800      01038         GOTO    _00224_DS_
+024F           01039 _00192_DS_
+               01040 ;       .line   449; "stepmotor2.c"     TMR1ON = 0;
+024F 0000 0000 01041         BANKSEL _T1CON_bits
+0251 1000      01042         BCF     _T1CON_bits,0
+               01043 ;       .line   450; "stepmotor2.c"     speed = 0;
+0252 0000 0000 01044         BANKSEL _speed
+0254 0180      01045         CLRF    _speed
+               01046 ;       .line   451; "stepmotor2.c"     LEDon();
+0255 0000      01047         PAGESEL _LEDon
+0256 2000      01048         CALL    _LEDon
+0257 0000      01049         PAGESEL $
+               01050 ;       .line   452; "stepmotor2.c"     break;
+0258 2800      01051         GOTO    _00234_DS_
+0259           01052 _00193_DS_
+               01053 ;       .line   454; "stepmotor2.c"     forward1();
+0259 2000      01054         CALL    _forward1
+               01055 ;       .line   455; "stepmotor2.c"     break;
+025A 2800      01056         GOTO    _00234_DS_
+025B           01057 _00194_DS_
+               01058 ;       .line   457; "stepmotor2.c"     reverse1();
+025B 2000      01059         CALL    _reverse1
+               01060 ;       .line   458; "stepmotor2.c"     break;
+025C 2800      01061         GOTO    _00234_DS_
+025D           01062 _00195_DS_
+               01063 ;       .line   460; "stepmotor2.c"     if (currentPosition.ival < seekPosition.ival) {
+025D 0000 0000 01064         BANKSEL _currentPosition
+025F 0800      01065         MOVF    (_currentPosition + 0),W
+0260 0000 0000 01066         BANKSEL r0x1021
+0262 0080      01067         MOVWF   r0x1021
+               01068 ;;117   MOVF    (_currentPosition + 1),W
+0263 0000 0000 01069         BANKSEL _seekPosition
+0265 0800      01070         MOVF    (_seekPosition + 0),W
+0266 0000 0000 01071         BANKSEL r0x101A
+0268 0080      01072         MOVWF   r0x101A
+               01073 ;;109   MOVF    (_seekPosition + 1),W
+               01074 ;;116   MOVF    r0x1019,W
+0269 0000 0000 01075         BANKSEL _currentPosition
+026B 0800      01076         MOVF    (_currentPosition + 1),W
+026C 0000 0000 01077         BANKSEL r0x1019
+gpasm-0.13.4 beta               stepmotorz-stepmotor2.asm6-13-2008  14:34:03          PAGE 21
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+026E 0080      01078         MOVWF   r0x1019
+026F 3E80      01079         ADDLW   0x80
+0270 0080      01080         MOVWF   r0x101C
+               01081 ;;108   MOVF    r0x101B,W
+0271 0000 0000 01082         BANKSEL _seekPosition
+0273 0800      01083         MOVF    (_seekPosition + 1),W
+0274 0000 0000 01084         BANKSEL r0x101B
+0276 0080      01085         MOVWF   r0x101B
+0277 3E80      01086         ADDLW   0x80
+0278 0200      01087         SUBWF   r0x101C,W
+0279 1D03      01088         BTFSS   STATUS,2
+027A 2800      01089         GOTO    _00254_DS_
+027B 0800      01090         MOVF    r0x101A,W
+027C 0200      01091         SUBWF   r0x1021,W
+027D           01092 _00254_DS_
+027D 1803      01093         BTFSC   STATUS,0
+027E 2800      01094         GOTO    _00200_DS_
+               01095 ;genSkipc:3694: created from rifx:0xbf8c33d0
+               01096 ;       .line   461; "stepmotor2.c"     forward1();
+027F 2000      01097         CALL    _forward1
+0280 2800      01098         GOTO    _00201_DS_
+0281           01099 _00200_DS_
+               01100 ;       .line   462; "stepmotor2.c"     } else if (currentPosition.ival > seekPosition.ival) {
+0281 0000 0000 01101         BANKSEL _currentPosition
+0283 0800      01102         MOVF    (_currentPosition + 0),W
+0284 0000 0000 01103         BANKSEL r0x1021
+0286 0080      01104         MOVWF   r0x1021
+               01105 ;;107   MOVF    (_currentPosition + 1),W
+0287 0000 0000 01106         BANKSEL _seekPosition
+0289 0800      01107         MOVF    (_seekPosition + 0),W
+028A 0000 0000 01108         BANKSEL r0x101A
+028C 0080      01109         MOVWF   r0x101A
+028D 0000 0000 01110         BANKSEL _seekPosition
+028F 0800      01111         MOVF    (_seekPosition + 1),W
+0290 0000 0000 01112         BANKSEL r0x101B
+0292 0080      01113         MOVWF   r0x101B
+0293 3E80      01114         ADDLW   0x80
+0294 0080      01115         MOVWF   r0x101C
+               01116 ;;106   MOVF    r0x1019,W
+0295 0000 0000 01117         BANKSEL _currentPosition
+0297 0800      01118         MOVF    (_currentPosition + 1),W
+0298 0000 0000 01119         BANKSEL r0x1019
+029A 0080      01120         MOVWF   r0x1019
+029B 3E80      01121         ADDLW   0x80
+029C 0200      01122         SUBWF   r0x101C,W
+029D 1D03      01123         BTFSS   STATUS,2
+029E 2800      01124         GOTO    _00255_DS_
+029F 0800      01125         MOVF    r0x1021,W
+02A0 0200      01126         SUBWF   r0x101A,W
+02A1           01127 _00255_DS_
+02A1 1803      01128         BTFSC   STATUS,0
+02A2 2800      01129         GOTO    _00197_DS_
+               01130 ;genSkipc:3694: created from rifx:0xbf8c33d0
+               01131 ;       .line   463; "stepmotor2.c"     reverse1();
+gpasm-0.13.4 beta               stepmotorz-stepmotor2.asm6-13-2008  14:34:03          PAGE 22
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+02A3 2000      01132         CALL    _reverse1
+02A4 2800      01133         GOTO    _00201_DS_
+02A5           01134 _00197_DS_
+               01135 ;       .line   466; "stepmotor2.c"     LEDon();
+02A5 0000      01136         PAGESEL _LEDon
+02A6 2000      01137         CALL    _LEDon
+02A7 0000      01138         PAGESEL $
+               01139 ;       .line   469; "stepmotor2.c"     function=func_idle;
+02A8 0000 0000 01140         BANKSEL _function
+02AA 0180      01141         CLRF    _function
+02AB           01142 _00201_DS_
+               01143 ;       .line   471; "stepmotor2.c"     if (function == func_idle && seekNotify != 255) {
+02AB 3000      01144         MOVLW   0x00
+02AC 0000 0000 01145         BANKSEL _function
+02AE 0400      01146         IORWF   _function,W
+02AF 1D03      01147         BTFSS   STATUS,2
+02B0 2800      01148         GOTO    _00234_DS_
+02B1 0000 0000 01149         BANKSEL _seekNotify
+02B3 0800      01150         MOVF    _seekNotify,W
+               01151 ;       .line   472; "stepmotor2.c"     if (sendMessageISR(seekNotify)) {
+02B4 3AFF      01152         XORLW   0xff
+02B5 1903      01153         BTFSC   STATUS,2
+02B6 2800      01154         GOTO    _00234_DS_
+02B7 0800      01155         MOVF    _seekNotify,W
+02B8 0000      01156         PAGESEL _sendMessageISR
+02B9 2000      01157         CALL    _sendMessageISR
+02BA 0000      01158         PAGESEL $
+02BB 0000 0000 01159         BANKSEL r0x1021
+02BD 0080      01160         MOVWF   r0x1021
+02BE 0800      01161         MOVF    r0x1021,W
+02BF 1903      01162         BTFSC   STATUS,2
+02C0 2800      01163         GOTO    _00203_DS_
+               01164 ;       .line   473; "stepmotor2.c"     sendDataByteISR(CMD_SEEK);
+02C1 3005      01165         MOVLW   0x05
+02C2 0000      01166         PAGESEL _sendDataByteISR
+02C3 2000      01167         CALL    _sendDataByteISR
+02C4 0000      01168         PAGESEL $
+               01169 ;       .line   474; "stepmotor2.c"     sendDataByteISR(currentPosition.bytes[0]);
+02C5 0000 0000 01170         BANKSEL _currentPosition
+02C7 0800      01171         MOVF    (_currentPosition + 0),W
+02C8 0000 0000 01172         BANKSEL r0x1021
+02CA 0080      01173         MOVWF   r0x1021
+02CB 0000      01174         PAGESEL _sendDataByteISR
+02CC 2000      01175         CALL    _sendDataByteISR
+02CD 0000      01176         PAGESEL $
+               01177 ;       .line   475; "stepmotor2.c"     sendDataByteISR(currentPosition.bytes[1]);
+02CE 0000 0000 01178         BANKSEL _currentPosition
+02D0 0800      01179         MOVF    (_currentPosition + 1),W
+02D1 0000 0000 01180         BANKSEL r0x1021
+02D3 0080      01181         MOVWF   r0x1021
+02D4 0000      01182         PAGESEL _sendDataByteISR
+02D5 2000      01183         CALL    _sendDataByteISR
+02D6 0000      01184         PAGESEL $
+               01185 ;       .line   476; "stepmotor2.c"     endMessageISR();
+gpasm-0.13.4 beta               stepmotorz-stepmotor2.asm6-13-2008  14:34:03          PAGE 23
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+02D7 0000      01186         PAGESEL _endMessageISR
+02D8 2000      01187         CALL    _endMessageISR
+02D9 0000      01188         PAGESEL $
+02DA 2800      01189         GOTO    _00234_DS_
+02DB           01190 _00203_DS_
+               01191 ;       .line   479; "stepmotor2.c"     function=func_seek;
+02DB 3004      01192         MOVLW   0x04
+02DC 0000 0000 01193         BANKSEL _function
+02DE 0080      01194         MOVWF   _function
+               01195 ;       .line   482; "stepmotor2.c"     break;
+02DF 2800      01196         GOTO    _00234_DS_
+02E0           01197 _00208_DS_
+               01198 ;       .line   484; "stepmotor2.c"     if (MINSENSOR) {
+02E0 0000 0000 01199         BANKSEL _PORTB_bits
+02E2 1C00      01200         BTFSS   _PORTB_bits,0
+02E3 2800      01201         GOTO    _00210_DS_
+               01202 ;gen.c:9306: size=0/1, offset=0, AOP_TYPE(res)=13
+               01203 ;       .line   485; "stepmotor2.c"     currentPosition.bytes[0] = 0;
+02E4 0000 0000 01204         BANKSEL _currentPosition
+02E6 0180      01205         CLRF    (_currentPosition + 0)
+               01206 ;gen.c:9306: size=0/1, offset=0, AOP_TYPE(res)=13
+               01207 ;       .line   486; "stepmotor2.c"     currentPosition.bytes[1] = 0;
+02E7 0180      01208         CLRF    (_currentPosition + 1)
+               01209 ;       .line   487; "stepmotor2.c"     function = func_findmax;
+02E8 3006      01210         MOVLW   0x06
+02E9 0000 0000 01211         BANKSEL _function
+02EB 0080      01212         MOVWF   _function
+02EC 2800      01213         GOTO    _00234_DS_
+02ED           01214 _00210_DS_
+               01215 ;       .line   489; "stepmotor2.c"     reverse1();
+02ED 2000      01216         CALL    _reverse1
+               01217 ;       .line   491; "stepmotor2.c"     break;
+02EE 2800      01218         GOTO    _00234_DS_
+02EF           01219 _00212_DS_
+               01220 ;       .line   493; "stepmotor2.c"     if (MAXSENSOR) {
+02EF 0000 0000 01221         BANKSEL _PORTA_bits
+02F1 1E80      01222         BTFSS   _PORTA_bits,5
+02F2 2800      01223         GOTO    _00214_DS_
+               01224 ;       .line   494; "stepmotor2.c"     maxPosition.bytes[0] = currentPosition.bytes[0];
+02F3 0000 0000 01225         BANKSEL _currentPosition
+02F5 0800      01226         MOVF    (_currentPosition + 0),W
+02F6 0000 0000 01227         BANKSEL r0x1021
+02F8 0080      01228         MOVWF   r0x1021
+02F9 0000 0000 01229         BANKSEL _maxPosition
+02FB 0080      01230         MOVWF   (_maxPosition + 0)
+               01231 ;       .line   495; "stepmotor2.c"     maxPosition.bytes[1] = currentPosition.bytes[1];
+02FC 0000 0000 01232         BANKSEL _currentPosition
+02FE 0800      01233         MOVF    (_currentPosition + 1),W
+02FF 0000 0000 01234         BANKSEL r0x1021
+0301 0080      01235         MOVWF   r0x1021
+0302 0000 0000 01236         BANKSEL _maxPosition
+0304 0080      01237         MOVWF   (_maxPosition + 1)
+               01238 ;       .line   496; "stepmotor2.c"     function = func_idle;
+0305 0000 0000 01239         BANKSEL _function
+gpasm-0.13.4 beta               stepmotorz-stepmotor2.asm6-13-2008  14:34:03          PAGE 24
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+0307 0180      01240         CLRF    _function
+0308 2800      01241         GOTO    _00215_DS_
+0309           01242 _00214_DS_
+               01243 ;       .line   498; "stepmotor2.c"     forward1();
+0309 2000      01244         CALL    _forward1
+030A           01245 _00215_DS_
+               01246 ;       .line   500; "stepmotor2.c"     if (function == func_idle && seekNotify != 255) {
+030A 3000      01247         MOVLW   0x00
+030B 0000 0000 01248         BANKSEL _function
+030D 0400      01249         IORWF   _function,W
+030E 1D03      01250         BTFSS   STATUS,2
+030F 2800      01251         GOTO    _00234_DS_
+0310 0000 0000 01252         BANKSEL _seekNotify
+0312 0800      01253         MOVF    _seekNotify,W
+               01254 ;       .line   501; "stepmotor2.c"     if (sendMessageISR(seekNotify)) {
+0313 3AFF      01255         XORLW   0xff
+0314 1903      01256         BTFSC   STATUS,2
+0315 2800      01257         GOTO    _00234_DS_
+0316 0800      01258         MOVF    _seekNotify,W
+0317 0000      01259         PAGESEL _sendMessageISR
+0318 2000      01260         CALL    _sendMessageISR
+0319 0000      01261         PAGESEL $
+031A 0000 0000 01262         BANKSEL r0x1021
+031C 0080      01263         MOVWF   r0x1021
+031D 0800      01264         MOVF    r0x1021,W
+031E 1903      01265         BTFSC   STATUS,2
+031F 2800      01266         GOTO    _00217_DS_
+               01267 ;       .line   502; "stepmotor2.c"     sendDataByteISR(CMD_CALIBRATE);
+0320 3009      01268         MOVLW   0x09
+0321 0000      01269         PAGESEL _sendDataByteISR
+0322 2000      01270         CALL    _sendDataByteISR
+0323 0000      01271         PAGESEL $
+               01272 ;       .line   503; "stepmotor2.c"     sendDataByteISR(currentPosition.bytes[0]);
+0324 0000 0000 01273         BANKSEL _currentPosition
+0326 0800      01274         MOVF    (_currentPosition + 0),W
+0327 0000 0000 01275         BANKSEL r0x1021
+0329 0080      01276         MOVWF   r0x1021
+032A 0000      01277         PAGESEL _sendDataByteISR
+032B 2000      01278         CALL    _sendDataByteISR
+032C 0000      01279         PAGESEL $
+               01280 ;       .line   504; "stepmotor2.c"     sendDataByteISR(currentPosition.bytes[1]);
+032D 0000 0000 01281         BANKSEL _currentPosition
+032F 0800      01282         MOVF    (_currentPosition + 1),W
+0330 0000 0000 01283         BANKSEL r0x1021
+0332 0080      01284         MOVWF   r0x1021
+0333 0000      01285         PAGESEL _sendDataByteISR
+0334 2000      01286         CALL    _sendDataByteISR
+0335 0000      01287         PAGESEL $
+               01288 ;       .line   505; "stepmotor2.c"     endMessageISR();
+0336 0000      01289         PAGESEL _endMessageISR
+0337 2000      01290         CALL    _endMessageISR
+0338 0000      01291         PAGESEL $
+0339 2800      01292         GOTO    _00234_DS_
+033A           01293 _00217_DS_
+gpasm-0.13.4 beta               stepmotorz-stepmotor2.asm6-13-2008  14:34:03          PAGE 25
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+               01294 ;       .line   508; "stepmotor2.c"     function = func_findmax;
+033A 3006      01295         MOVLW   0x06
+033B 0000 0000 01296         BANKSEL _function
+033D 0080      01297         MOVWF   _function
+               01298 ;       .line   511; "stepmotor2.c"     break;
+033E 2800      01299         GOTO    _00234_DS_
+033F           01300 _00222_DS_
+               01301 ;       .line   514; "stepmotor2.c"     break;
+033F 2800      01302         GOTO    _00234_DS_
+0340           01303 _00223_DS_
+               01304 ;       .line   516; "stepmotor2.c"     dda_step();
+0340 2000      01305         CALL    _dda_step
+               01306 ;       .line   517; "stepmotor2.c"     break;
+0341 2800      01307         GOTO    _00234_DS_
+0342           01308 _00224_DS_
+               01309 ;       .line   519; "stepmotor2.c"     if (MINSENSOR) {
+0342 0000 0000 01310         BANKSEL _PORTB_bits
+0344 1C00      01311         BTFSS   _PORTB_bits,0
+0345 2800      01312         GOTO    _00226_DS_
+               01313 ;gen.c:9306: size=0/1, offset=0, AOP_TYPE(res)=13
+               01314 ;       .line   520; "stepmotor2.c"     currentPosition.bytes[0] = 0;
+0346 0000 0000 01315         BANKSEL _currentPosition
+0348 0180      01316         CLRF    (_currentPosition + 0)
+               01317 ;gen.c:9306: size=0/1, offset=0, AOP_TYPE(res)=13
+               01318 ;       .line   521; "stepmotor2.c"     currentPosition.bytes[1] = 0;
+0349 0180      01319         CLRF    (_currentPosition + 1)
+               01320 ;       .line   522; "stepmotor2.c"     function = func_idle;
+034A 0000 0000 01321         BANKSEL _function
+034C 0180      01322         CLRF    _function
+034D 2800      01323         GOTO    _00227_DS_
+034E           01324 _00226_DS_
+               01325 ;       .line   524; "stepmotor2.c"     reverse1();
+034E 2000      01326         CALL    _reverse1
+034F           01327 _00227_DS_
+               01328 ;       .line   526; "stepmotor2.c"     if (function == func_idle && seekNotify != 255) {
+034F 3000      01329         MOVLW   0x00
+0350 0000 0000 01330         BANKSEL _function
+0352 0400      01331         IORWF   _function,W
+0353 1D03      01332         BTFSS   STATUS,2
+0354 2800      01333         GOTO    _00234_DS_
+0355 0000 0000 01334         BANKSEL _seekNotify
+0357 0800      01335         MOVF    _seekNotify,W
+               01336 ;       .line   527; "stepmotor2.c"     if (sendMessageISR(seekNotify)) {
+0358 3AFF      01337         XORLW   0xff
+0359 1903      01338         BTFSC   STATUS,2
+035A 2800      01339         GOTO    _00234_DS_
+035B 0800      01340         MOVF    _seekNotify,W
+035C 0000      01341         PAGESEL _sendMessageISR
+035D 2000      01342         CALL    _sendMessageISR
+035E 0000      01343         PAGESEL $
+035F 0000 0000 01344         BANKSEL r0x1021
+0361 0080      01345         MOVWF   r0x1021
+0362 0800      01346         MOVF    r0x1021,W
+0363 1903      01347         BTFSC   STATUS,2
+gpasm-0.13.4 beta               stepmotorz-stepmotor2.asm6-13-2008  14:34:03          PAGE 26
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+0364 2800      01348         GOTO    _00229_DS_
+               01349 ;       .line   528; "stepmotor2.c"     sendDataByteISR(CMD_HOMERESET);
+0365 3010      01350         MOVLW   0x10
+0366 0000      01351         PAGESEL _sendDataByteISR
+0367 2000      01352         CALL    _sendDataByteISR
+0368 0000      01353         PAGESEL $
+               01354 ;       .line   529; "stepmotor2.c"     endMessageISR();
+0369 0000      01355         PAGESEL _endMessageISR
+036A 2000      01356         CALL    _endMessageISR
+036B 0000      01357         PAGESEL $
+036C 2800      01358         GOTO    _00234_DS_
+036D           01359 _00229_DS_
+               01360 ;       .line   532; "stepmotor2.c"     function = func_homereset;
+036D 3008      01361         MOVLW   0x08
+036E 0000 0000 01362         BANKSEL _function
+0370 0080      01363         MOVWF   _function
+0371           01364 _00234_DS_
+               01365 ;       .line   537; "stepmotor2.c"     setTimer(speed);
+0371 0000 0000 01366         BANKSEL _speed
+0373 0800      01367         MOVF    _speed,W
+0374 2000      01368         CALL    _setTimer
+0375 0000 0000 01369         BANKSEL _coilPosition
+0377 0008      01370         RETURN  
+               01371 ; exit point of _timerTick
+               01372 
+               01373 ;***
+               01374 ;  pBlock Stats: dbName = C
+               01375 ;***
+               01376 ;entry:  _dda_step      ;Function start
+               01377 ; 2 exit points
+               01378 ;has an exit
+               01379 ;functions called:
+               01380 ;   _forward1
+               01381 ;   _reverse1
+               01382 ;   _sendMessageISR
+               01383 ;   _sendDataByteISR
+               01384 ;   _sendDataByteISR
+               01385 ;   _sendDataByteISR
+               01386 ;   _endMessageISR
+               01387 ;   _strobe_sync
+               01388 ;   _forward1
+               01389 ;   _reverse1
+               01390 ;   _sendMessageISR
+               01391 ;   _sendDataByteISR
+               01392 ;   _sendDataByteISR
+               01393 ;   _sendDataByteISR
+               01394 ;   _endMessageISR
+               01395 ;   _strobe_sync
+               01396 ;5 compiler assigned registers:
+               01397 ;   r0x101D
+               01398 ;   r0x101E
+               01399 ;   r0x101F
+               01400 ;   r0x1020
+               01401 ;   r0x1021
+gpasm-0.13.4 beta               stepmotorz-stepmotor2.asm6-13-2008  14:34:03          PAGE 27
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+               01402 ;; Starting pCode block
+0378           01403 _dda_step       ;Function start
+               01404 ; 2 exit points
+               01405 ;       .line   413; "stepmotor2.c"     if (currentPosition.ival == seekPosition.ival) {
+0378 0000 0000 01406         BANKSEL _currentPosition
+037A 0800      01407         MOVF    (_currentPosition + 0),W
+037B 0000 0000 01408         BANKSEL r0x101D
+037D 0080      01409         MOVWF   r0x101D
+037E 0000 0000 01410         BANKSEL _currentPosition
+0380 0800      01411         MOVF    (_currentPosition + 1),W
+0381 0000 0000 01412         BANKSEL r0x101E
+0383 0080      01413         MOVWF   r0x101E
+0384 0000 0000 01414         BANKSEL _seekPosition
+0386 0800      01415         MOVF    (_seekPosition + 0),W
+0387 0000 0000 01416         BANKSEL r0x101F
+0389 0080      01417         MOVWF   r0x101F
+038A 0000 0000 01418         BANKSEL _seekPosition
+038C 0800      01419         MOVF    (_seekPosition + 1),W
+038D 0000 0000 01420         BANKSEL r0x1020
+038F 0080      01421         MOVWF   r0x1020
+0390 0800      01422         MOVF    r0x101F,W
+0391 0600      01423         XORWF   r0x101D,W
+0392 1D03      01424         BTFSS   STATUS,2
+0393 2800      01425         GOTO    _00163_DS_
+0394 0800      01426         MOVF    r0x1020,W
+0395 0600      01427         XORWF   r0x101E,W
+0396 1D03      01428         BTFSS   STATUS,2
+0397 2800      01429         GOTO    _00163_DS_
+               01430 ;       .line   414; "stepmotor2.c"     function = func_idle;
+0398 0000 0000 01431         BANKSEL _function
+039A 0180      01432         CLRF    _function
+039B 2800      01433         GOTO    _00164_DS_
+039C           01434 _00163_DS_
+               01435 ;       .line   415; "stepmotor2.c"     } else if (currentPosition.ival < seekPosition.ival) {
+039C 0000 0000 01436         BANKSEL _currentPosition
+039E 0800      01437         MOVF    (_currentPosition + 0),W
+039F 0000 0000 01438         BANKSEL r0x101D
+03A1 0080      01439         MOVWF   r0x101D
+               01440 ;;115   MOVF    (_currentPosition + 1),W
+03A2 0000 0000 01441         BANKSEL _seekPosition
+03A4 0800      01442         MOVF    (_seekPosition + 0),W
+03A5 0000 0000 01443         BANKSEL r0x101F
+03A7 0080      01444         MOVWF   r0x101F
+               01445 ;;105   MOVF    (_seekPosition + 1),W
+               01446 ;;114   MOVF    r0x101E,W
+03A8 0000 0000 01447         BANKSEL _currentPosition
+03AA 0800      01448         MOVF    (_currentPosition + 1),W
+03AB 0000 0000 01449         BANKSEL r0x101E
+03AD 0080      01450         MOVWF   r0x101E
+03AE 3E80      01451         ADDLW   0x80
+03AF 0080      01452         MOVWF   r0x1021
+               01453 ;;104   MOVF    r0x1020,W
+03B0 0000 0000 01454         BANKSEL _seekPosition
+03B2 0800      01455         MOVF    (_seekPosition + 1),W
+gpasm-0.13.4 beta               stepmotorz-stepmotor2.asm6-13-2008  14:34:03          PAGE 28
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+03B3 0000 0000 01456         BANKSEL r0x1020
+03B5 0080      01457         MOVWF   r0x1020
+03B6 3E80      01458         ADDLW   0x80
+03B7 0200      01459         SUBWF   r0x1021,W
+03B8 1D03      01460         BTFSS   STATUS,2
+03B9 2800      01461         GOTO    _00185_DS_
+03BA 0800      01462         MOVF    r0x101F,W
+03BB 0200      01463         SUBWF   r0x101D,W
+03BC           01464 _00185_DS_
+03BC 1803      01465         BTFSC   STATUS,0
+03BD 2800      01466         GOTO    _00160_DS_
+               01467 ;genSkipc:3694: created from rifx:0xbf8c33d0
+               01468 ;       .line   416; "stepmotor2.c"     forward1();
+03BE 2000      01469         CALL    _forward1
+03BF 2800      01470         GOTO    _00164_DS_
+03C0           01471 _00160_DS_
+               01472 ;       .line   418; "stepmotor2.c"     reverse1();
+03C0 2000      01473         CALL    _reverse1
+03C1           01474 _00164_DS_
+               01475 ;       .line   420; "stepmotor2.c"     if (function == func_idle && seekNotify != 255) {
+03C1 3000      01476         MOVLW   0x00
+03C2 0000 0000 01477         BANKSEL _function
+03C4 0400      01478         IORWF   _function,W
+03C5 1D03      01479         BTFSS   STATUS,2
+03C6 2800      01480         GOTO    _00173_DS_
+03C7 0000 0000 01481         BANKSEL _seekNotify
+03C9 0800      01482         MOVF    _seekNotify,W
+               01483 ;       .line   421; "stepmotor2.c"     if (sendMessageISR(seekNotify)) { 
+03CA 3AFF      01484         XORLW   0xff
+03CB 1903      01485         BTFSC   STATUS,2
+03CC 2800      01486         GOTO    _00173_DS_
+03CD 0800      01487         MOVF    _seekNotify,W
+03CE 0000      01488         PAGESEL _sendMessageISR
+03CF 2000      01489         CALL    _sendMessageISR
+03D0 0000      01490         PAGESEL $
+03D1 0000 0000 01491         BANKSEL r0x101D
+03D3 0080      01492         MOVWF   r0x101D
+03D4 0800      01493         MOVF    r0x101D,W
+03D5 1903      01494         BTFSC   STATUS,2
+03D6 2800      01495         GOTO    _00166_DS_
+               01496 ;       .line   422; "stepmotor2.c"     sendDataByteISR(CMD_DDA);
+03D7 300B      01497         MOVLW   0x0b
+03D8 0000      01498         PAGESEL _sendDataByteISR
+03D9 2000      01499         CALL    _sendDataByteISR
+03DA 0000      01500         PAGESEL $
+               01501 ;       .line   423; "stepmotor2.c"     sendDataByteISR(currentPosition.bytes[0]);
+03DB 0000 0000 01502         BANKSEL _currentPosition
+03DD 0800      01503         MOVF    (_currentPosition + 0),W
+03DE 0000 0000 01504         BANKSEL r0x101D
+03E0 0080      01505         MOVWF   r0x101D
+03E1 0000      01506         PAGESEL _sendDataByteISR
+03E2 2000      01507         CALL    _sendDataByteISR
+03E3 0000      01508         PAGESEL $
+               01509 ;       .line   424; "stepmotor2.c"     sendDataByteISR(currentPosition.bytes[1]);
+gpasm-0.13.4 beta               stepmotorz-stepmotor2.asm6-13-2008  14:34:03          PAGE 29
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+03E4 0000 0000 01510         BANKSEL _currentPosition
+03E6 0800      01511         MOVF    (_currentPosition + 1),W
+03E7 0000 0000 01512         BANKSEL r0x101D
+03E9 0080      01513         MOVWF   r0x101D
+03EA 0000      01514         PAGESEL _sendDataByteISR
+03EB 2000      01515         CALL    _sendDataByteISR
+03EC 0000      01516         PAGESEL $
+               01517 ;       .line   425; "stepmotor2.c"     endMessageISR();
+03ED 0000      01518         PAGESEL _endMessageISR
+03EE 2000      01519         CALL    _endMessageISR
+03EF 0000      01520         PAGESEL $
+03F0 2800      01521         GOTO    _00003_DS_
+03F1           01522 _00166_DS_
+               01523 ;       .line   428; "stepmotor2.c"     function = func_ddamaster;
+03F1 3007      01524         MOVLW   0x07
+03F2 0000 0000 01525         BANKSEL _function
+03F4 0080      01526         MOVWF   _function
+03F5 2800      01527         GOTO    _00003_DS_
+03F6           01528 _00173_DS_
+               01529 ;       .line   430; "stepmotor2.c"     } else if (function != func_idle) {
+03F6 3000      01530         MOVLW   0x00
+03F7 0000 0000 01531         BANKSEL _function
+03F9 0400      01532         IORWF   _function,W
+03FA 1903      01533         BTFSC   STATUS,2
+03FB 2800      01534         GOTO    _00003_DS_
+               01535 ;;113   MOVF    (_dda_deltay + 0),W
+               01536 ;;103   MOVF    (_dda_deltay + 1),W
+               01537 ;;112   MOVF    r0x101D,W
+               01538 ;       .line   431; "stepmotor2.c"     dda_error += dda_deltay.ival;
+03FC 0000 0000 01539         BANKSEL _dda_deltay
+03FE 0800      01540         MOVF    (_dda_deltay + 0),W
+03FF 0000 0000 01541         BANKSEL r0x101D
+0401 0080      01542         MOVWF   r0x101D
+0402 0000 0000 01543         BANKSEL _dda_error
+0404 0780      01544         ADDWF   _dda_error,F
+               01545 ;;102   MOVF    r0x101E,W
+0405 0000 0000 01546         BANKSEL _dda_deltay
+0407 0800      01547         MOVF    (_dda_deltay + 1),W
+0408 0000 0000 01548         BANKSEL r0x101E
+040A 0080      01549         MOVWF   r0x101E
+040B 1803      01550         BTFSC   STATUS,0
+040C 0A00      01551         INCF    r0x101E,W
+040D 1903      01552         BTFSC   STATUS,2
+040E 2800      01553         GOTO    _00002_DS_
+040F 0000 0000 01554         BANKSEL _dda_error
+0411 0780      01555         ADDWF   (_dda_error + 1),F
+0412           01556 _00002_DS_
+               01557 ;       .line   432; "stepmotor2.c"     if ((dda_error + dda_error) > dda_deltax) {
+0412 1003      01558         BCF     STATUS,0
+0413 0000 0000 01559         BANKSEL _dda_error
+0415 0D00      01560         RLF     _dda_error,W
+0416 0000 0000 01561         BANKSEL r0x101D
+0418 0080      01562         MOVWF   r0x101D
+0419 0000 0000 01563         BANKSEL _dda_error
+gpasm-0.13.4 beta               stepmotorz-stepmotor2.asm6-13-2008  14:34:03          PAGE 30
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+041B 0D00      01564         RLF     (_dda_error + 1),W
+041C 0000 0000 01565         BANKSEL r0x101E
+041E 0080      01566         MOVWF   r0x101E
+041F 0000 0000 01567         BANKSEL _dda_deltax
+0421 0800      01568         MOVF    (_dda_deltax + 1),W
+0422 3E80      01569         ADDLW   0x80
+0423 0000 0000 01570         BANKSEL r0x1021
+0425 0080      01571         MOVWF   r0x1021
+0426 0800      01572         MOVF    r0x101E,W
+0427 3E80      01573         ADDLW   0x80
+0428 0200      01574         SUBWF   r0x1021,W
+0429 1D03      01575         BTFSS   STATUS,2
+042A 2800      01576         GOTO    _00187_DS_
+042B 0800      01577         MOVF    r0x101D,W
+042C 0000 0000 01578         BANKSEL _dda_deltax
+042E 0200      01579         SUBWF   _dda_deltax,W
+042F           01580 _00187_DS_
+042F 1803      01581         BTFSC   STATUS,0
+0430 2800      01582         GOTO    _00003_DS_
+               01583 ;genSkipc:3694: created from rifx:0xbf8c33d0
+               01584 ;       .line   434; "stepmotor2.c"     strobe_sync();
+0431 2000      01585         CALL    _strobe_sync
+               01586 ;       .line   435; "stepmotor2.c"     dda_error -= dda_deltax;
+0432 0000 0000 01587         BANKSEL _dda_deltax
+0434 0800      01588         MOVF    _dda_deltax,W
+0435 0000 0000 01589         BANKSEL _dda_error
+0437 0280      01590         SUBWF   _dda_error,F
+0438 0000 0000 01591         BANKSEL _dda_deltax
+043A 0800      01592         MOVF    (_dda_deltax + 1),W
+043B 1C03      01593         BTFSS   STATUS,0
+043C 0A00      01594         INCF    (_dda_deltax + 1),W
+043D 1903      01595         BTFSC   STATUS,2
+043E 2800      01596         GOTO    _00003_DS_
+043F 0000 0000 01597         BANKSEL _dda_error
+0441 0280      01598         SUBWF   (_dda_error + 1),F
+0442           01599 _00003_DS_
+0442 0008      01600         RETURN  
+               01601 ; exit point of _dda_step
+               01602 
+               01603 ;***
+               01604 ;  pBlock Stats: dbName = C
+               01605 ;***
+               01606 ;entry:  _strobe_sync   ;Function start
+               01607 ; 2 exit points
+               01608 ;has an exit
+               01609 ;1 compiler assigned register :
+               01610 ;   r0x1022
+               01611 ;; Starting pCode block
+0443           01612 _strobe_sync    ;Function start
+               01613 ; 2 exit points
+               01614 ;       .line   393; "stepmotor2.c"     SYNCA = 0; // Pull low
+0443 0000 0000 01615         BANKSEL _PORTA_bits
+0445 1080      01616         BCF     _PORTA_bits,1
+               01617 ;       .line   394; "stepmotor2.c"     SYNCA_TRIS = 0; // Set to output during stobe
+gpasm-0.13.4 beta               stepmotorz-stepmotor2.asm6-13-2008  14:34:03          PAGE 31
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+0446 0000 0000 01618         BANKSEL _TRISA_bits
+0448 1080      01619         BCF     _TRISA_bits,1
+               01620 ;       .line   397; "stepmotor2.c"     for(delay = 0; delay <= 254; delay++)
+0449 30FF      01621         MOVLW   0xff
+044A 0000 0000 01622         BANKSEL r0x1022
+044C 0080      01623         MOVWF   r0x1022
+044D           01624 _00154_DS_
+044D 0000 0000 01625         BANKSEL r0x1022
+044F 0B80      01626         DECFSZ  r0x1022,F
+0450 2800      01627         GOTO    _00154_DS_
+               01628 ;       .line   400; "stepmotor2.c"     SYNCA_TRIS = 1; // Back to input so we don't drive the sync line
+0451 0000 0000 01629         BANKSEL _TRISA_bits
+0453 1480      01630         BSF     _TRISA_bits,1
+0454 0000 0000 01631         BANKSEL _coilPosition
+0456 0008      01632         RETURN  
+               01633 ; exit point of _strobe_sync
+               01634 
+               01635 ;***
+               01636 ;  pBlock Stats: dbName = C
+               01637 ;***
+               01638 ;entry:  _setTimer      ;Function start
+               01639 ; 2 exit points
+               01640 ;has an exit
+               01641 ;; Starting pCode block
+0457           01642 _setTimer       ;Function start
+               01643 ; 2 exit points
+               01644 ;       .line   371; "stepmotor2.c"     void setTimer(byte newspeed)
+0457 0000 0000 01645         BANKSEL _speed
+0459 0080      01646         MOVWF   _speed
+               01647 ;       .line   374; "stepmotor2.c"     if (speed) {
+045A 0800      01648         MOVF    _speed,W
+045B 1903      01649         BTFSC   STATUS,2
+045C 2800      01650         GOTO    _00146_DS_
+               01651 ;       .line   375; "stepmotor2.c"     TMR1ON = 0;  //TMR1H, TMR1L should only be set, when TMR1ON is off
+045D 0000 0000 01652         BANKSEL _T1CON_bits
+045F 1000      01653         BCF     _T1CON_bits,0
+               01654 ;       .line   376; "stepmotor2.c"     TMR1H = speed;
+0460 0000 0000 01655         BANKSEL _speed
+0462 0800      01656         MOVF    _speed,W
+0463 0000 0000 01657         BANKSEL _TMR1H
+0465 0080      01658         MOVWF   _TMR1H
+               01659 ;       .line   377; "stepmotor2.c"     TMR1L = 0;
+0466 0180      01660         CLRF    _TMR1L
+               01661 ;       .line   378; "stepmotor2.c"     TMR1ON = 1;
+0467 1400      01662         BSF     _T1CON_bits,0
+0468 2800      01663         GOTO    _00147_DS_
+0469           01664 _00146_DS_
+               01665 ;       .line   380; "stepmotor2.c"     TMR1ON = 0;
+0469 0000 0000 01666         BANKSEL _T1CON_bits
+046B 1000      01667         BCF     _T1CON_bits,0
+046C           01668 _00147_DS_
+046C 0000 0000 01669         BANKSEL _coilPosition
+046E 0008      01670         RETURN  
+               01671 ; exit point of _setTimer
+gpasm-0.13.4 beta               stepmotorz-stepmotor2.asm6-13-2008  14:34:03          PAGE 32
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+               01672 
+               01673 ;***
+               01674 ;  pBlock Stats: dbName = C
+               01675 ;***
+               01676 ;entry:  _reverse1      ;Function start
+               01677 ; 2 exit points
+               01678 ;has an exit
+               01679 ;functions called:
+               01680 ;   _flashLED
+               01681 ;   _motor_stop
+               01682 ;   _motor_click
+               01683 ;   _flashLED
+               01684 ;   _motor_stop
+               01685 ;   _motor_click
+               01686 ;2 compiler assigned registers:
+               01687 ;   r0x1015
+               01688 ;   r0x1016
+               01689 ;; Starting pCode block
+046F           01690 _reverse1       ;Function start
+               01691 ; 2 exit points
+               01692 ;       .line   353; "stepmotor2.c"     flashLED();
+046F 0000      01693         PAGESEL _flashLED
+0470 2000      01694         CALL    _flashLED
+0471 0000      01695         PAGESEL $
+               01696 ;       .line   354; "stepmotor2.c"     if (MINSENSOR) {
+0472 0000 0000 01697         BANKSEL _PORTB_bits
+0474 1C00      01698         BTFSS   _PORTB_bits,0
+0475 2800      01699         GOTO    _00139_DS_
+               01700 ;       .line   356; "stepmotor2.c"     motor_stop();
+0476 2000      01701         CALL    _motor_stop
+               01702 ;       .line   357; "stepmotor2.c"     function = func_idle;
+0477 0000 0000 01703         BANKSEL _function
+0479 0180      01704         CLRF    _function
+047A 2800      01705         GOTO    _00140_DS_
+047B           01706 _00139_DS_
+               01707 ;       .line   359; "stepmotor2.c"     currentPosition.ival--;
+047B 0000 0000 01708         BANKSEL _currentPosition
+047D 0800      01709         MOVF    (_currentPosition + 0),W
+047E 0000 0000 01710         BANKSEL r0x1015
+0480 0080      01711         MOVWF   r0x1015
+0481 0000 0000 01712         BANKSEL _currentPosition
+0483 0800      01713         MOVF    (_currentPosition + 1),W
+0484 0000 0000 01714         BANKSEL r0x1016
+0486 0080      01715         MOVWF   r0x1016
+0487 30FF      01716         MOVLW   0xff
+0488 0780      01717         ADDWF   r0x1015,F
+0489 1C03      01718         BTFSS   STATUS,0
+048A 0380      01719         DECF    r0x1016,F
+               01720 ;gen.c:9306: size=1/2, offset=0, AOP_TYPE(res)=13
+048B 0800      01721         MOVF    r0x1015,W
+048C 0000 0000 01722         BANKSEL _currentPosition
+048E 0080      01723         MOVWF   (_currentPosition + 0)
+               01724 ;gen.c:9306: size=0/2, offset=1, AOP_TYPE(res)=13
+048F 0000 0000 01725         BANKSEL r0x1016
+gpasm-0.13.4 beta               stepmotorz-stepmotor2.asm6-13-2008  14:34:03          PAGE 33
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+0491 0800      01726         MOVF    r0x1016,W
+0492 0000 0000 01727         BANKSEL _currentPosition
+0494 0080      01728         MOVWF   (_currentPosition + 1)
+               01729 ;       .line   360; "stepmotor2.c"     coilPosition = (coilPosition + stepCount - 1) & (stepCount - 1);
+0495 3003      01730         MOVLW   0x03
+0496 0000 0000 01731         BANKSEL _coilPosition
+0498 0700      01732         ADDWF   _coilPosition,W
+0499 0000 0000 01733         BANKSEL r0x1015
+049B 0080      01734         MOVWF   r0x1015
+049C 3003      01735         MOVLW   0x03
+049D 0500      01736         ANDWF   r0x1015,W
+049E 0000 0000 01737         BANKSEL _coilPosition
+04A0 0080      01738         MOVWF   _coilPosition
+               01739 ;       .line   361; "stepmotor2.c"     motor_click();
+04A1 2000      01740         CALL    _motor_click
+04A2           01741 _00140_DS_
+04A2 0000 0000 01742         BANKSEL _coilPosition;
+04A4 0008      01743         RETURN  
+               01744 ; exit point of _reverse1
+               01745 
+               01746 ;***
+               01747 ;  pBlock Stats: dbName = C
+               01748 ;***
+               01749 ;entry:  _forward1      ;Function start
+               01750 ; 2 exit points
+               01751 ;has an exit
+               01752 ;functions called:
+               01753 ;   _flashLED
+               01754 ;   _motor_stop
+               01755 ;   _motor_click
+               01756 ;   _flashLED
+               01757 ;   _motor_stop
+               01758 ;   _motor_click
+               01759 ;2 compiler assigned registers:
+               01760 ;   r0x1015
+               01761 ;   r0x1016
+               01762 ;; Starting pCode block
+04A5           01763 _forward1       ;Function start
+               01764 ; 2 exit points
+               01765 ;       .line   333; "stepmotor2.c"     flashLED();
+04A5 0000      01766         PAGESEL _flashLED
+04A6 2000      01767         CALL    _flashLED
+04A7 0000      01768         PAGESEL $
+               01769 ;       .line   334; "stepmotor2.c"     if (MAXSENSOR) {
+04A8 0000 0000 01770         BANKSEL _PORTA_bits
+04AA 1E80      01771         BTFSS   _PORTA_bits,5
+04AB 2800      01772         GOTO    _00132_DS_
+               01773 ;       .line   336; "stepmotor2.c"     motor_stop();
+04AC 2000      01774         CALL    _motor_stop
+               01775 ;       .line   337; "stepmotor2.c"     function = func_idle;
+04AD 0000 0000 01776         BANKSEL _function
+04AF 0180      01777         CLRF    _function
+04B0 2800      01778         GOTO    _00133_DS_
+04B1           01779 _00132_DS_
+gpasm-0.13.4 beta               stepmotorz-stepmotor2.asm6-13-2008  14:34:03          PAGE 34
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+               01780 ;       .line   339; "stepmotor2.c"     currentPosition.ival++;
+04B1 0000 0000 01781         BANKSEL _currentPosition
+04B3 0800      01782         MOVF    (_currentPosition + 0),W
+04B4 0000 0000 01783         BANKSEL r0x1015
+04B6 0080      01784         MOVWF   r0x1015
+04B7 0000 0000 01785         BANKSEL _currentPosition
+04B9 0800      01786         MOVF    (_currentPosition + 1),W
+04BA 0000 0000 01787         BANKSEL r0x1016
+04BC 0080      01788         MOVWF   r0x1016
+04BD 0A80      01789         INCF    r0x1015,F
+04BE 1903      01790         BTFSC   STATUS,2
+04BF 0A80      01791         INCF    r0x1016,F
+               01792 ;gen.c:9306: size=1/2, offset=0, AOP_TYPE(res)=13
+04C0 0800      01793         MOVF    r0x1015,W
+04C1 0000 0000 01794         BANKSEL _currentPosition
+04C3 0080      01795         MOVWF   (_currentPosition + 0)
+               01796 ;gen.c:9306: size=0/2, offset=1, AOP_TYPE(res)=13
+04C4 0000 0000 01797         BANKSEL r0x1016
+04C6 0800      01798         MOVF    r0x1016,W
+04C7 0000 0000 01799         BANKSEL _currentPosition
+04C9 0080      01800         MOVWF   (_currentPosition + 1)
+               01801 ;       .line   340; "stepmotor2.c"     coilPosition = (coilPosition + 1) & (stepCount - 1);
+04CA 0000 0000 01802         BANKSEL _coilPosition
+04CC 0A00      01803         INCF    _coilPosition,W
+04CD 0000 0000 01804         BANKSEL r0x1015
+04CF 0080      01805         MOVWF   r0x1015
+04D0 3003      01806         MOVLW   0x03
+04D1 0500      01807         ANDWF   r0x1015,W
+04D2 0000 0000 01808         BANKSEL _coilPosition
+04D4 0080      01809         MOVWF   _coilPosition
+               01810 ;       .line   341; "stepmotor2.c"     motor_click();
+04D5 2000      01811         CALL    _motor_click
+04D6           01812 _00133_DS_
+04D6 0000 0000 01813         BANKSEL _coilPosition
+04D8 0008      01814         RETURN  
+               01815 ; exit point of _forward1
+               01816 
+               01817 ;***
+               01818 ;  pBlock Stats: dbName = C
+               01819 ;***
+               01820 ;entry:  _motor_click   ;Function start
+               01821 ; 2 exit points
+               01822 ;has an exit
+               01823 ;1 compiler assigned register :
+               01824 ;   r0x1017
+               01825 ;; Starting pCode block
+04D9           01826 _motor_click    ;Function start
+               01827 ; 2 exit points
+               01828 ;       .line   192; "stepmotor2.c"     cp = coilPosition << 1;
+04D9 1003      01829         BCF     STATUS,0
+04DA 0000 0000 01830         BANKSEL _coilPosition
+04DC 0D00      01831         RLF     _coilPosition,W
+04DD 0000 0000 01832         BANKSEL r0x1017
+04DF 0080      01833         MOVWF   r0x1017
+gpasm-0.13.4 beta               stepmotorz-stepmotor2.asm6-13-2008  14:34:03          PAGE 35
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+               01834 ;swapping arguments (AOP_TYPEs 1/2)
+               01835 ;unsigned compare: left >= lit(0x8=8), size=1
+               01836 ;       .line   194; "stepmotor2.c"     switch(cp) {
+04E0 3008      01837         MOVLW   0x08
+04E1 0200      01838         SUBWF   r0x1017,W
+04E2 1803      01839         BTFSC   STATUS,0
+04E3 2800      01840         GOTO    _00121_DS_
+               01841 ;genSkipc:3694: created from rifx:0xbf8c33d0
+04E4 3000      01842         MOVLW   HIGH(_00126_DS_)
+04E5 008A      01843         MOVWF   PCLATH
+04E6 3000      01844         MOVLW   _00126_DS_
+04E7 0700      01845         ADDWF   r0x1017,W
+04E8 1803      01846         BTFSC   STATUS,0
+04E9 0A8A      01847         INCF    PCLATH,F
+04EA 1283 1303 01848         BANKSEL PCL
+04EC 0082      01849         MOVWF   PCL
+04ED           01850 _00126_DS_
+04ED 2800      01851         GOTO    _00120_DS_
+04EE 2800      01852         GOTO    _00119_DS_
+04EF 2800      01853         GOTO    _00118_DS_
+04F0 2800      01854         GOTO    _00117_DS_
+04F1 2800      01855         GOTO    _00116_DS_
+04F2 2800      01856         GOTO    _00115_DS_
+04F3 2800      01857         GOTO    _00114_DS_
+04F4 2800      01858         GOTO    _00113_DS_
+04F5           01859 _00113_DS_
+               01860 ;       .line   197; "stepmotor2.c"     RB5 = 1;
+04F5 0000 0000 01861         BANKSEL _PORTB_bits
+04F7 1680      01862         BSF     _PORTB_bits,5
+               01863 ;       .line   198; "stepmotor2.c"     RB4 = 0;
+04F8 1200      01864         BCF     _PORTB_bits,4
+               01865 ;       .line   199; "stepmotor2.c"     RA2 = 1;
+04F9 1500      01866         BSF     _PORTA_bits,2
+               01867 ;       .line   200; "stepmotor2.c"     RA0 = 0;
+04FA 1000      01868         BCF     _PORTA_bits,0
+               01869 ;       .line   201; "stepmotor2.c"     break;
+04FB 2800      01870         GOTO    _00121_DS_
+04FC           01871 _00114_DS_
+               01872 ;       .line   204; "stepmotor2.c"     RB5 = 1;
+04FC 0000 0000 01873         BANKSEL _PORTB_bits
+04FE 1680      01874         BSF     _PORTB_bits,5
+               01875 ;       .line   205; "stepmotor2.c"     RB4 = 0;
+04FF 1200      01876         BCF     _PORTB_bits,4
+               01877 ;       .line   206; "stepmotor2.c"     RA2 = 0;
+0500 1100      01878         BCF     _PORTA_bits,2
+               01879 ;       .line   207; "stepmotor2.c"     RA0 = 0;
+0501 1000      01880         BCF     _PORTA_bits,0
+               01881 ;       .line   208; "stepmotor2.c"     break;    
+0502 2800      01882         GOTO    _00121_DS_
+0503           01883 _00115_DS_
+               01884 ;       .line   211; "stepmotor2.c"     RB5 = 1;
+0503 0000 0000 01885         BANKSEL _PORTB_bits
+0505 1680      01886         BSF     _PORTB_bits,5
+               01887 ;       .line   212; "stepmotor2.c"     RB4 = 0;
+gpasm-0.13.4 beta               stepmotorz-stepmotor2.asm6-13-2008  14:34:03          PAGE 36
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+0506 1200      01888         BCF     _PORTB_bits,4
+               01889 ;       .line   213; "stepmotor2.c"     RA2 = 0;
+0507 1100      01890         BCF     _PORTA_bits,2
+               01891 ;       .line   214; "stepmotor2.c"     RA0 = 1;
+0508 1400      01892         BSF     _PORTA_bits,0
+               01893 ;       .line   215; "stepmotor2.c"     break;     
+0509 2800      01894         GOTO    _00121_DS_
+050A           01895 _00116_DS_
+               01896 ;       .line   218; "stepmotor2.c"     RB5 = 0;
+050A 0000 0000 01897         BANKSEL _PORTB_bits
+050C 1280      01898         BCF     _PORTB_bits,5
+               01899 ;       .line   219; "stepmotor2.c"     RB4 = 0;
+050D 1200      01900         BCF     _PORTB_bits,4
+               01901 ;       .line   220; "stepmotor2.c"     RA2 = 0;
+050E 1100      01902         BCF     _PORTA_bits,2
+               01903 ;       .line   221; "stepmotor2.c"     RA0 = 1;
+050F 1400      01904         BSF     _PORTA_bits,0
+               01905 ;       .line   222; "stepmotor2.c"     break;     
+0510 2800      01906         GOTO    _00121_DS_
+0511           01907 _00117_DS_
+               01908 ;       .line   225; "stepmotor2.c"     RB5 = 0;
+0511 0000 0000 01909         BANKSEL _PORTB_bits
+0513 1280      01910         BCF     _PORTB_bits,5
+               01911 ;       .line   226; "stepmotor2.c"     RB4 = 1;
+0514 1600      01912         BSF     _PORTB_bits,4
+               01913 ;       .line   227; "stepmotor2.c"     RA2 = 0;
+0515 1100      01914         BCF     _PORTA_bits,2
+               01915 ;       .line   228; "stepmotor2.c"     RA0 = 1;
+0516 1400      01916         BSF     _PORTA_bits,0
+               01917 ;       .line   229; "stepmotor2.c"     break;     
+0517 2800      01918         GOTO    _00121_DS_
+0518           01919 _00118_DS_
+               01920 ;       .line   232; "stepmotor2.c"     RB5 = 0;
+0518 0000 0000 01921         BANKSEL _PORTB_bits
+051A 1280      01922         BCF     _PORTB_bits,5
+               01923 ;       .line   233; "stepmotor2.c"     RB4 = 1;
+051B 1600      01924         BSF     _PORTB_bits,4
+               01925 ;       .line   234; "stepmotor2.c"     RA2 = 0;
+051C 1100      01926         BCF     _PORTA_bits,2
+               01927 ;       .line   235; "stepmotor2.c"     RA0 = 0;
+051D 1000      01928         BCF     _PORTA_bits,0
+               01929 ;       .line   236; "stepmotor2.c"     break;    
+051E 2800      01930         GOTO    _00121_DS_
+051F           01931 _00119_DS_
+               01932 ;       .line   239; "stepmotor2.c"     RB5 = 0;
+051F 0000 0000 01933         BANKSEL _PORTB_bits
+0521 1280      01934         BCF     _PORTB_bits,5
+               01935 ;       .line   240; "stepmotor2.c"     RB4 = 1;
+0522 1600      01936         BSF     _PORTB_bits,4
+               01937 ;       .line   241; "stepmotor2.c"     RA2 = 1;
+0523 1500      01938         BSF     _PORTA_bits,2
+               01939 ;       .line   242; "stepmotor2.c"     RA0 = 0;
+0524 1000      01940         BCF     _PORTA_bits,0
+               01941 ;       .line   243; "stepmotor2.c"     break;    
+gpasm-0.13.4 beta               stepmotorz-stepmotor2.asm6-13-2008  14:34:03          PAGE 37
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+0525 2800      01942         GOTO    _00121_DS_
+0526           01943 _00120_DS_
+               01944 ;       .line   246; "stepmotor2.c"     RB5 = 0;
+0526 0000 0000 01945         BANKSEL _PORTB_bits
+0528 1280      01946         BCF     _PORTB_bits,5
+               01947 ;       .line   247; "stepmotor2.c"     RB4 = 0;
+0529 1200      01948         BCF     _PORTB_bits,4
+               01949 ;       .line   248; "stepmotor2.c"     RA2 = 1;
+052A 1500      01950         BSF     _PORTA_bits,2
+               01951 ;       .line   249; "stepmotor2.c"     RA0 = 0;
+052B 1000      01952         BCF     _PORTA_bits,0
+052C           01953 _00121_DS_
+052C 0000 0000 01954         BANKSEL _coilPosition
+052E 0008      01955         RETURN  
+               01956 ; exit point of _motor_click
+               01957 
+               01958 ;***
+               01959 ;  pBlock Stats: dbName = C
+               01960 ;***
+               01961 ;entry:  _motor_stop    ;Function start
+               01962 ; 2 exit points
+               01963 ;has an exit
+               01964 ;; Starting pCode block
+052F           01965 _motor_stop     ;Function start
+               01966 ; 2 exit points
+               01967 ;       .line   169; "stepmotor2.c"     PORTB = PORTB & BIN(11001111);
+052F 30CF      01968         MOVLW   0xcf
+0530 0000 0000 01969         BANKSEL _PORTB
+0532 0580      01970         ANDWF   _PORTB,F
+               01971 ;       .line   170; "stepmotor2.c"     PORTA = PORTA & BIN(11111010);
+0533 30FA      01972         MOVLW   0xfa
+0534 0580      01973         ANDWF   _PORTA,F
+0535 0000 0000 01974         BANKSEL _coilPosition
+0537 0008      01975         RETURN  
+               01976 ; exit point of _motor_stop
+               01977 
+               01978 ;***
+               01979 ;  pBlock Stats: dbName = C
+               01980 ;***
+               01981 ;entry:  _init2 ;Function start
+               01982 ; 2 exit points
+               01983 ;has an exit
+               01984 ;; Starting pCode block
+0538           01985 _init2  ;Function start
+               01986 ; 2 exit points
+               01987 ;       .line   148; "stepmotor2.c"     speed = 0;
+0538 0000 0000 01988         BANKSEL _speed
+053A 0180      01989         CLRF    _speed
+               01990 ;       .line   149; "stepmotor2.c"     function = func_idle;
+053B 0000 0000 01991         BANKSEL _function
+053D 0180      01992         CLRF    _function
+               01993 ;       .line   150; "stepmotor2.c"     coilPosition = 0;
+053E 0000 0000 01994         BANKSEL _coilPosition
+0540 0180      01995         CLRF    _coilPosition
+gpasm-0.13.4 beta               stepmotorz-stepmotor2.asm6-13-2008  14:34:03          PAGE 38
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+               01996 ;       .line   151; "stepmotor2.c"     sync_mode = sync_none;
+0541 0000 0000 01997         BANKSEL _sync_mode
+0543 0180      01998         CLRF    _sync_mode
+               01999 ;       .line   152; "stepmotor2.c"     seekNotify = 255;
+0544 30FF      02000         MOVLW   0xff
+0545 0000 0000 02001         BANKSEL _seekNotify
+0547 0080      02002         MOVWF   _seekNotify
+               02003 ;gen.c:9306: size=0/1, offset=0, AOP_TYPE(res)=13
+               02004 ;       .line   154; "stepmotor2.c"     currentPosition.bytes[0] = 0;
+0548 0000 0000 02005         BANKSEL _currentPosition
+054A 0180      02006         CLRF    (_currentPosition + 0)
+               02007 ;gen.c:9306: size=0/1, offset=0, AOP_TYPE(res)=13
+               02008 ;       .line   155; "stepmotor2.c"     currentPosition.bytes[1] = 0;
+054B 0180      02009         CLRF    (_currentPosition + 1)
+               02010 ;gen.c:9306: size=0/1, offset=0, AOP_TYPE(res)=13
+               02011 ;       .line   156; "stepmotor2.c"     seekPosition.bytes[0] = 0;
+054C 0000 0000 02012         BANKSEL _seekPosition
+054E 0180      02013         CLRF    (_seekPosition + 0)
+               02014 ;gen.c:9306: size=0/1, offset=0, AOP_TYPE(res)=13
+               02015 ;       .line   157; "stepmotor2.c"     seekPosition.bytes[1] = 0;
+054F 0180      02016         CLRF    (_seekPosition + 1)
+               02017 ;gen.c:9306: size=0/1, offset=0, AOP_TYPE(res)=13
+               02018 ;       .line   158; "stepmotor2.c"     maxPosition.bytes[0] = 0;
+0550 0000 0000 02019         BANKSEL _maxPosition
+0552 0180      02020         CLRF    (_maxPosition + 0)
+               02021 ;gen.c:9306: size=0/1, offset=0, AOP_TYPE(res)=13
+               02022 ;       .line   159; "stepmotor2.c"     maxPosition.bytes[1] = 0;
+0553 0180      02023         CLRF    (_maxPosition + 1)
+0554 0008      02024         RETURN  
+               02025 ; exit point of _init2
+               02026 
+               02027 
+               02028 ;       code size estimation:
+               02029 ;         749+  355 =  1104 instructions ( 2918 byte)
+               02030 
+gpasm-0.13.4 beta               stepmotorz-stepmotor2.asm6-13-2008  14:34:03          PAGE 39
+
+
+SYMBOL TABLE
+  LABEL                             VALUE 
+
+ADEN                              00000003
+BRGH                              00000002
+C                                 00000000
+C1INV                             00000004
+C1OUT                             00000006
+C2INV                             00000005
+C2OUT                             00000007
+CCP1CON                           00000017
+CCP1IE                            00000002
+CCP1IF                            00000002
+CCP1M0                            00000000
+CCP1M1                            00000001
+CCP1M2                            00000002
+CCP1M3                            00000003
+CCP1X                             00000005
+CCP1Y                             00000004
+CCPR1H                            00000016
+CCPR1L                            00000015
+CIS                               00000003
+CM0                               00000000
+CM1                               00000001
+CM2                               00000002
+CMCON                             0000001F
+CMIE                              00000006
+CMIF                              00000006
+CREN                              00000004
+CSRC                              00000007
+DC                                00000001
+EEADR                             0000009B
+EECON1                            0000009C
+EECON2                            0000009D
+EEDATA                            0000009A
+EEIE                              00000007
+EEIF                              00000007
+F                                 00000001
+FERR                              00000002
+FSR                               00000004
+GIE                               00000007
+INDF                              00000000
+INTCON                            0000000B
+INTE                              00000004
+INTEDG                            00000006
+INTF                              00000001
+IRP                               00000007
+NOT_BO                            00000000
+NOT_BOD                           00000000
+NOT_BOR                           00000000
+NOT_PD                            00000003
+NOT_POR                           00000001
+NOT_RBPU                          00000007
+NOT_T1SYNC                        00000002
+NOT_TO                            00000004
+OERR                              00000001
+gpasm-0.13.4 beta               stepmotorz-stepmotor2.asm6-13-2008  14:34:03          PAGE 40
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+OPTION_REG                        00000081
+OSCF                              00000003
+PCL                               00000002
+PCLATH                            0000000A
+PCON                              0000008E
+PEIE                              00000006
+PIE1                              0000008C
+PIR1                              0000000C
+PORTA                             00000005
+PORTB                             00000006
+PR2                               00000092
+PS0                               00000000
+PS1                               00000001
+PS2                               00000002
+PSA                               00000003
+PSAVE                             00000000
+RBIE                              00000003
+RBIF                              00000000
+RCIE                              00000005
+RCIF                              00000005
+RCREG                             0000001A
+RCSTA                             00000018
+RD                                00000000
+RP0                               00000005
+RP1                               00000006
+RX9                               00000006
+RX9D                              00000000
+SPBRG                             00000099
+SPEN                              00000007
+SREN                              00000005
+SSAVE                             00000000
+STATUS                            00000003
+STK00                             00000000
+STK01                             00000000
+STK02                             00000000
+STK03                             00000000
+STK04                             00000000
+STK05                             00000000
+STK06                             00000000
+STK07                             00000000
+STK08                             00000000
+STK09                             00000000
+STK10                             00000000
+STK11                             00000000
+STK12                             00000000
+SYNC                              00000004
+T0CS                              00000005
+T0IE                              00000005
+T0IF                              00000002
+T0SE                              00000004
+T1CKPS0                           00000004
+T1CKPS1                           00000005
+T1CON                             00000010
+T1OSCEN                           00000003
+gpasm-0.13.4 beta               stepmotorz-stepmotor2.asm6-13-2008  14:34:03          PAGE 41
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+T2CKPS0                           00000000
+T2CKPS1                           00000001
+T2CON                             00000012
+TMR0                              00000001
+TMR1CS                            00000001
+TMR1H                             0000000F
+TMR1IE                            00000000
+TMR1IF                            00000000
+TMR1L                             0000000E
+TMR1ON                            00000000
+TMR2                              00000011
+TMR2IE                            00000001
+TMR2IF                            00000001
+TMR2ON                            00000002
+TOUTPS0                           00000003
+TOUTPS1                           00000004
+TOUTPS2                           00000005
+TOUTPS3                           00000006
+TRISA                             00000085
+TRISB                             00000086
+TRMT                              00000001
+TX9                               00000006
+TX9D                              00000000
+TXEN                              00000005
+TXIE                              00000004
+TXIF                              00000004
+TXREG                             00000019
+TXSTA                             00000098
+VR0                               00000000
+VR1                               00000001
+VR2                               00000002
+VR3                               00000003
+VRCON                             0000009F
+VREN                              00000007
+VROE                              00000006
+VRR                               00000005
+W                                 00000000
+WR                                00000001
+WREN                              00000002
+WRERR                             00000003
+WSAVE                             00000000
+Z                                 00000002
+_00001_DS_                        000001AB
+_00002_DS_                        00000412
+_00003_DS_                        00000442
+_00113_DS_                        000004F5
+_00114_DS_                        000004FC
+_00115_DS_                        00000503
+_00116_DS_                        0000050A
+_00117_DS_                        00000511
+_00118_DS_                        00000518
+_00119_DS_                        0000051F
+_00120_DS_                        00000526
+_00121_DS_                        0000052C
+gpasm-0.13.4 beta               stepmotorz-stepmotor2.asm6-13-2008  14:34:03          PAGE 42
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+_00126_DS_                        000004ED
+_00132_DS_                        000004B1
+_00133_DS_                        000004D6
+_00139_DS_                        0000047B
+_00140_DS_                        000004A2
+_00146_DS_                        00000469
+_00147_DS_                        0000046C
+_00154_DS_                        0000044D
+_00160_DS_                        000003C0
+_00163_DS_                        0000039C
+_00164_DS_                        000003C1
+_00166_DS_                        000003F1
+_00173_DS_                        000003F6
+_00185_DS_                        000003BC
+_00187_DS_                        0000042F
+_00192_DS_                        0000024F
+_00193_DS_                        00000259
+_00194_DS_                        0000025B
+_00195_DS_                        0000025D
+_00197_DS_                        000002A5
+_00200_DS_                        00000281
+_00201_DS_                        000002AB
+_00203_DS_                        000002DB
+_00208_DS_                        000002E0
+_00210_DS_                        000002ED
+_00212_DS_                        000002EF
+_00214_DS_                        00000309
+_00215_DS_                        0000030A
+_00217_DS_                        0000033A
+_00222_DS_                        0000033F
+_00223_DS_                        00000340
+_00224_DS_                        00000342
+_00226_DS_                        0000034E
+_00227_DS_                        0000034F
+_00229_DS_                        0000036D
+_00234_DS_                        00000371
+_00253_DS_                        00000246
+_00254_DS_                        0000027D
+_00255_DS_                        000002A1
+_00263_DS_                        00000222
+_00264_DS_                        00000223
+_00267_DS_                        0000022F
+_00268_DS_                        00000231
+_00270_DS_                        00000232
+_00274_DS_                        0000021E
+_00283_DS_                        00000051
+_00284_DS_                        00000064
+_00286_DS_                        00000090
+_00289_DS_                        00000095
+_00292_DS_                        00000078
+_00293_DS_                        00000099
+_00294_DS_                        000000A5
+_00295_DS_                        000000B4
+_00296_DS_                        000000C0
+gpasm-0.13.4 beta               stepmotorz-stepmotor2.asm6-13-2008  14:34:03          PAGE 43
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+_00297_DS_                        000000CC
+_00298_DS_                        000000DF
+_00299_DS_                        000000FC
+_00301_DS_                        00000119
+_00302_DS_                        0000011D
+_00303_DS_                        00000125
+_00304_DS_                        0000012A
+_00305_DS_                        00000131
+_00306_DS_                        00000138
+_00307_DS_                        00000144
+_00308_DS_                        00000161
+_00310_DS_                        000001B7
+_00311_DS_                        000001C3
+_00312_DS_                        000001C5
+_00313_DS_                        000001C7
+_00314_DS_                        000001CF
+_00315_DS_                        000001E6
+_00316_DS_                        000001F1
+_BODEN_OFF                        00003FBF
+_BODEN_ON                         00003FFF
+_BOREN_OFF                        00003FBF
+_BOREN_ON                         00003FFF
+_CCP1CON                          00000000
+_CCP1CON_bits                     00000000
+_CCPR1H                           00000000
+_CCPR1L                           00000000
+_CMCON                            00000000
+_CMCON_bits                       00000000
+_CP_OFF                           00003FFF
+_CP_ON                            00001FFF
+_DATA_CP_OFF                      00003FFF
+_DATA_CP_ON                       00003EFF
+_EEADR                            00000000
+_EECON1                           00000000
+_EECON1_bits                      00000000
+_EECON2                           00000000
+_EEDATA                           00000000
+_ER_OSC_CLKOUT                    00003FFF
+_ER_OSC_NOCLKOUT                  00003FFE
+_EXTCLK_OSC                       00003FEF
+_FSR                              00000000
+_HS_OSC                           00003FEE
+_INDF                             00000000
+_INTCON                           00000000
+_INTCON_bits                      00000000
+_INTOSC_OSC_CLKOUT                00003FFD
+_INTOSC_OSC_NOCLKOUT              00003FFC
+_INTRC_OSC_CLKOUT                 00003FFD
+_INTRC_OSC_NOCLKOUT               00003FFC
+_LEDon                            00000000
+_LP_OSC                           00003FEC
+_LVP_OFF                          00003F7F
+_LVP_ON                           00003FFF
+_MCLRE_OFF                        00003FDF
+gpasm-0.13.4 beta               stepmotorz-stepmotor2.asm6-13-2008  14:34:03          PAGE 44
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+_MCLRE_ON                         00003FFF
+_OPTION_REG                       00000000
+_OPTION_REG_bits                  00000000
+_PCL                              00000000
+_PCLATH                           00000000
+_PCON                             00000000
+_PCON_bits                        00000000
+_PIE1                             00000000
+_PIE1_bits                        00000000
+_PIR1                             00000000
+_PIR1_bits                        00000000
+_PORTA                            00000000
+_PORTA_bits                       00000000
+_PORTB                            00000000
+_PORTB_bits                       00000000
+_PR2                              00000000
+_PWRTE_OFF                        00003FFF
+_PWRTE_ON                         00003FF7
+_RCREG                            00000000
+_RCSTA                            00000000
+_RCSTA_bits                       00000000
+_RC_OSC_CLKOUT                    00003FFF
+_RC_OSC_NOCLKOUT                  00003FFE
+_SPBRG                            00000000
+_STATUS                           00000000
+_STATUS_bits                      00000000
+_T1CON                            00000000
+_T1CON_bits                       00000000
+_T2CON                            00000000
+_T2CON_bits                       00000000
+_TMR0                             00000000
+_TMR1H                            00000000
+_TMR1L                            00000000
+_TMR2                             00000000
+_TRISA                            00000000
+_TRISA_bits                       00000000
+_TRISB                            00000000
+_TRISB_bits                       00000000
+_TXREG                            00000000
+_TXSTA                            00000000
+_TXSTA_bits                       00000000
+_VRCON                            00000000
+_VRCON_bits                       00000000
+_WDT_OFF                          00003FFB
+_WDT_ON                           00003FFF
+_XT_OSC                           00003FED
+__16F648A                         00000001
+_buffer                           00000000
+_clearwdt                         00000000
+_code_stepmotor2_000053           00000053
+_code_stepmotor2_000057           00000057
+_code_stepmotor2_00005b           0000005B
+_code_stepmotor2_00005f           0000005F
+_code_stepmotor2_000062           00000062
+gpasm-0.13.4 beta               stepmotorz-stepmotor2.asm6-13-2008  14:34:03          PAGE 45
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+_code_stepmotor2_000066           00000066
+_code_stepmotor2_00006a           0000006A
+_code_stepmotor2_000076           00000076
+_code_stepmotor2_00008e           0000008E
+_code_stepmotor2_000093           00000093
+_code_stepmotor2_000098           00000098
+_code_stepmotor2_00009c           0000009C
+_code_stepmotor2_0000a0           000000A0
+_code_stepmotor2_0000a3           000000A3
+_code_stepmotor2_0000a7           000000A7
+_code_stepmotor2_0000ab           000000AB
+_code_stepmotor2_0000af           000000AF
+_code_stepmotor2_0000b2           000000B2
+_code_stepmotor2_0000e1           000000E1
+_code_stepmotor2_0000e5           000000E5
+_code_stepmotor2_0000ee           000000EE
+_code_stepmotor2_0000f7           000000F7
+_code_stepmotor2_0000fa           000000FA
+_code_stepmotor2_000146           00000146
+_code_stepmotor2_00014a           0000014A
+_code_stepmotor2_000153           00000153
+_code_stepmotor2_00015c           0000015C
+_code_stepmotor2_00015f           0000015F
+_code_stepmotor2_0001d1           000001D1
+_code_stepmotor2_0001d5           000001D5
+_code_stepmotor2_0001db           000001DB
+_code_stepmotor2_0001e1           000001E1
+_code_stepmotor2_0001e4           000001E4
+_code_stepmotor2_000257           00000257
+_code_stepmotor2_0002a7           000002A7
+_code_stepmotor2_0002ba           000002BA
+_code_stepmotor2_0002c4           000002C4
+_code_stepmotor2_0002cd           000002CD
+_code_stepmotor2_0002d6           000002D6
+_code_stepmotor2_0002d9           000002D9
+_code_stepmotor2_000319           00000319
+_code_stepmotor2_000323           00000323
+_code_stepmotor2_00032c           0000032C
+_code_stepmotor2_000335           00000335
+_code_stepmotor2_000338           00000338
+_code_stepmotor2_00035e           0000035E
+_code_stepmotor2_000368           00000368
+_code_stepmotor2_00036b           0000036B
+_code_stepmotor2_0003d0           000003D0
+_code_stepmotor2_0003da           000003DA
+_code_stepmotor2_0003e3           000003E3
+_code_stepmotor2_0003ec           000003EC
+_code_stepmotor2_0003ef           000003EF
+_code_stepmotor2_000471           00000471
+_code_stepmotor2_0004a7           000004A7
+_coilPosition                     00000000
+_currentPosition                  0000000F
+_dda_deltax                       00000019
+_dda_deltay                       00000017
+gpasm-0.13.4 beta               stepmotorz-stepmotor2.asm6-13-2008  14:34:03          PAGE 46
+
+
+LOC  OBJECT CODE     LINE SOURCE TEXT
+  VALUE
+ 
+_dda_error                        00000015
+_dda_step                         00000378
+_delay_10us                       00000000
+_endMessage                       00000000
+_endMessageISR                    00000000
+_flashLED                         00000000
+_forward1                         000004A5
+_function                         00000000
+_init2                            00000538
+_maxPosition                      00000013
+_motor_click                      000004D9
+_motor_stop                       0000052F
+_packetReady                      00000000
+_processCommand                   00000000
+_releaseLock                      00000000
+_reverse1                         0000046F
+_seekNotify                       00000000
+_seekPosition                     00000011
+_sendDataByte                     00000000
+_sendDataByteISR                  00000000
+_sendMessage                      00000000
+_sendMessageISR                   00000000
+_sendReply                        00000000
+_serialInterruptHandler           00000000
+_serialStatus                     00000000
+_serial_init                      00000000
+_setFlash                         00000000
+_setPower                         000001F4
+_setTimer                         00000457
+_speed                            00000000
+_strobe_sync                      00000443
+_syncCounter                      00000000
+_syncEnabled                      00000000
+_syncStrobe                       0000020F
+_sync_mode                        00000000
+_timerTick                        00000233
+_uartNotifyReceive                00000000
+_uartTransmit                     00000000
+r0x1011                           0000000D
+r0x1014                           0000000E
+r0x1015                           00000001
+r0x1016                           00000002
+r0x1017                           00000000
+r0x1019                           00000009
+r0x101A                           0000000A
+r0x101B                           0000000B
+r0x101C                           0000000C
+r0x101D                           00000004
+r0x101E                           00000005
+r0x101F                           00000006
+r0x1020                           00000007
+r0x1021                           00000008
+r0x1022                           00000003
+
+
+Errors   :       0
+Warnings :       0 reported,       0 suppressed
+Messages :       0 reported,       0 suppressed
+

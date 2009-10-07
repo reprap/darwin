@@ -1,0 +1,8 @@
+load c usart.stim
+node testnode
+attach test1 testnode portb7
+
+#node test_rx
+#attach test_rx rx1 portb1
+#node test_tx
+#attach test_tx portb2

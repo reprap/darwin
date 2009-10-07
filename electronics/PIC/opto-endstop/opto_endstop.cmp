@@ -1,0 +1,31 @@
+Cmp-Mod V01 Created by Cvpcb (2007-02-16) date = 26/3/2007-16:37:16
+
+BeginCmp
+TimeStamp = 4607F0A5;
+Reference = K1;
+ValeurCmp = CONN_3;
+IdModule  = SIL-3;
+EndCmp
+
+BeginCmp
+TimeStamp = 4607F10A;
+Reference = R1;
+ValeurCmp = 10K;
+IdModule  = R3;
+EndCmp
+
+BeginCmp
+TimeStamp = 4607F105;
+Reference = R2;
+ValeurCmp = 220R;
+IdModule  = R3;
+EndCmp
+
+BeginCmp
+TimeStamp = 4607EFF4;
+Reference = U1;
+ValeurCmp = H21LOI;
+IdModule  = SIL-5;
+EndCmp
+
+EndListe

@@ -1,0 +1,43 @@
+# EESchema Netlist Version 1.1 created  26/3/2007-16:57:27
+(
+ ( 4607F10A $noname  R1 10K {Lib=R}
+  (    1 N-000002 )
+  (    2 N-000003 )
+ )
+ ( 4607F105 $noname  R2 220R {Lib=R}
+  (    1 N-000002 )
+  (    2 N-000001 )
+ )
+ ( 4607F0A5 $noname  K1 CONN_3 {Lib=CONN_3}
+  (    1 N-000002 )
+  (    2 N-000003 )
+  (    3 N-000004 )
+ )
+ ( 4607EFF4 $noname  U1 H21LOI {Lib=H21LOI}
+  (    1 N-000001 )
+  (    2 N-000004 )
+  (    3 N-000002 )
+  (    4 N-000003 )
+  (    5 N-000004 )
+ )
+)
+*
+{ Pin List by Nets
+Net 1 ""
+ R2 2
+ U1 1
+Net 2 ""
+ U1 3
+ R1 1
+ R2 1
+ K1 1
+Net 3 ""
+ R1 2
+ U1 4
+ K1 2
+Net 4 ""
+ U1 2
+ K1 3
+ U1 5
+}
+#End

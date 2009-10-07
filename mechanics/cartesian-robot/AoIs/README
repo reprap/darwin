@@ -1,0 +1,11 @@
+The STL files for the cartesian robot can be found at:
+
+https://sourceforge.net/project/showfiles.php?group_id=159590
+
+(look for the latest cartesian bot files).
+
+In this directory we are starting to translate these files into 
+Art of Illusion so that anyone can easily edit them.
+
+Note that you can import any STL file into Art of Illusion, so you can do
+that with the STL files in the Sourceforge repository too.

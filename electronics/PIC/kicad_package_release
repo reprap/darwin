@@ -1,0 +1,62 @@
+#!/bin/bash
+
+#init up
+BOARD=`basename $1`
+VERSION=${2:-`date +%Y-%m-%d`}
+TO_DIR="reprap-$BOARD-$VERSION"
+FILELIST=""
+
+#directory structure
+echo "Making Files..."
+mkdir -p "$TO_DIR"
+mkdir -p "$TO_DIR/gerber"
+mkdir -p "$TO_DIR/pdf"
+mkdir -p "$TO_DIR/kicad"
+mkdir -p "$TO_DIR/kicad/src"
+mkdir -p "$TO_DIR/kicad/library"
+mkdir -p "$TO_DIR/kicad/modules"
+
+#copy our files...
+echo "Copying Files..."
+cp $BOARD/*-Component.pho "$TO_DIR/gerber/ComponentTraces.pho"
+cp $BOARD/*-Copper.pho "$TO_DIR/gerber/CopperTraces.pho"
+cp $BOARD/*-MaskCmp.pho "$TO_DIR/gerber/SolderMaskComponent.pho"
+cp $BOARD/*-MaskCopp.pho "$TO_DIR/gerber/SolderMaskCopper.pho"
+cp $BOARD/*-SilkSCmp.pho "$TO_DIR/gerber/SilkScreen.pho"
+cp $BOARD/*-Component.ps "$TO_DIR/pdf/ComponentTraces.ps"
+cp $BOARD/*-Copper.ps "$TO_DIR/pdf/CopperTraces.ps"
+cp $BOARD/*-MaskCmp.ps "$TO_DIR/pdf/SolderMaskComponent.ps"
+cp $BOARD/*-MaskCopp.ps "$TO_DIR/pdf/SolderMaskCopper.ps"
+cp $BOARD/*-SilkSCmp.ps "$TO_DIR/pdf/SilkScreen.ps"
+cp $BOARD/*.drl "$TO_DIR/gerber"
+
+#create our source dir
+cp $BOARD/* "$TO_DIR/kicad/src";
+rm -rf $TO_DIR/src/*.ps
+rm -rf $TO_DIR/src/*.pdf
+rm -rf $TO_DIR/src/*.pho
+rm -rf $TO_DIR/src/.svn
+
+#save our kicad files
+cp kicad_library/reprap.mod "$TO_DIR/kicad/modules"
+cp kicad_library/reprap.lib "$TO_DIR/kicad/library"
+
+#convert to pdf...
+echo "Converting to PDF..."
+for PS in $TO_DIR/pdf/*.ps
+do
+	TO_FILE=`basename $PS .ps`.pdf
+	ps2pdf $PS $TO_DIR/pdf/$TO_FILE
+done
+rm $TO_DIR/pdf/*.ps
+
+#create our archive
+echo "Archiving..."
+zip -qr "$TO_DIR.zip" "$TO_DIR"
+
+#cleanup
+echo "Cleanup..."
+rm -rf "$TO_DIR"
+
+#done!
+echo "Release v$VERSION created as ${TO_DIR}.zip"
