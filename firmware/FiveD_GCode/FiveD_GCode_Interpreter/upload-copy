@@ -1,7 +1,0 @@
-#!/bin/sh
-cp cartesian_dda.h cartesian_dda.h.dist
-cp extruder.h extruder.h.dist
-cp parameters.h parameters.h.dist
-cp pins.h pins.h.dist
-cp vectors.h vectors.h.dist
-
